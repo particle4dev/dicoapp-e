@@ -15,7 +15,16 @@ export default class Home extends Component<Props> {
       <div className={styles.container} data-tid="container">
         <h2>Home</h2>
         <AkAvatar size="small" />
+        <br />
         <Link to={routes.COUNTER}>to Counter</Link>
+        <br />
+        <Link to={routes.BUY}>to BuyPage</Link>
+        <br />
+        <Link to={routes.WALLET}>to WalletPage</Link>
+        <br />
+        <Link to={routes.HELP}>to HelpPage</Link>
+        <br />
+        <Link to={routes.SEED}>to SeedPage</Link>
       </div>
     );
   }
