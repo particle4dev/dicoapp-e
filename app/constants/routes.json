@@ -1,4 +1,8 @@
 {
   "HOME": "/",
-  "COUNTER": "/counter"
+  "COUNTER": "/counter",
+  "SEED": "/seed",
+  "BUY": "/buy",
+  "WALLET": "/wallet",
+  "HELP": "/help"
 }
