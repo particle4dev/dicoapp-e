@@ -1,41 +1,33 @@
-// import fs from 'fs';
-// import path from 'path';
-import pm2 from 'pm2';
-
-// const cp = require('child_process');
-// const queue = require('queue');
-// const ms = require('ms');
+import childProcess from 'child_process';
+import { app } from 'electron';
+import killProcess from './killprocess';
 import {
   marketmaker as marketmakerBin,
   homeDir,
-  binDir
+  // binDir,
+  userDataDir
 } from '../config/paths';
-
 import coinsdata from './coinsdata.json';
 
-const marketmaker = (() => {
-  // Instance stores a reference to the Singleton
-  let instance;
+const debug = require('debug')('dicoapp:plugins:marketmaker');
 
-  function init() {
-    // Private methods and variables
-    // function privateMethod() {
-    //   console.log('I am private');
-    // }
+const APPNAME = 'mm';
 
-    // const privateVariable = 'Im also private';
+const MarketMaker = (name = APPNAME) => {
+  const state = {
+    isRunning: false,
+    marketmakerBin,
+    name
+  };
+  let marketmakerProcess = null;
+  return Object.assign(
+    {
+      // start: function start(options) {
+      start: function start() {
+        debug('start');
 
-    const privateRandomNumber = Math.random();
-    let process;
+        killProcess('marketmaker');
 
-    pm2.connect(
-      true,
-      err => {
-        // start up pm2 god
-        if (err) {
-          console.error(err);
-          process.exit(2);
-        }
         const startparams = {
           gui: 'dICOapp-cm',
           client: 1,
@@ -44,55 +36,44 @@ const marketmaker = (() => {
           passphrase: 'default',
           coins: coinsdata
         };
-        const params = JSON.stringify(startparams);
-        console.log(params, 'params');
-        pm2.start(
-          {
-            script: marketmakerBin, // path to MM binary
-            exec_mode: 'fork',
-            cwd: binDir, // set correct working dir for MM data
-            args: params, // stringified params,
-            name: 'mm',
-            exec_interpreter: 'none'
-          },
-          (e, app) => {
-            if (e) {
-              console.log(e, 'pm2 start error');
-              return;
-            }
-            pm2.disconnect(); // Disconnect from PM2
-            console.log('started MM ');
 
-            process = app;
-          }
+        marketmakerProcess = childProcess.spawn(
+          marketmakerBin,
+          [JSON.stringify(startparams)],
+          { cwd: userDataDir }
         );
-      }
-    );
+        marketmakerProcess.on('error', error => {
+          state.isRunning = false;
+          throw error;
+        });
 
-    return {
-      // Public methods and variables
-      publicMethod() {
-        console.log('The public can see me!');
+        app.on('quit', () => {
+          this.stop();
+        });
       },
 
-      publicProperty: 'I am also public',
+      stop: function stop() {
+        debug('stop');
+        state.isRunning = false;
+        if (marketmakerProcess) {
+          marketmakerProcess.kill();
+        }
 
-      getRandomNumber() {
-        return privateRandomNumber;
-      }
-    };
-  }
+        marketmakerProcess = null;
+        killProcess('marketmaker');
+      },
 
-  return {
-    // Get the Singleton instance if one exists
-    // or create one if it doesn't
-    start: () => {
-      if (!instance) {
-        instance = init();
+      isRunning: function isRunning() {
+        return state.isRunning;
       }
-      return instance;
     }
-  };
-})();
+    // GetState(state),
+    // Config(state),
+    // OpenConnect(state),
+    // FileStream(state),
+    // UploadImage(state),
+    // FinishUpload(state)
+  );
+};
 
-export default marketmaker;
+export default MarketMaker();

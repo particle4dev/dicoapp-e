@@ -12,7 +12,7 @@
  */
 import { app, BrowserWindow } from 'electron';
 import MenuBuilder from './menu';
-// import marketmaker from './plugins/marketmaker'
+import marketmaker from './plugins/marketmaker';
 
 let mainWindow = null;
 
@@ -77,7 +77,8 @@ app.on('ready', async () => {
       throw new Error('"mainWindow" is not defined');
     }
 
-    // const marketmakerInstance = marketmaker.start()
+    // const marketmakerInstance = marketmaker.start();
+    marketmaker.start();
     // console.log(marketmakerInstance)
 
     mainWindow.show();
