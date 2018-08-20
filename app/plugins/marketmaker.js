@@ -7,7 +7,7 @@ import {
   // binDir,
   userDataDir
 } from '../config/paths';
-import coinsdata from './coinsdata.json';
+import coinsdata from '../config/coins-data';
 
 // const { marketmakerCrashedDialog } = require('../dialogs');
 const debug = require('debug')('dicoapp:plugins:marketmaker');
