@@ -9,6 +9,7 @@ import {
 } from '../config/paths';
 import coinsdata from './coinsdata.json';
 
+// const { marketmakerCrashedDialog } = require('../dialogs');
 const debug = require('debug')('dicoapp:plugins:marketmaker');
 
 const APPNAME = 'mm';
@@ -42,10 +43,20 @@ const MarketMaker = (name = APPNAME) => {
           [JSON.stringify(startparams)],
           { cwd: userDataDir }
         );
+        state.isRunning = true;
         marketmakerProcess.on('error', error => {
           state.isRunning = false;
           throw error;
         });
+
+        // marketmakerProcess.on('exit', () => {
+        //   if (!this.isRunning) {
+        //     return;
+        //   }
+
+        //   state.isRunning = false;
+        //   marketmakerCrashedDialog();
+        // });
 
         app.on('quit', () => {
           this.stop();
