@@ -24,7 +24,6 @@ const MarketMaker = () => {
     {
       start: function start(options) {
         debug('start');
-
         killProcess('marketmaker');
 
         const startparams = Object.assign({}, options, {
@@ -44,11 +43,16 @@ const MarketMaker = () => {
 
         state.isRunning = true;
 
+        // The 'error' event is emitted whenever:
+        //  The process could not be spawned, or
+        //   The process could not be killed, or
+        //  Sending a message to the child process failed.
         marketmakerProcess.on('error', error => {
           state.isRunning = false;
           throw error;
         });
 
+        // The 'exit' event is emitted after the child process ends.
         // marketmakerProcess.on('exit', () => {
         //   if (!this.isRunning) {
         //     return;
