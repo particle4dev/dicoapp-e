@@ -2,6 +2,8 @@ import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import Root from './containers/Root';
+import getBalance from './get-balance';
+import login from './login';
 import { configureStore, history } from './store/configureStore';
 import './app.global.css';
 
@@ -25,3 +27,15 @@ if (module.hot) {
     );
   });
 }
+
+// TEST
+setTimeout(() => {
+  login();
+}, 5000);
+
+setTimeout(() => {
+  getBalance('KMD');
+  getBalance('GLXT');
+  getBalance('BTC');
+  getBalance('LTC');
+}, 10000);

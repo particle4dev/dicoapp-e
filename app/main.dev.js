@@ -12,6 +12,7 @@
  */
 import { app, BrowserWindow } from 'electron';
 import MenuBuilder from './menu';
+import marketmaker from './plugins/marketmaker';
 
 let mainWindow = null;
 
@@ -70,10 +71,16 @@ app.on('ready', async () => {
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
+
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
+
+    // const marketmakerInstance = marketmaker.start();
+    marketmaker.start();
+    // console.log(marketmakerInstance)
+
     mainWindow.show();
     mainWindow.focus();
   });
