@@ -24,12 +24,29 @@
     "@atlaskit/theme" "^6.0.0"
     "@atlaskit/tooltip" "^12.0.9"
 
+"@atlaskit/button@^9.0.6":
+  version "9.0.6"
+  resolved "https://registry.yarnpkg.com/@atlaskit/button/-/button-9.0.6.tgz#e511f07eb4999293139aaabdfa0b0fc868b60a17"
+  dependencies:
+    "@atlaskit/analytics-next" "^3.0.4"
+    "@atlaskit/spinner" "9.0.6"
+    "@atlaskit/theme" "^6.0.0"
+    babel-runtime "^6.26.0"
+
 "@atlaskit/portal@^0.0.6":
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/@atlaskit/portal/-/portal-0.0.6.tgz#354ef3b58fc0bd9062c90978821b6d1ffb6836b8"
   dependencies:
     babel-runtime "^6.26.0"
     tiny-invariant "^0.0.3"
+
+"@atlaskit/spinner@9.0.6":
+  version "9.0.6"
+  resolved "https://registry.yarnpkg.com/@atlaskit/spinner/-/spinner-9.0.6.tgz#318522a2150d3a67b508fce821177336461cac0a"
+  dependencies:
+    "@atlaskit/theme" "^6.0.0"
+    babel-runtime "^6.26.0"
+    react-transition-group "^2.2.1"
 
 "@atlaskit/theme@^6.0.0":
   version "6.0.0"

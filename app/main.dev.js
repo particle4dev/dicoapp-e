@@ -77,9 +77,8 @@ app.on('ready', async () => {
       throw new Error('"mainWindow" is not defined');
     }
 
-    // const marketmakerInstance = marketmaker.start();
+    // marketmaker
     marketmaker.start();
-    // console.log(marketmakerInstance)
 
     mainWindow.show();
     mainWindow.focus();
