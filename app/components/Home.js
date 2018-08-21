@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { ipcRenderer } from 'electron';
+import ipc from 'electron-better-ipc';
 import AkAvatar from '@atlaskit/avatar';
 import AkButton from '@atlaskit/button';
 import routes from '../constants/routes.json';
@@ -9,25 +9,23 @@ import styles from './Home.css';
 // import getBalance from './get-balance';
 import login from '../login';
 
-ipcRenderer.on('asynchronous-reply', (event, arg) => {
-  console.log(arg); // prints "pong"
-});
-
 type Props = {};
 
 export default class Home extends Component<Props> {
   props: Props;
 
-  onStartButtonClick = (evt: SyntheticEvent<*>) => {
+  onStartButtonClick = async (evt: SyntheticEvent<*>) => {
     evt.preventDefault();
 
-    ipcRenderer.send('marketmaker:start', 'ping');
+    const emoji = await ipc.callMain('marketmaker:start', 'ping');
+    console.log('marketmaker:start', emoji);
   };
 
-  onStopButtonClick = (evt: SyntheticEvent<*>) => {
+  onStopButtonClick = async (evt: SyntheticEvent<*>) => {
     evt.preventDefault();
 
-    ipcRenderer.send('marketmaker:stop', 'ping');
+    const emoji = await ipc.callMain('marketmaker:stop', 'ping');
+    console.log('marketmaker:stop', emoji);
   };
 
   onLoginButtonClick = (evt: SyntheticEvent<*>) => {

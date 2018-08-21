@@ -1,5 +1,6 @@
 import childProcess from 'child_process';
-import { app, ipcMain } from 'electron';
+import ipc from 'electron-better-ipc';
+import { app } from 'electron';
 import killProcess from './killprocess';
 import {
   marketmaker as marketmakerBin,
@@ -90,16 +91,16 @@ function setup() {
 
   marketmaker = MarketMaker();
 
-  ipcMain.on('marketmaker:start', (event, arg) => {
+  ipc.answerRenderer('marketmaker:start', async arg => {
     console.log(arg); // prints "ping"
     marketmaker.start();
-    event.sender.send('asynchronous-reply', 'pong');
+    return 'pong';
   });
 
-  ipcMain.on('marketmaker:stop', (event, arg) => {
+  ipc.answerRenderer('marketmaker:stop', async arg => {
     console.log(arg); // prints "ping"
     marketmaker.stop();
-    event.sender.send('asynchronous-reply', 'pong');
+    return 'pong';
   });
 
   return marketmaker;
