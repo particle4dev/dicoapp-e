@@ -12,13 +12,10 @@ import coinsdata from '../config/coins-data';
 // const { marketmakerCrashedDialog } = require('../dialogs');
 const debug = require('debug')('dicoapp:plugins:marketmaker');
 
-const APPNAME = 'mm';
-
-const MarketMaker = (name = APPNAME) => {
+const MarketMaker = () => {
   const state = {
     isRunning: false,
-    marketmakerBin,
-    name
+    marketmakerBin
   };
   let marketmakerProcess = null;
   return Object.assign(
