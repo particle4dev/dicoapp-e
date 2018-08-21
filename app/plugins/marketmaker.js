@@ -17,30 +17,33 @@ const MarketMaker = () => {
     isRunning: false,
     marketmakerBin
   };
+
   let marketmakerProcess = null;
+
   return Object.assign(
     {
-      // start: function start(options) {
-      start: function start() {
+      start: function start(options) {
         debug('start');
 
         killProcess('marketmaker');
 
-        const startparams = {
-          gui: 'dICOapp-cm',
+        const startparams = Object.assign({}, options, {
           client: 1,
           canbind: 0,
-          userhome: homeDir,
+          gui: 'dICOapp-cm',
           passphrase: 'default',
+          userhome: homeDir,
           coins: coinsdata
-        };
+        });
 
         marketmakerProcess = childProcess.spawn(
           marketmakerBin,
           [JSON.stringify(startparams)],
           { cwd: userDataDir }
         );
+
         state.isRunning = true;
+
         marketmakerProcess.on('error', error => {
           state.isRunning = false;
           throw error;
