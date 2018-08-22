@@ -8,9 +8,7 @@ import AkTextField from '@atlaskit/field-text';
 import routes from '../constants/routes.json';
 import styles from './Home.css';
 // import getBalance from './get-balance';
-import BarterDexApi from '../utils/barter-dex-api';
-
-const bda = new BarterDexApi();
+import api from '../utils/barter-dex-api';
 
 type Props = {};
 type State = {
@@ -41,7 +39,7 @@ export default class Home extends Component<Props, State> {
   onLoginButtonClick = async (evt: SyntheticEvent<*>) => {
     evt.preventDefault();
     const { eventResult } = this.state;
-    const data = await bda.login(eventResult);
+    const data = await api.login(eventResult);
     console.log(data, 'data');
   };
 

@@ -4,7 +4,7 @@ import { config } from '../../config/config-default';
 
 const debug = require('debug')('dicoapp:utils:barter-dex-api');
 
-export default class BarterDexAPI {
+class BarterDexAPI {
   constructor(
     settings = {
       url: config.barterdex,
@@ -64,3 +64,15 @@ export default class BarterDexAPI {
     return this.create(setparams);
   }
 }
+
+let api = null;
+
+function setup() {
+  if (api) return api;
+
+  api = new BarterDexAPI();
+
+  return api;
+}
+
+export default setup();

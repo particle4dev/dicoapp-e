@@ -51,6 +51,5 @@ main.js.map
 .idea
 npm-debug.log.*
 app/get-balance.js
-app/login.js
 myipaddr
 **/DB/*
