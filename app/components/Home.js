@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import ipc from 'electron-better-ipc';
+import swal from 'sweetalert';
 import AkAvatar from '@atlaskit/avatar';
 import AkButton from '@atlaskit/button';
 import AkTextField from '@atlaskit/field-text';
@@ -9,19 +10,19 @@ import routes from '../constants/routes.json';
 import styles from './Home.css';
 // import getBalance from './get-balance';
 import api from '../utils/barter-dex-api';
-import electrumServers from './electrum';
-import tokenconfig from './tokenconfig';
+// import electrumServers from './electrum';
+// import tokenconfig from './tokenconfig';
 
 type Props = {};
 type State = {
-  eventResult: string
+  passphrase: string
 };
 
 export default class Home extends Component<Props, State> {
   props: Props;
 
   state = {
-    eventResult: ''
+    passphrase: ''
   };
 
   onStartButtonClick = async (evt: SyntheticEvent<*>) => {
@@ -39,10 +40,23 @@ export default class Home extends Component<Props, State> {
   };
 
   onLoginButtonClick = async (evt: SyntheticEvent<*>) => {
-    evt.preventDefault();
-    const { eventResult } = this.state;
-    const data = await api.login(eventResult);
-    console.log(data, 'data');
+    try {
+      evt.preventDefault();
+      const { passphrase } = this.state;
+      if (passphrase === '' || passphrase.length < 4) {
+        return swal(
+          'Oops!',
+          'The passphrase you entered is either empty or too short.',
+          'error'
+        );
+      }
+      const data = await api.login(passphrase);
+      console.log(data, 'data');
+      return swal('Success', 'Welcome to the GLX dICO Wallet!', 'success');
+    } catch (err) {
+      return swal('Something went wrong:', err.toString(), 'error');
+    }
+    /**
     const paramsKMD = {
       userpass: data.userpass,
       method: 'electrum',
@@ -132,11 +146,12 @@ export default class Home extends Component<Props, State> {
     } catch (err) {
       console.log(err);
     }
+    */
   };
 
   onChange = (evt: SyntheticEvent<*>) => {
     this.setState({
-      eventResult: evt.target.value
+      passphrase: evt.target.value
     });
   };
 
