@@ -8,12 +8,21 @@ import AkTextField from '@atlaskit/field-text';
 import routes from '../constants/routes.json';
 import styles from './Home.css';
 // import getBalance from './get-balance';
-import login from '../login';
+import BarterDexApi from '../utils/barter-dex-api';
+
+const bda = new BarterDexApi();
 
 type Props = {};
+type State = {
+  eventResult: string
+};
 
-export default class Home extends Component<Props> {
+export default class Home extends Component<Props, State> {
   props: Props;
+
+  state = {
+    eventResult: ''
+  };
 
   onStartButtonClick = async (evt: SyntheticEvent<*>) => {
     evt.preventDefault();
@@ -29,10 +38,17 @@ export default class Home extends Component<Props> {
     console.log('marketmaker:stop', emoji);
   };
 
-  onLoginButtonClick = (evt: SyntheticEvent<*>) => {
+  onLoginButtonClick = async (evt: SyntheticEvent<*>) => {
     evt.preventDefault();
+    const { eventResult } = this.state;
+    const data = await bda.login(eventResult);
+    console.log(data, 'data');
+  };
 
-    login();
+  onChange = (evt: SyntheticEvent<*>) => {
+    this.setState({
+      eventResult: evt.target.value
+    });
   };
 
   render() {
@@ -49,7 +65,11 @@ export default class Home extends Component<Props> {
           Stop marketmaker
         </AkButton>
         <br />
-        <AkTextField autoFocus label="Passphrase/Seed" />
+        <AkTextField
+          onChange={this.onChange}
+          autoFocus
+          label="Passphrase/Seed"
+        />
         <br />
         <AkButton appearance="warning" onClick={this.onLoginButtonClick}>
           Login

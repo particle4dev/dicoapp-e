@@ -1,3 +1,4 @@
+import { remote } from 'electron';
 import FetchService from '../fetch-service';
 import { config } from '../../config/config-default';
 
@@ -16,6 +17,9 @@ export default class BarterDexAPI {
       options: {},
       base: settings.url
     });
+    this.config = {
+      paths: remote.require('./config/paths')
+    };
   }
 
   isReady() {
@@ -45,7 +49,18 @@ export default class BarterDexAPI {
     return this.fetch.create('', data);
   }
 
-  // get() {
-
-  // }
+  login(passphrase) {
+    const { paths } = this.config;
+    const setparams = {
+      userpass:
+        '1d8b27b21efabcd96571cd56f91a40fb9aa4cc623d273c63bf9223dc6f8cd81f',
+      userhome: paths.homeDir,
+      method: 'passphrase',
+      passphrase,
+      gui: 'dICOapp-cm'
+      // 'netid':
+      // 'seednode':
+    };
+    return this.create(setparams);
+  }
 }
