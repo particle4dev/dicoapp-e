@@ -1,3 +1,4 @@
+// @flow
 import { remote } from 'electron';
 import FetchService from '../fetch-service';
 import { config } from '../../config/config-default';
@@ -49,7 +50,7 @@ class BarterDexAPI {
     return this.fetch.create('', data);
   }
 
-  login(passphrase) {
+  login(passphrase: string) {
     const { paths } = this.config;
     const setparams = {
       userpass:
@@ -62,6 +63,24 @@ class BarterDexAPI {
       // 'seednode':
     };
     return this.create(setparams);
+  }
+
+  /**
+   *
+   */
+  getBalance(params) {
+    const balanceparams = Object.assign({}, params, {
+      method: 'balance'
+    });
+    return this.create(balanceparams);
+  }
+
+  // https://docs.komodoplatform.com/barterDEX/barterDEX-API.html#electrum
+  addServer(params) {
+    const serverparams = Object.assign({}, params, {
+      method: 'electrum'
+    });
+    return this.create(serverparams);
   }
 }
 
