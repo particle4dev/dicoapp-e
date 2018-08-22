@@ -1,62 +1,65 @@
 // @flow
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import ipc from 'electron-better-ipc';
-import swal from 'sweetalert';
-import AkAvatar from '@atlaskit/avatar';
+// import { Link } from 'react-router-dom';
+// import { remote } from 'electron';
+// import ipc from 'electron-better-ipc';
+// import swal from 'sweetalert';
+// import AkAvatar from '@atlaskit/avatar';
 import AkButton from '@atlaskit/button';
-import AkTextField from '@atlaskit/field-text';
-import routes from '../constants/routes.json';
+// import AkTextField from '@atlaskit/field-text';
+// import routes from '../constants/routes.json';
 import styles from './Home.css';
 // import getBalance from './get-balance';
-import api from '../utils/barter-dex-api';
+// import api from '../utils/barter-dex-api';
 // import electrumServers from './electrum';
 // import tokenconfig from './tokenconfig';
+import image from './logo.png';
 
 type Props = {};
 type State = {
-  passphrase: string
+  // passphrase: string
 };
 
 export default class Home extends Component<Props, State> {
   props: Props;
 
   state = {
-    passphrase: ''
+    // passphrase: '',
+    // electrum: remote.require('./config/electrum'),
   };
 
-  onStartButtonClick = async (evt: SyntheticEvent<*>) => {
-    evt.preventDefault();
+  // onStartButtonClick = async (evt: SyntheticEvent<*>) => {
+  //   evt.preventDefault();
 
-    const emoji = await ipc.callMain('marketmaker:start', 'ping');
-    console.log('marketmaker:start', emoji);
-  };
+  //   const emoji = await ipc.callMain('marketmaker:start', 'ping');
+  //   console.log('marketmaker:start', emoji);
+  // };
 
-  onStopButtonClick = async (evt: SyntheticEvent<*>) => {
-    evt.preventDefault();
+  // onStopButtonClick = async (evt: SyntheticEvent<*>) => {
+  //   evt.preventDefault();
 
-    const emoji = await ipc.callMain('marketmaker:stop', 'ping');
-    console.log('marketmaker:stop', emoji);
-  };
+  //   const emoji = await ipc.callMain('marketmaker:stop', 'ping');
+  //   console.log('marketmaker:stop', emoji);
+  // };
 
-  onLoginButtonClick = async (evt: SyntheticEvent<*>) => {
-    try {
-      evt.preventDefault();
-      const { passphrase } = this.state;
-      if (passphrase === '' || passphrase.length < 4) {
-        return swal(
-          'Oops!',
-          'The passphrase you entered is either empty or too short.',
-          'error'
-        );
-      }
-      const data = await api.login(passphrase);
-      console.log(data, 'data');
-      return swal('Success', 'Welcome to the GLX dICO Wallet!', 'success');
-    } catch (err) {
-      return swal('Something went wrong:', err.toString(), 'error');
-    }
-    /**
+  // onLoginButtonClick = async (evt: SyntheticEvent<*>) => {
+  //   try {
+  //     evt.preventDefault();
+  //     const { passphrase } = this.state;
+  //     if (passphrase === '' || passphrase.length < 4) {
+  //       return swal(
+  //         'Oops!',
+  //         'The passphrase you entered is either empty or too short.',
+  //         'error'
+  //       );
+  //     }
+  //     const data = await api.login(passphrase);
+  //     console.log(data, 'data');
+  //     return swal('Success', 'Welcome to the GLX dICO Wallet!', 'success');
+  //   } catch (err) {
+  //     return swal('Something went wrong:', err.toString(), 'error');
+  //   }
+  /**
     const paramsKMD = {
       userpass: data.userpass,
       method: 'electrum',
@@ -66,6 +69,8 @@ export default class Home extends Component<Props, State> {
     };
     const kmd = await api.addServer(paramsKMD);
     console.log(kmd);
+
+
     const paramsKMD2 = {
       userpass: data.userpass,
       method: 'electrum',
@@ -147,17 +152,20 @@ export default class Home extends Component<Props, State> {
       console.log(err);
     }
     */
-  };
+  // };
 
-  onChange = (evt: SyntheticEvent<*>) => {
-    this.setState({
-      passphrase: evt.target.value
-    });
-  };
+  // onChange = (evt: SyntheticEvent<*>) => {
+  //   this.setState({
+  //     passphrase: evt.target.value
+  //   });
+  // };
 
   render() {
+    // const {passphrase} = this.state;
+
     return (
-      <div className={styles.container} data-tid="container">
+      <React.Fragment>
+        {/* <div className={styles.container} data-tid="container">
         <h2>Home</h2>
         <AkAvatar size="small" />
         <br />
@@ -170,6 +178,7 @@ export default class Home extends Component<Props, State> {
         </AkButton>
         <br />
         <AkTextField
+          value={passphrase}
           onChange={this.onChange}
           autoFocus
           label="Passphrase/Seed"
@@ -188,7 +197,55 @@ export default class Home extends Component<Props, State> {
         <Link to={routes.HELP}>to HelpPage</Link>
         <br />
         <Link to={routes.SEED}>to SeedPage</Link>
-      </div>
+      </div> */}
+        <div className={styles.container}>
+          <div className={styles.logo}>
+            <img src={image} alt="logo" />
+          </div>
+          <div className={styles.notification}>
+            <p>Please type in your Seed to Login to your existing Account</p>
+          </div>
+          <div className={styles.form}>
+            <form
+              onSubmit={e => {
+                e.preventDefault();
+                console.log('aaaaa');
+              }}
+            >
+              <div className={styles.password}>
+                <i className={`fas fa-lock ${styles['padding-right-10']}`} />
+                <input
+                  className={styles.input}
+                  type="password"
+                  placeholder="Passphrase/Seed"
+                />
+                <i
+                  className={`fas fa-eye-slash ${styles['padding-left-10']}`}
+                />
+              </div>
+              <div className={styles['submit-form']}>
+                <AkButton
+                  appearance="primary"
+                  className={styles['button-green']}
+                  type="submit"
+                >
+                  Log In
+                </AkButton>
+              </div>
+            </form>
+          </div>
+
+          <div className={styles.register}>
+            <AkButton
+              appearance="warning"
+              className={styles['button-white']}
+              type="submit"
+            >
+              Click Here to Create a New Account
+            </AkButton>
+          </div>
+        </div>
+      </React.Fragment>
     );
   }
 }
