@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import ipc from 'electron-better-ipc';
 import AkAvatar from '@atlaskit/avatar';
 import AkButton from '@atlaskit/button';
+import AkTextField from '@atlaskit/field-text';
 import routes from '../constants/routes.json';
 import styles from './Home.css';
 // import getBalance from './get-balance';
@@ -47,6 +48,8 @@ export default class Home extends Component<Props> {
         <AkButton appearance="warning" onClick={this.onStopButtonClick}>
           Stop marketmaker
         </AkButton>
+        <br />
+        <AkTextField autoFocus label="Passphrase/Seed" />
         <br />
         <AkButton appearance="warning" onClick={this.onLoginButtonClick}>
           Login

@@ -209,6 +209,7 @@
   "dependencies": {
     "@atlaskit/avatar": "^14.0.8",
     "@atlaskit/button": "^9.0.6",
+    "@atlaskit/field-text": "^7.0.7",
     "@fortawesome/fontawesome-free": "^5.2.0",
     "debug": "^3.1.0",
     "devtron": "^1.4.0",
