@@ -1,6 +1,7 @@
 // import { call, put, select, takeLatest } from 'redux-saga/effects';
 import { select, takeLatest } from 'redux-saga/effects';
-import { LOAD_REPOS } from '../App/constants';
+// import { LOAD_REPOS } from '../App/constants';
+import { CHANGE_USERNAME } from './constants';
 
 // import request from 'utils/request';
 import { makeSelectUsername } from './selectors';
@@ -31,5 +32,5 @@ export default function* githubData() {
   // By using `takeLatest` only the result of the latest API call is applied.
   // It returns task descriptor (just like fork) so we can continue execution
   // It will be cancelled automatically on component unmount
-  yield takeLatest(LOAD_REPOS, getRepos);
+  yield takeLatest(CHANGE_USERNAME, getRepos);
 }
