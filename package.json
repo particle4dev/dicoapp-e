@@ -215,6 +215,7 @@
     "devtron": "^1.4.0",
     "electron-debug": "^2.0.0",
     "history": "^4.7.2",
+    "invariant": "^2.2.4",
     "lodash": "^4.17.10",
     "node-fetch": "^2.2.0",
     "react": "^16.4.2",
