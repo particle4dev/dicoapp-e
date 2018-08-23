@@ -4,6 +4,8 @@ import hoistNonReactStatics from 'hoist-non-react-statics';
 
 import getInjectors from './saga-injectors';
 
+const debug = require('debug')('dicoapp:utils:inject-saga');
+
 /**
  * Dynamically injects a saga, passes component's props as saga arguments
  *
@@ -30,13 +32,14 @@ export default ({ key, saga, mode }) => WrappedComponent => {
 
     componentWillMount() {
       const { injectSaga } = this.injectors;
-
+      debug(`injectSaga ${key}`);
       injectSaga(key, { saga, mode }, this.props);
     }
 
     componentWillUnmount() {
       const { ejectSaga } = this.injectors;
 
+      debug(`ejectSaga ${key}`);
       ejectSaga(key);
     }
 

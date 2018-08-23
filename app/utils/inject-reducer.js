@@ -4,6 +4,8 @@ import hoistNonReactStatics from 'hoist-non-react-statics';
 
 import getInjectors from './reducer-injectors';
 
+const debug = require('debug')('dicoapp:utils:inject-reducer');
+
 /**
  * Dynamically injects a reducer
  *
@@ -26,7 +28,7 @@ export default ({ key, reducer }) => WrappedComponent => {
 
     componentWillMount() {
       const { injectReducer } = this.injectors;
-
+      debug(`injectReducer ${key}`);
       injectReducer(key, reducer);
     }
 
