@@ -2,262 +2,116 @@
 import React, { Component } from 'react';
 // import { Link } from 'react-router-dom';
 // import { remote } from 'electron';
-// import ipc from 'electron-better-ipc';
-// import swal from 'sweetalert';
-// import AkAvatar from '@atlaskit/avatar';
+import ipc from 'electron-better-ipc';
+import swal from 'sweetalert';
 import AkButton from '@atlaskit/button';
 // import AkTextField from '@atlaskit/field-text';
 // import routes from '../constants/routes.json';
 import styles from './Home.css';
-// import getBalance from './get-balance';
-// import api from '../utils/barter-dex-api';
+import api from '../utils/barter-dex-api';
 // import electrumServers from './electrum';
 // import tokenconfig from './tokenconfig';
 import image from './logo.png';
 
 type Props = {};
 type State = {
-  // passphrase: string
+  passphrase: string
 };
 
 export default class Home extends Component<Props, State> {
   props: Props;
 
   state = {
-    // passphrase: '',
+    passphrase: ''
     // electrum: remote.require('./config/electrum'),
   };
 
-  // onStartButtonClick = async (evt: SyntheticEvent<*>) => {
-  //   evt.preventDefault();
+  onStartButtonClick = async (evt: SyntheticEvent<*>) => {
+    evt.preventDefault();
 
-  //   const emoji = await ipc.callMain('marketmaker:start', 'ping');
-  //   console.log('marketmaker:start', emoji);
-  // };
+    const emoji = await ipc.callMain('marketmaker:start', 'ping');
+    console.log('marketmaker:start', emoji);
+  };
 
-  // onStopButtonClick = async (evt: SyntheticEvent<*>) => {
-  //   evt.preventDefault();
+  onStopButtonClick = async (evt: SyntheticEvent<*>) => {
+    evt.preventDefault();
 
-  //   const emoji = await ipc.callMain('marketmaker:stop', 'ping');
-  //   console.log('marketmaker:stop', emoji);
-  // };
+    const emoji = await ipc.callMain('marketmaker:stop', 'ping');
+    console.log('marketmaker:stop', emoji);
+  };
 
-  // onLoginButtonClick = async (evt: SyntheticEvent<*>) => {
-  //   try {
-  //     evt.preventDefault();
-  //     const { passphrase } = this.state;
-  //     if (passphrase === '' || passphrase.length < 4) {
-  //       return swal(
-  //         'Oops!',
-  //         'The passphrase you entered is either empty or too short.',
-  //         'error'
-  //       );
-  //     }
-  //     const data = await api.login(passphrase);
-  //     console.log(data, 'data');
-  //     return swal('Success', 'Welcome to the GLX dICO Wallet!', 'success');
-  //   } catch (err) {
-  //     return swal('Something went wrong:', err.toString(), 'error');
-  //   }
-  /**
-    const paramsKMD = {
-      userpass: data.userpass,
-      method: 'electrum',
-      coin: 'KMD',
-      ipaddr: 'electrum1.cipig.net',
-      port: 10001
-    };
-    const kmd = await api.addServer(paramsKMD);
-    console.log(kmd);
-
-
-    const paramsKMD2 = {
-      userpass: data.userpass,
-      method: 'electrum',
-      coin: 'KMD',
-      ipaddr: 'electrum2.cipig.net',
-      port: 10001
-    };
-    const kmd2 = await api.addServer(paramsKMD2);
-    console.log(kmd2);
-    const paramsBTC = {
-      userpass: data.userpass,
-      method: 'electrum',
-      coin: 'BTC',
-      ipaddr: 'electrum1.cipig.net',
-      port: 10000
-    };
-    const btc = await api.addServer(paramsBTC);
-    console.log(btc);
-    const paramsBTC2 = {
-      userpass: data.userpass,
-      method: 'electrum',
-      coin: 'BTC',
-      ipaddr: 'electrum2.cipig.net',
-      port: 10000
-    };
-    const btc2 = await api.addServer(paramsBTC2);
-    console.log(btc2);
-    const paramsLTC = {
-      userpass: data.userpass,
-      method: 'electrum',
-      coin: 'LTC',
-      ipaddr: 'electrum1.cipig.net',
-      port: 10065
-    };
-    const ltc = await api.addServer(paramsLTC);
-    console.log(ltc);
-    const paramsLTC2 = {
-      userpass: data.userpass,
-      method: 'electrum',
-      coin: 'LTC',
-      ipaddr: 'electrum2.cipig.net',
-      port: 10065
-    };
-    const ltc2 = await api.addServer(paramsLTC2);
-    console.log(ltc2);
-
-    const paramsdICOT = {
-      userpass: data.userpass,
-      method: 'electrum',
-      coin: tokenconfig.dICOtoken.shortcode,
-      ipaddr: electrumServers.dICOtoken.address,
-      port: electrumServers.dICOtoken.port
-    };
-    const dicot = await api.addServer(paramsdICOT);
-    console.log(dicot);
-
-    const paramsdICOT2 = {
-      userpass: data.userpass,
-      method: 'electrum',
-      coin: tokenconfig.dICOtoken.shortcode,
-      ipaddr: electrumServers.dICOtoken.serverList[0],
-      port: electrumServers.dICOtoken.port
-    };
-    const dicot2 = await api.addServer(paramsdICOT2);
-    console.log(dicot2);
-
+  onLoginButtonClick = async (evt: SyntheticEvent<*>) => {
     try {
-      const results = [];
-      for (let i = 0; i < data.coins.length; i += 1) {
-        const balanceparams = {
-          userpass: data.userpass,
-          coin: data.coins[i].coin,
-          address: data.coins[i].smartaddress
-        };
-        results.push(api.getBalance(balanceparams));
+      evt.preventDefault();
+      const { passphrase } = this.state;
+      if (passphrase === '' || passphrase.length < 4) {
+        return swal(
+          'Oops!',
+          'The passphrase you entered is either empty or too short.',
+          'error'
+        );
       }
-      console.log(await Promise.all(results));
+      const data = await api.login(passphrase);
+      console.log(data, 'data');
+      return swal('Success', 'Welcome to the GLX dICO Wallet!', 'success');
     } catch (err) {
-      console.log(err);
+      return swal('Something went wrong:', err.toString(), 'error');
     }
-    */
-  // };
+  };
 
-  // onChange = (evt: SyntheticEvent<*>) => {
-  //   this.setState({
-  //     passphrase: evt.target.value
-  //   });
-  // };
+  onChange = (evt: SyntheticEvent<*>) => {
+    this.setState({
+      passphrase: evt.target.value
+    });
+  };
 
   render() {
-    // const {passphrase} = this.state;
+    const { passphrase } = this.state;
 
     return (
-      <React.Fragment>
-        {/* <div className={styles.container} data-tid="container">
-        <h2>Home</h2>
-        <AkAvatar size="small" />
-        <br />
-        <AkButton appearance="primary" onClick={this.onStartButtonClick}>
-          Start marketmaker
-        </AkButton>
-        <br />
-        <AkButton appearance="warning" onClick={this.onStopButtonClick}>
-          Stop marketmaker
-        </AkButton>
-        <br />
-        <AkTextField
-          value={passphrase}
-          onChange={this.onChange}
-          autoFocus
-          label="Passphrase/Seed"
-        />
-        <br />
-        <AkButton appearance="warning" onClick={this.onLoginButtonClick}>
-          Login
-        </AkButton>
-        <br />
-        <Link to={routes.COUNTER}>to Counter</Link>
-        <br />
-        <Link to={routes.BUY}>to BuyPage</Link>
-        <br />
-        <Link to={routes.WALLET}>to WalletPage</Link>
-        <br />
-        <Link to={routes.HELP}>to HelpPage</Link>
-        <br />
-        <Link to={routes.SEED}>to SeedPage</Link>
-      </div> */}
-        <div className={styles.container}>
-          <div className={styles.logo}>
-            <img src={image} alt="logo" />
-          </div>
-          <div className={styles.notification}>
-            <p>Please type in your Seed to Login to your existing Account</p>
-          </div>
-          <div className={styles.form}>
-            <form
-              onSubmit={e => {
-                e.preventDefault();
-                console.log('aaaaa');
-              }}
-            >
-              <div className={styles.password}>
-                <i className={`fas fa-lock ${styles['padding-right-10']}`} />
-                <input
-                  className={styles.input}
-                  type="password"
-                  placeholder="Passphrase/Seed"
-                />
-                <i
-                  className={`fas fa-eye-slash ${styles['padding-left-10']}`}
-                />
-              </div>
-              <div className={styles['submit-form']}>
-                <AkButton
-                  appearance="primary"
-                  className={styles['button-green']}
-                  type="submit"
-                >
-                  Log In
-                </AkButton>
-              </div>
-            </form>
-          </div>
-
-          <div className={styles.register}>
-            <AkButton
-              appearance="warning"
-              className={styles['button-white']}
-              type="submit"
-            >
-              Click Here to Create a New Account
-            </AkButton>
-          </div>
+      <div className={styles.container}>
+        <div className={styles.logo}>
+          <img src={image} alt="logo" />
         </div>
-      </React.Fragment>
+        <div className={styles.notification}>
+          <p>Please type in your Seed to Login to your existing Account</p>
+        </div>
+        <div className={styles.form}>
+          <form>
+            <div className={styles.password}>
+              <i className={`fas fa-lock ${styles['padding-right-10']}`} />
+              <input
+                value={passphrase}
+                onChange={this.onChange}
+                className={styles.input}
+                type="password"
+                placeholder="Passphrase/Seed"
+              />
+              <i className={`fas fa-eye-slash ${styles['padding-left-10']}`} />
+            </div>
+            <div className={styles['submit-form']}>
+              <AkButton
+                appearance="primary"
+                className={styles['button-green']}
+                type="submit"
+                onClick={this.onLoginButtonClick}
+              >
+                Log In
+              </AkButton>
+            </div>
+          </form>
+        </div>
+
+        <div className={styles.register}>
+          <AkButton
+            appearance="warning"
+            className={styles['button-white']}
+            type="submit"
+          >
+            Click Here to Create a New Account
+          </AkButton>
+        </div>
+      </div>
     );
   }
 }
-
-// TEST
-// setTimeout(() => {
-//   login();
-// }, 5000);
-
-// setTimeout(() => {
-//   getBalance('KMD');
-//   getBalance('GLXT');
-//   getBalance('BTC');
-//   getBalance('LTC');
-// }, 10000);
