@@ -1,32 +1,36 @@
-// import { call, put, select, takeLatest } from 'redux-saga/effects';
-import { takeLatest } from 'redux-saga/effects';
+import swal from 'sweetalert';
+import { remote } from 'electron';
+// import { call, select } from 'redux-saga/effects';
+import { put, takeLatest } from 'redux-saga/effects';
 import { LOGIN } from '../App/constants';
-// import { CHANGE_USERNAME } from './constants';
-
+import { loginSuccess } from '../App/actions';
 import api from '../../utils/barter-dex-api';
+// import { CHANGE_USERNAME } from './constants';
 // import { makeSelectUsername } from './selectors';
+
+const electrum = remote.require('./config/electrum');
 
 /**
  * Github repos request/response handler
  */
-export function* loginProcess(action) {
+export function* loginProcess({ payload }) {
   try {
-    const { passphrase } = action;
+    const { passphrase } = payload;
     const data = yield api.login(passphrase);
-    console.log(data, 'data');
+    yield put(loginSuccess(data));
+    const servers = electrum.map(e => {
+      e.userpass = data.userpass;
+      return e;
+    });
+    const results = [];
+    for (let i = 0; i < servers.length; i += 1) {
+      results.push(api.addServer(servers[i]));
+    }
+    console.log(yield Promise.all(results));
+    return swal('Success', 'Welcome to the GLX dICO Wallet!', 'success');
   } catch (err) {
-    console.log(err, 123);
+    console.log(err);
   }
-  // const servers = electrum.map(e => {
-  //   e.userpass = data.userpass;
-  //   return e;
-  // });
-  // const results = [];
-  // for (let i = 0; i < servers.length; i += 1) {
-  //   results.push(api.addServer(servers[i]));
-  // }
-  // console.log(await Promise.all(results));
-  // return swal('Success', 'Welcome to the GLX dICO Wallet!', 'success');
 
   // const username = yield select(makeSelectUsername());
   // console.log(username);

@@ -13,6 +13,7 @@
  *    export function yourAction(var) {
  *        return { type: YOUR_ACTION_CONSTANT, var: var }
  *    }
+ * https://github.com/redux-utilities/flux-standard-action
  */
 
 import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR } from './constants';
@@ -25,7 +26,9 @@ import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR } from './constants';
 export function login(passphrase) {
   return {
     type: LOGIN,
-    passphrase
+    payload: {
+      passphrase
+    }
   };
 }
 
@@ -37,11 +40,12 @@ export function login(passphrase) {
  *
  * @return {object}      An action object with a type of LOGIN_SUCCESS passing the repos
  */
-export function loginSuccess(repos, username) {
+export function loginSuccess(user) {
   return {
     type: LOGIN_SUCCESS,
-    repos,
-    username
+    payload: {
+      user
+    }
   };
 }
 

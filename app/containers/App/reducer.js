@@ -21,17 +21,14 @@ const initialState = fromJS({
   currentUser: null
 });
 
-function appReducer(state = initialState, action) {
-  switch (action.type) {
+function appReducer(state = initialState, { type, payload, error }) {
+  switch (type) {
     case LOGIN:
       return state.set('loading', true).set('error', false);
     case LOGIN_SUCCESS:
-      return state
-        .setIn(['userData', 'repositories'], action.repos)
-        .set('loading', false)
-        .set('currentUser', action.username);
+      return state.set('loading', false).set('currentUser', payload.user);
     case LOGIN_ERROR:
-      return state.set('error', action.error).set('loading', false);
+      return state.set('error', error).set('loading', false);
     default:
       return state;
   }

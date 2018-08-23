@@ -1,7 +1,6 @@
 // @flow
 import React, { Component } from 'react';
 import styled from 'styled-components';
-// import { remote } from 'electron';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
@@ -73,7 +72,6 @@ class HomePage extends Component<Props, State> {
 
   state = {
     passphrase: ''
-    // electrum: remote.require('./config/electrum')
   };
 
   onLoginButtonClick = async (evt: SyntheticEvent<*>) => {
