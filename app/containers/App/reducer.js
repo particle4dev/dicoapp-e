@@ -24,10 +24,7 @@ const initialState = fromJS({
 function appReducer(state = initialState, action) {
   switch (action.type) {
     case LOGIN:
-      return state
-        .set('loading', true)
-        .set('error', false)
-        .setIn(['userData', 'repositories'], false);
+      return state.set('loading', true).set('error', false);
     case LOGIN_SUCCESS:
       return state
         .setIn(['userData', 'repositories'], action.repos)

@@ -22,9 +22,10 @@ import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR } from './constants';
  *
  * @return {object} An action object with a type of LOAD_REPOS
  */
-export function loadRepos() {
+export function login(passphrase) {
   return {
-    type: LOGIN
+    type: LOGIN,
+    passphrase
   };
 }
 
@@ -36,7 +37,7 @@ export function loadRepos() {
  *
  * @return {object}      An action object with a type of LOGIN_SUCCESS passing the repos
  */
-export function reposLoaded(repos, username) {
+export function loginSuccess(repos, username) {
   return {
     type: LOGIN_SUCCESS,
     repos,
@@ -51,7 +52,7 @@ export function reposLoaded(repos, username) {
  *
  * @return {object}       An action object with a type of LOGIN_ERROR passing the error
  */
-export function repoLoadingError(error) {
+export function loginError(error) {
   return {
     type: LOGIN_ERROR,
     error

@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { remote } from 'electron';
+// import { remote } from 'electron';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
@@ -9,14 +9,13 @@ import AkButton from '@atlaskit/button';
 import swal from 'sweetalert';
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
-import api from '../../utils/barter-dex-api';
 
 // import Home from '../../components/Home';
 import Logo from './Logo';
 import reducer from './reducer';
 import saga from './saga';
-import { changeUsername } from './actions';
-import { makeSelectUsername } from './selectors';
+import { login } from '../App/actions';
+import { makeSelectLoading } from '../App/selectors';
 import styles from './Home.css';
 
 const Container = styled.div`
@@ -62,7 +61,9 @@ const Password = styled.div`
   }
 `;
 
-type Props = {};
+type Props = {
+  loading: boolean
+};
 type State = {
   passphrase: string
 };
@@ -71,14 +72,14 @@ class HomePage extends Component<Props, State> {
   props: Props;
 
   state = {
-    passphrase: '',
-    electrum: remote.require('./config/electrum')
+    passphrase: ''
+    // electrum: remote.require('./config/electrum')
   };
 
   onLoginButtonClick = async (evt: SyntheticEvent<*>) => {
     try {
       evt.preventDefault();
-      const { passphrase, electrum } = this.state;
+      const { passphrase } = this.state;
       if (passphrase === '' || passphrase.length < 4) {
         return swal(
           'Oops!',
@@ -86,18 +87,11 @@ class HomePage extends Component<Props, State> {
           'error'
         );
       }
-      const data = await api.login(passphrase);
-      console.log(data, 'data');
-      const servers = electrum.map(e => {
-        e.userpass = data.userpass;
-        return e;
-      });
-      const results = [];
-      for (let i = 0; i < servers.length; i += 1) {
-        results.push(api.addServer(servers[i]));
-      }
-      console.log(await Promise.all(results));
-      return swal('Success', 'Welcome to the GLX dICO Wallet!', 'success');
+      const {
+        // eslint-disable-next-line react/prop-types
+        dispatchLogin
+      } = this.props;
+      dispatchLogin(passphrase);
     } catch (err) {
       return swal('Something went wrong:', err.toString(), 'error');
     }
@@ -110,11 +104,7 @@ class HomePage extends Component<Props, State> {
   };
 
   render() {
-    // const {
-    //   username,
-    //   // eslint-disable-next-line react/prop-types
-    //   onChangeUsername
-    // } = this.props;
+    const { loading } = this.props;
     const { passphrase } = this.state;
     return (
       <Container>
@@ -123,6 +113,13 @@ class HomePage extends Component<Props, State> {
           <p>Please type in your Seed to Login to your existing Account</p>
         </Notification>
         <Form>
+          <p
+            style={{
+              color: '#000'
+            }}
+          >
+            loading = {loading.toString()}
+          </p>
           <Password>
             <i className={`fas fa-lock ${styles['padding-right-10']}`} />
             <input
@@ -145,13 +142,6 @@ class HomePage extends Component<Props, State> {
             </AkButton>
           </Submit>
         </Form>
-        {/* <input
-          id="username"
-          type="text"
-          placeholder="mxstbr"
-          value={username}
-          onChange={onChangeUsername}
-        /> */}
         <Register>
           <AkButton
             appearance="warning"
@@ -168,12 +158,12 @@ class HomePage extends Component<Props, State> {
 
 export function mapDispatchToProps(dispatch) {
   return {
-    onChangeUsername: evt => dispatch(changeUsername(evt.target.value))
+    dispatchLogin: passphrase => dispatch(login(passphrase))
   };
 }
 
 const mapStateToProps = createStructuredSelector({
-  username: makeSelectUsername()
+  loading: makeSelectLoading()
 });
 
 const withReducer = injectReducer({ key: 'home', reducer });

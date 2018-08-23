@@ -1,18 +1,35 @@
 // import { call, put, select, takeLatest } from 'redux-saga/effects';
-import { select, takeLatest } from 'redux-saga/effects';
-// import { LOAD_REPOS } from '../App/constants';
-import { CHANGE_USERNAME } from './constants';
+import { takeLatest } from 'redux-saga/effects';
+import { LOGIN } from '../App/constants';
+// import { CHANGE_USERNAME } from './constants';
 
-// import request from 'utils/request';
-import { makeSelectUsername } from './selectors';
+import api from '../../utils/barter-dex-api';
+// import { makeSelectUsername } from './selectors';
 
 /**
  * Github repos request/response handler
  */
-export function* getRepos() {
-  // Select username from store
-  const username = yield select(makeSelectUsername());
-  console.log(username);
+export function* loginProcess(action) {
+  try {
+    const { passphrase } = action;
+    const data = yield api.login(passphrase);
+    console.log(data, 'data');
+  } catch (err) {
+    console.log(err, 123);
+  }
+  // const servers = electrum.map(e => {
+  //   e.userpass = data.userpass;
+  //   return e;
+  // });
+  // const results = [];
+  // for (let i = 0; i < servers.length; i += 1) {
+  //   results.push(api.addServer(servers[i]));
+  // }
+  // console.log(await Promise.all(results));
+  // return swal('Success', 'Welcome to the GLX dICO Wallet!', 'success');
+
+  // const username = yield select(makeSelectUsername());
+  // console.log(username);
   // const requestURL = `https://api.github.com/users/${username}/repos?type=all&sort=updated`;
 
   //   try {
@@ -32,5 +49,5 @@ export default function* githubData() {
   // By using `takeLatest` only the result of the latest API call is applied.
   // It returns task descriptor (just like fork) so we can continue execution
   // It will be cancelled automatically on component unmount
-  yield takeLatest(CHANGE_USERNAME, getRepos);
+  yield takeLatest(LOGIN, loginProcess);
 }
