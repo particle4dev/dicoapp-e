@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 // import { Link } from 'react-router-dom';
-// import { remote } from 'electron';
+import { remote } from 'electron';
 import ipc from 'electron-better-ipc';
 import swal from 'sweetalert';
 import AkButton from '@atlaskit/button';
@@ -22,8 +22,8 @@ export default class Home extends Component<Props, State> {
   props: Props;
 
   state = {
-    passphrase: ''
-    // electrum: remote.require('./config/electrum'),
+    passphrase: '',
+    electrum: remote.require('./config/electrum')
   };
 
   onStartButtonClick = async (evt: SyntheticEvent<*>) => {
@@ -43,7 +43,7 @@ export default class Home extends Component<Props, State> {
   onLoginButtonClick = async (evt: SyntheticEvent<*>) => {
     try {
       evt.preventDefault();
-      const { passphrase } = this.state;
+      const { passphrase, electrum } = this.state;
       if (passphrase === '' || passphrase.length < 4) {
         return swal(
           'Oops!',
@@ -53,6 +53,16 @@ export default class Home extends Component<Props, State> {
       }
       const data = await api.login(passphrase);
       console.log(data, 'data');
+      const servers = electrum.map(e => {
+        e.userpass = data.userpass;
+        return e;
+      });
+      const results = [];
+      for (let i = 0; i < servers.length; i += 1) {
+        results.push(api.addServer(servers[i]));
+      }
+      console.log(await Promise.all(results));
+
       return swal('Success', 'Welcome to the GLX dICO Wallet!', 'success');
     } catch (err) {
       return swal('Something went wrong:', err.toString(), 'error');
