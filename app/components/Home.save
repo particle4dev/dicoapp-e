@@ -1,0 +1,64 @@
+    try {
+      const results = [];
+      for (let i = 0; i < data.coins.length; i += 1) {
+        const balanceparams = {
+          userpass: data.userpass,
+          coin: data.coins[i].coin,
+          address: data.coins[i].smartaddress
+        };
+        results.push(api.getBalance(balanceparams));
+      }
+      console.log(await Promise.all(results));
+    } catch (err) {
+      console.log(err);
+    }
+
+
+           {/* <div className={styles.container} data-tid="container">
+        <h2>Home</h2>
+        <br />
+        <AkButton appearance="primary" onClick={this.onStartButtonClick}>
+          Start marketmaker
+        </AkButton>
+        <br />
+        <AkButton appearance="warning" onClick={this.onStopButtonClick}>
+          Stop marketmaker
+        </AkButton>
+        <br />
+        <AkTextField
+          value={passphrase}
+          onChange={this.onChange}
+          autoFocus
+          label="Passphrase/Seed"
+        />
+        <br />
+        <AkButton appearance="warning" onClick={this.onLoginButtonClick}>
+          Login
+        </AkButton>
+        <br />
+        <Link to={routes.COUNTER}>to Counter</Link>
+        <br />
+        <Link to={routes.BUY}>to BuyPage</Link>
+        <br />
+        <Link to={routes.WALLET}>to WalletPage</Link>
+        <br />
+        <Link to={routes.HELP}>to HelpPage</Link>
+        <br />
+        <Link to={routes.SEED}>to SeedPage</Link>
+      </div> */}
+
+
+
+
+
+// TEST
+// setTimeout(() => {
+//   login();
+// }, 5000);
+
+// setTimeout(() => {
+//   getBalance('KMD');
+//   getBalance('GLXT');
+//   getBalance('BTC');
+//   getBalance('LTC');
+// }, 10000);

@@ -1,9 +1,11 @@
+// @flow
+import { remote } from 'electron';
 import FetchService from '../fetch-service';
 import { config } from '../../config/config-default';
 
 const debug = require('debug')('dicoapp:utils:barter-dex-api');
 
-export default class BarterDexAPI {
+class BarterDexAPI {
   constructor(
     settings = {
       url: config.barterdex,
@@ -16,6 +18,9 @@ export default class BarterDexAPI {
       options: {},
       base: settings.url
     });
+    this.config = {
+      paths: remote.require('./config/paths')
+    };
   }
 
   isReady() {
@@ -45,7 +50,48 @@ export default class BarterDexAPI {
     return this.fetch.create('', data);
   }
 
-  // get() {
+  login(passphrase: string) {
+    const { paths } = this.config;
+    const setparams = {
+      userpass:
+        '1d8b27b21efabcd96571cd56f91a40fb9aa4cc623d273c63bf9223dc6f8cd81f',
+      userhome: paths.homeDir,
+      method: 'passphrase',
+      passphrase,
+      gui: 'dICOapp-cm'
+      // 'netid':
+      // 'seednode':
+    };
+    return this.create(setparams);
+  }
 
-  // }
+  /**
+   *
+   */
+  getBalance(params) {
+    const balanceparams = Object.assign({}, params, {
+      method: 'balance'
+    });
+    return this.create(balanceparams);
+  }
+
+  // https://docs.komodoplatform.com/barterDEX/barterDEX-API.html#electrum
+  addServer(params) {
+    const serverparams = Object.assign({}, params, {
+      method: 'electrum'
+    });
+    return this.create(serverparams);
+  }
 }
+
+let api = null;
+
+function setup() {
+  if (api) return api;
+
+  api = new BarterDexAPI();
+
+  return api;
+}
+
+export default setup();
