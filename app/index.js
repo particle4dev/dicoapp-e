@@ -1,11 +1,15 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
+import { createHashHistory } from 'history';
 import Root from './containers/Root';
-import { configureStore, history } from './store/configureStore';
+import configureStore from './store/configureStore';
 import './app.global.css';
 
-const store = configureStore();
+// Create redux store with history
+const initialState = {};
+const history = createHashHistory();
+const store = configureStore(initialState, history);
 
 render(
   <AppContainer>

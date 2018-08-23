@@ -1,21 +1,23 @@
+import createSagaMiddleware from 'redux-saga';
+import { fromJS } from 'immutable';
 import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
-import { createHashHistory } from 'history';
 import { routerMiddleware, routerActions } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 import * as counterActions from '../actions/counter';
 import type { counterStateType } from '../reducers/types';
+import createReducer from '../reducers';
 
-const history = createHashHistory();
+const sagaMiddleware = createSagaMiddleware();
 
-const configureStore = (initialState?: counterStateType) => {
+const configureStore = (initialState = {}, history) => {
+
   // Redux Configuration
   const middleware = [];
   const enhancers = [];
 
-  // Thunk Middleware
-  middleware.push(thunk);
+  // Saga Middleware
+  middleware.push(createSagaMiddleware);
 
   // Logging Middleware
   const logger = createLogger({
@@ -52,8 +54,18 @@ const configureStore = (initialState?: counterStateType) => {
   const enhancer = composeEnhancers(...enhancers);
 
   // Create Store
-  const store = createStore(rootReducer, initialState, enhancer);
+  const store = createStore(
+    createReducer(),
+    fromJS(initialState),
+    enhancer,
+  );
 
+  // Extensions
+  store.runSaga = sagaMiddleware.run;
+  store.injectedReducers = {}; // Reducer registry
+  store.injectedSagas = {}; // Saga registry
+
+  // Make reducers hot reloadable, see http://mxs.is/googmo
   if (module.hot) {
     module.hot.accept(
       '../reducers',
