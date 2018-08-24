@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
@@ -8,6 +9,7 @@ import AkButton from '@atlaskit/button';
 import swal from 'sweetalert';
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
+import routes from '../../constants/routes.json';
 
 import Logo from './Logo';
 import reducer from './reducer';
@@ -143,6 +145,43 @@ class HomePage extends Component<Props, State> {
             Click Here to Create a New Account
           </AkButton>
         </Register>
+        <p>
+          <Link
+            style={{
+              color: '#000'
+            }}
+            to={routes.BUY}
+          >
+            BuyPage
+          </Link>
+          <br />
+          <Link
+            style={{
+              color: '#000'
+            }}
+            to={routes.WALLET}
+          >
+            WalletPage
+          </Link>
+          <br />
+          <Link
+            style={{
+              color: '#000'
+            }}
+            to={routes.HELP}
+          >
+            HelpPage
+          </Link>
+          <br />
+          <Link
+            style={{
+              color: '#000'
+            }}
+            to={routes.SEED}
+          >
+            SeedPage
+          </Link>
+        </p>
       </Container>
     );
   }
