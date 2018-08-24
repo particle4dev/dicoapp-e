@@ -9,7 +9,6 @@ import swal from 'sweetalert';
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
 
-// import Home from '../../components/Home';
 import Logo from './Logo';
 import reducer from './reducer';
 import saga from './saga';
@@ -111,16 +110,10 @@ class HomePage extends Component<Props, State> {
           <p>Please type in your Seed to Login to your existing Account</p>
         </Notification>
         <Form>
-          <p
-            style={{
-              color: '#000'
-            }}
-          >
-            loading = {loading.toString()}
-          </p>
           <Password>
             <i className={`fas fa-lock ${styles['padding-right-10']}`} />
             <input
+              disabled={loading}
               value={passphrase}
               onChange={this.onChange}
               className={styles.input}
@@ -131,6 +124,7 @@ class HomePage extends Component<Props, State> {
           </Password>
           <Submit>
             <AkButton
+              disabled={loading}
               appearance="primary"
               className={styles['button-green']}
               type="submit"

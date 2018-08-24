@@ -14,12 +14,12 @@ const history = createHashHistory();
 const store = configureStore(initialState, history);
 const MOUNT_NODE = document.getElementById('root');
 
-const render = () => {
+const render = AppComponent => {
   ReactDOM.render(
     <AppContainer>
       <Provider store={store}>
         <ConnectedRouter history={history}>
-          <App />
+          <AppComponent />
         </ConnectedRouter>
       </Provider>
     </AppContainer>,
@@ -28,10 +28,12 @@ const render = () => {
 };
 
 if (module.hot) {
-  module.hot.accept('./containers/App', () => {
-    ReactDOM.unmountComponentAtNode(MOUNT_NODE);
-    render();
+  module.hot.accept(['./containers/App'], () => {
+    // ReactDOM.unmountComponentAtNode(MOUNT_NODE);
+    // render();
+    const NextRoot = require('./containers/App'); // eslint-disable-line global-require
+    render(NextRoot);
   });
 }
 
-render();
+render(App);
