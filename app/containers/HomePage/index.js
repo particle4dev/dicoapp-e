@@ -16,6 +16,7 @@ import reducer from './reducer';
 import saga from './saga';
 import { login } from '../App/actions';
 import { makeSelectLoading } from '../App/selectors';
+import { APP_STATE_NAME } from './constants';
 import styles from './Home.css';
 
 const Container = styled.div`
@@ -197,8 +198,8 @@ const mapStateToProps = createStructuredSelector({
   loading: makeSelectLoading()
 });
 
-const withReducer = injectReducer({ key: 'home', reducer });
-const withSaga = injectSaga({ key: 'home', saga });
+const withReducer = injectReducer({ key: APP_STATE_NAME, reducer });
+const withSaga = injectSaga({ key: APP_STATE_NAME, saga });
 const withConnect = connect(
   mapStateToProps,
   mapDispatchToProps

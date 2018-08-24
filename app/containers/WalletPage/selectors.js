@@ -1,11 +1,6 @@
-/**
- * The global state selectors
- */
-
 import { createSelector } from 'reselect';
-import { APP_STATE_NAME } from './constants';
 
-const selectGlobal = state => state.get(APP_STATE_NAME);
+const selectGlobal = state => state.get('global');
 
 const selectRoute = state => state.get('route');
 
