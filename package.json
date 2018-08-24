@@ -62,6 +62,7 @@
       }
     ],
     "files": [
+      "config/",
       "dist/",
       "node_modules/",
       "app.html",
