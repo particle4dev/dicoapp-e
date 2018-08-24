@@ -47,6 +47,20 @@
   "build": {
     "productName": "ElectronReact",
     "appId": "org.develar.ElectronReact",
+    "extraResources": [
+      {
+        "from": "./app/bin/marketmaker/LINUX",
+        "to": "./bin/marketmaker/LINUX"
+      },
+      {
+        "from": "./app/bin/marketmaker/OSX",
+        "to": "./bin/marketmaker/OSX"
+      },
+      {
+        "from": "./app/bin/marketmaker/WIN",
+        "to": "./bin/marketmaker/WIN"
+      }
+    ],
     "files": [
       "dist/",
       "node_modules/",

@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import React, { Component } from 'react';
 import { Switch, Route } from 'react-router';
 import routes from '../../constants/routes.json';
 import BuyPage from '../BuyPage';
@@ -10,7 +10,7 @@ import HomePage from '../HomePage';
 
 type Props = {};
 
-export default class App extends React.Component<Props> {
+export default class App extends Component<Props> {
   render() {
     return (
       <React.Fragment>
