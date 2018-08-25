@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
@@ -8,12 +9,14 @@ import AkButton from '@atlaskit/button';
 import swal from 'sweetalert';
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
+import routes from '../../constants/routes.json';
 
 import Logo from './Logo';
 import reducer from './reducer';
 import saga from './saga';
 import { login } from '../App/actions';
 import { makeSelectLoading } from '../App/selectors';
+import { APP_STATE_NAME } from './constants';
 import styles from './Home.css';
 
 const Container = styled.div`
@@ -143,6 +146,43 @@ class HomePage extends Component<Props, State> {
             Click Here to Create a New Account
           </AkButton>
         </Register>
+        <p>
+          <Link
+            style={{
+              color: '#000'
+            }}
+            to={routes.BUY}
+          >
+            BuyPage
+          </Link>
+          <br />
+          <Link
+            style={{
+              color: '#000'
+            }}
+            to={routes.WALLET}
+          >
+            WalletPage
+          </Link>
+          <br />
+          <Link
+            style={{
+              color: '#000'
+            }}
+            to={routes.HELP}
+          >
+            HelpPage
+          </Link>
+          <br />
+          <Link
+            style={{
+              color: '#000'
+            }}
+            to={routes.SEED}
+          >
+            SeedPage
+          </Link>
+        </p>
       </Container>
     );
   }
@@ -158,8 +198,8 @@ const mapStateToProps = createStructuredSelector({
   loading: makeSelectLoading()
 });
 
-const withReducer = injectReducer({ key: 'home', reducer });
-const withSaga = injectSaga({ key: 'home', saga });
+const withReducer = injectReducer({ key: APP_STATE_NAME, reducer });
+const withSaga = injectSaga({ key: APP_STATE_NAME, saga });
 const withConnect = connect(
   mapStateToProps,
   mapDispatchToProps
