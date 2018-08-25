@@ -10,16 +10,18 @@ import routes from '../../constants/routes.json';
 
 import reducer from './reducer';
 import saga from './saga';
-import { makeSelectLoading } from './selectors';
+import { makeSelectLoading, makeSelectTransactions } from './selectors';
 import { APP_STATE_NAME } from './constants';
 import { loadWallet } from './actions';
 
 type Props = {
   loading: boolean
+  // transactions: array,
 };
 
 let idInterval = null;
-const LOAD_TRANSACTION_TIME = 1000;
+const LOAD_TRANSACTION_TIME = 90000;
+const debug = require('debug')('dicoapp:containers:WalletPage');
 
 class WalletPage extends Component<Props> {
   props: Props;
@@ -28,6 +30,7 @@ class WalletPage extends Component<Props> {
     // eslint-disable-next-line react/prop-types
     const { dispatchLoadWallet } = this.props;
 
+    debug('watch transactions');
     if (idInterval) {
       clearInterval(idInterval);
       idInterval = null;
@@ -35,6 +38,8 @@ class WalletPage extends Component<Props> {
     idInterval = setInterval(() => {
       dispatchLoadWallet();
     }, LOAD_TRANSACTION_TIME);
+    //
+    dispatchLoadWallet();
   };
 
   componentWillUnmount = () => {
@@ -45,14 +50,35 @@ class WalletPage extends Component<Props> {
   };
 
   render() {
-    const { loading } = this.props;
+    // eslint-disable-next-line react/prop-types
+    const { loading, transactions } = this.props;
     return (
       <div>
+        <Link to={routes.HOME}>to HomePage</Link>
+        <br />
         WalletPage
         <br />
         loading = {loading.toString()}
         <br />
-        <Link to={routes.HOME}>to HomePage</Link>
+        <table>
+          <tr>
+            <th>Coin</th>
+            <th>Block height</th>
+            <th>Transaction id</th>
+            <th>Amount</th>
+          </tr>
+          <tbody>
+            {/* eslint-disable-next-line react/no-array-index-key */}
+            {transactions.map((t, k) => (
+              <tr key={k}>
+                <td>{t.get('coin')}</td>
+                <td>{t.get('height')}</td>
+                <td>{t.get('tx_hash')}</td>
+                <td>N/A</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     );
   }
@@ -65,7 +91,8 @@ export function mapDispatchToProps(dispatch) {
 }
 
 const mapStateToProps = createStructuredSelector({
-  loading: makeSelectLoading()
+  loading: makeSelectLoading(),
+  transactions: makeSelectTransactions()
 });
 
 const withReducer = injectReducer({ key: APP_STATE_NAME, reducer });

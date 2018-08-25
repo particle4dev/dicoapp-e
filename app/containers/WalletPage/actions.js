@@ -4,18 +4,18 @@ import {
   LOAD_WALLET_ERROR
 } from './constants';
 
-export function loadWallet(passphrase) {
+export function loadWallet() {
   return {
-    type: LOAD_WALLET,
-    payload: {
-      passphrase
-    }
+    type: LOAD_WALLET
   };
 }
 
-export function loadWalletSuccess() {
+export function loadWalletSuccess(transactions) {
   return {
-    type: LOAD_WALLET_SUCCESS
+    type: LOAD_WALLET_SUCCESS,
+    payload: {
+      transactions
+    }
   };
 }
 

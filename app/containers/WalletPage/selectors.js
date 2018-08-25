@@ -9,4 +9,12 @@ const makeSelectLoading = () =>
 const makeSelectError = () =>
   createSelector(selectWallet, walletState => walletState.get('error'));
 
-export { selectWallet, makeSelectLoading, makeSelectError };
+const makeSelectTransactions = () =>
+  createSelector(selectWallet, walletState => walletState.get('transactions'));
+
+export {
+  selectWallet,
+  makeSelectLoading,
+  makeSelectError,
+  makeSelectTransactions
+};
