@@ -21,6 +21,12 @@ type Props = {
 
 let idInterval = null;
 const LOAD_TRANSACTION_TIME = 90000;
+const explorer = {
+  KMD: 'http://kmdexplorer.io/tx',
+  BTC: 'https://blockchain.com/tx',
+  LTC: 'https://live.blockcypher.com/ltc/tx',
+  GLXT: 'http://glx.info/tx'
+};
 const debug = require('debug')('dicoapp:containers:WalletPage');
 
 class WalletPage extends Component<Props> {
@@ -68,12 +74,23 @@ class WalletPage extends Component<Props> {
             <th>Amount</th>
           </tr>
           <tbody>
-            {/* eslint-disable-next-line react/no-array-index-key */}
-            {transactions.map((t, k) => (
-              <tr key={k}>
+            {transactions.map(t => (
+              <tr key={t.get('tx_hash')}>
                 <td>{t.get('coin')}</td>
                 <td>{t.get('height')}</td>
-                <td>{t.get('tx_hash')}</td>
+                <td>
+                  {/* eslint-disable-next-line react/jsx-no-target-blank */}
+                  {explorer[t.get('coin')] && (
+                    <a
+                      style={{ color: '#000' }}
+                      href={`${explorer[t.get('coin')]}/${t.get('tx_hash')}`}
+                      target="_blank"
+                    >
+                      {t.get('tx_hash')}
+                    </a>
+                  )}
+                  {!explorer[t.get('coin')] && t.get('tx_hash')}
+                </td>
                 <td>N/A</td>
               </tr>
             ))}

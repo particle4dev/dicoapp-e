@@ -10,14 +10,7 @@ import {
 const initialState = fromJS({
   loading: false,
   error: false,
-  transactions: [
-    {
-      coin: 'KMD',
-      tx_hash:
-        'f464c1ba30403cba971c13cd4e4ff03efa33aab3189e77788ec0accef0b29a28',
-      height: 808310
-    }
-  ]
+  transactions: []
 });
 
 function appReducer(state = initialState, { type, payload, error }) {

@@ -21,10 +21,14 @@ const makeSelectError = () =>
 const makeSelectLocation = () =>
   createSelector(selectRoute, routeState => routeState.get('location').toJS());
 
+const makeSelectUserpass = () =>
+  createSelector(makeSelectCurrentUser(), user => user.get('userpass'));
+
 export {
   selectGlobal,
   makeSelectCurrentUser,
   makeSelectLoading,
   makeSelectError,
-  makeSelectLocation
+  makeSelectLocation,
+  makeSelectUserpass
 };

@@ -1,41 +1,72 @@
+import isArray from 'lodash/isArray';
 import { put, select, takeLatest } from 'redux-saga/effects';
 import { LOAD_WALLET } from './constants';
 import { makeSelectCurrentUser } from '../App/selectors';
 import api from '../../utils/barter-dex-api';
 import { loadWalletSuccess } from './actions';
 
-// export function* loadWalletProcess({ payload }) {
+const debug = require('debug')('dicoapp:containers:WalletPage:saga');
+
+export function processTransactionsData(data, coin) {
+  // https://github.com/chainmakers/dicoapp/blob/glxt/.desktop/modules/marketmaker/index.js#L1144
+  // sort
+  let result = data.sort((a, b) => b.height - a.height);
+
+  // only take 10 records
+  result = result.slice(0, 10);
+
+  // add coin symbol
+  result = result.map(e => {
+    e.coin = coin;
+    return e;
+  });
+  return result;
+}
+
 export function* loadWalletProcess() {
   try {
     // load user data
     const user = yield select(makeSelectCurrentUser());
-    console.log('user', user);
-    // NOTE: what if user is not found
-    // const listparams1 = {
-    //   userpass: user.userpass,
-    //   coin: 'BTC',
-    //   address: '1HD77JGnkyqtj3ESgqjG18aJkb41aknPyv',
-    // };
-    // const data1 = yield api.listTransactions(listparams1);
-    // console.log('data1', data1);
-
-    const listparams2 = {
-      // userpass: user.userpass,
-      userpass:
-        '191af892de6980aacbbb74ab5cca89a68ebaa9360687d4059228485277a73a09',
-      coin: 'KMD',
-      address: 'RRVJBpA5MoeTo3beA1iP6euWWrWcJdJtXu'
-    };
-    let data2 = yield api.listTransactions(listparams2);
-    if (data2.error) {
-      throw new Error(data2.error);
+    if (!user) {
+      // NOTE: what if user is not found
+      console.log('FIXME: if user is not logged in');
     }
-    console.log(data2, data2);
-    data2 = data2.map(e => {
-      e.coin = 'KMD';
-      return e;
+    const userpass = user.get('userpass');
+    const coins = user.get('coins');
+    // eslint-disable-next-line arrow-body-style
+    const requests = coins.map(e => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const params = {
+            userpass,
+            coin: e.get('coin'),
+            address: e.get('smartaddress')
+          };
+          const data = await api.listTransactions(params);
+          return resolve({
+            data,
+            coin: e.get('coin')
+          });
+        } catch (err) {
+          return reject(err);
+        }
+      });
     });
-    yield put(loadWalletSuccess(data2));
+    let data = yield Promise.all(requests);
+    data = data
+      .filter(e => {
+        const r = isArray(e.data);
+        if (!r) {
+          debug(`not found ${e.coin}`);
+        }
+        return r;
+        // eslint-disable-next-line arrow-body-style
+      })
+      .map(e => processTransactionsData(e.data, e.coin))
+      .reduce((a, b) => {
+        return a.concat(b);
+      }, []);
+    return yield put(loadWalletSuccess(data));
   } catch (err) {
     console.log('123', err);
   }
