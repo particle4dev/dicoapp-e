@@ -82,6 +82,15 @@ class BarterDexAPI {
     });
     return this.create(serverparams);
   }
+
+  listTransactions(params) {
+    // verify params
+    const serverparams = Object.assign({}, params, {
+      method: 'listtransactions',
+      count: 10
+    });
+    return this.create(serverparams);
+  }
 }
 
 let api = null;

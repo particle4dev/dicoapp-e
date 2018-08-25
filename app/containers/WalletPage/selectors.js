@@ -1,25 +1,12 @@
 import { createSelector } from 'reselect';
+import { APP_STATE_NAME } from './constants';
 
-const selectGlobal = state => state.get('global');
-
-const selectRoute = state => state.get('route');
-
-const makeSelectCurrentUser = () =>
-  createSelector(selectGlobal, globalState => globalState.get('currentUser'));
+const selectWallet = state => state.get(APP_STATE_NAME);
 
 const makeSelectLoading = () =>
-  createSelector(selectGlobal, globalState => globalState.get('loading'));
+  createSelector(selectWallet, walletState => walletState.get('loading'));
 
 const makeSelectError = () =>
-  createSelector(selectGlobal, globalState => globalState.get('error'));
+  createSelector(selectWallet, walletState => walletState.get('error'));
 
-const makeSelectLocation = () =>
-  createSelector(selectRoute, routeState => routeState.get('location').toJS());
-
-export {
-  selectGlobal,
-  makeSelectCurrentUser,
-  makeSelectLoading,
-  makeSelectError,
-  makeSelectLocation
-};
+export { selectWallet, makeSelectLoading, makeSelectError };
