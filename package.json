@@ -235,6 +235,7 @@
     "invariant": "^2.2.4",
     "lodash": "^4.17.10",
     "node-fetch": "^2.2.0",
+    "normalizr": "^3.2.4",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-hot-loader": "^4.3.4",
