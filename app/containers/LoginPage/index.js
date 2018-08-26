@@ -6,19 +6,18 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import AkButton from '@atlaskit/button';
-import Button from '@material-ui/core/Button';
 import swal from 'sweetalert';
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
 import routes from '../../constants/routes.json';
-
+import { EmptyLayout } from '../Layout';
 import Logo from './Logo';
 import reducer from './reducer';
 import saga from './saga';
 import { login } from '../App/actions';
 import { makeSelectLoading } from '../App/selectors';
 import { APP_STATE_NAME } from './constants';
-import styles from './Home.css';
+import styles from './Login.css';
 
 const Container = styled.div`
   width: 100%;
@@ -66,6 +65,7 @@ const Password = styled.div`
 type Props = {
   loading: boolean
 };
+
 type State = {
   passphrase: string
 };
@@ -108,59 +108,49 @@ class HomePage extends Component<Props, State> {
     const { loading } = this.props;
     const { passphrase } = this.state;
     return (
-      <Container>
-        <Logo />
-        <Notification>
-          <p>Please type in your Seed to Login to your existing Account</p>
-        </Notification>
-        <Form>
-          <Password>
-            <i className={`fas fa-lock ${styles['padding-right-10']}`} />
-            <input
-              disabled={loading}
-              value={passphrase}
-              onChange={this.onChange}
-              className={styles.input}
-              type="password"
-              placeholder="Passphrase/Seed"
-            />
-            <i className={`fas fa-eye-slash ${styles['padding-left-10']}`} />
-          </Password>
-          <Submit>
-            <AkButton
-              disabled={loading}
-              appearance="primary"
-              className={styles['button-green']}
-              type="submit"
-              onClick={this.onLoginButtonClick}
-            >
-              Log In
-            </AkButton>
-          </Submit>
-        </Form>
-        <Register>
-          <AkButton
-            appearance="warning"
-            className={styles['button-white']}
-            type="submit"
-          >
-            Click Here to Create a New Account
-          </AkButton>
-        </Register>
-        <p>
-          <Link
-            style={{
-              color: '#000'
-            }}
-            to={routes.SEED}
-          >
-            SeedPage
-          </Link>
-        </p>
-        <Button variant="contained" color="primary">
-          Hello World
-        </Button>
-      </Container>
+      <EmptyLayout>
+        <Container>
+          <Logo />
+          <Notification>
+            <p>Please type in your Seed to Login to your existing Account</p>
+          </Notification>
+          <Form>
+            <Password>
+              <i className={`fas fa-lock ${styles['padding-right-10']}`} />
+              <input
+                disabled={loading}
+                value={passphrase}
+                onChange={this.onChange}
+                className={styles.input}
+                type="password"
+                placeholder="Passphrase/Seed"
+              />
+              <i className={`fas fa-eye-slash ${styles['padding-left-10']}`} />
+            </Password>
+            <Submit>
+              <AkButton
+                disabled={loading}
+                appearance="primary"
+                className={styles['button-green']}
+                type="submit"
+                onClick={this.onLoginButtonClick}
+              >
+                Log In
+              </AkButton>
+            </Submit>
+          </Form>
+          <Register>
+            <Link to={routes.SEED}>
+              {/* <AkButton
+              appearance="warning"
+              className={styles['button-white']}
+            > */}
+              Click Here to Create a New Account123
+              {/* </AkButton> */}
+            </Link>
+          </Register>
+        </Container>
+      </EmptyLayout>
     );
   }
 }

@@ -5,8 +5,6 @@ import { put, takeLatest } from 'redux-saga/effects';
 import { LOGIN } from '../App/constants';
 import { loginSuccess } from '../App/actions';
 import api from '../../utils/barter-dex-api';
-// import { CHANGE_USERNAME } from './constants';
-// import { makeSelectUsername } from './selectors';
 
 const electrum = remote.require('./config/electrum');
 
