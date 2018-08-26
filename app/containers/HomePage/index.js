@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import AkButton from '@atlaskit/button';
+import Button from '@material-ui/core/Button';
 import swal from 'sweetalert';
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
@@ -151,38 +152,14 @@ class HomePage extends Component<Props, State> {
             style={{
               color: '#000'
             }}
-            to={routes.BUY}
-          >
-            BuyPage
-          </Link>
-          <br />
-          <Link
-            style={{
-              color: '#000'
-            }}
-            to={routes.WALLET}
-          >
-            WalletPage
-          </Link>
-          <br />
-          <Link
-            style={{
-              color: '#000'
-            }}
-            to={routes.HELP}
-          >
-            HelpPage
-          </Link>
-          <br />
-          <Link
-            style={{
-              color: '#000'
-            }}
             to={routes.SEED}
           >
             SeedPage
           </Link>
         </p>
+        <Button variant="contained" color="primary">
+          Hello World
+        </Button>
       </Container>
     );
   }
