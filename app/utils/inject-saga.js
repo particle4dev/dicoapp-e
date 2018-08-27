@@ -32,6 +32,7 @@ export default ({ key, saga, mode }) => WrappedComponent => {
 
     componentWillMount() {
       const { injectSaga } = this.injectors;
+
       debug(`injectSaga ${key}`);
       injectSaga(key, { saga, mode }, this.props);
     }

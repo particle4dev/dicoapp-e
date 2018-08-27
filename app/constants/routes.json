@@ -3,5 +3,6 @@
   "SEED": "/seed",
   "BUY": "/buy",
   "WALLET": "/wallet",
-  "HELP": "/help"
+  "HELP": "/help",
+  "LOGIN": "/login"
 }

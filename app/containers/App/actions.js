@@ -16,7 +16,7 @@
  * https://github.com/redux-utilities/flux-standard-action
  */
 
-import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR } from './constants';
+import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR, LOGOUT } from './constants';
 
 /**
  * Load the repositories, this action starts the request saga
@@ -60,5 +60,16 @@ export function loginError(error) {
   return {
     type: LOGIN_ERROR,
     error
+  };
+}
+
+/**
+ * Logout, this action starts the request saga
+ *
+ * @return {object} An action object with a type of LOGOUT
+ */
+export function logout() {
+  return {
+    type: LOGOUT
   };
 }

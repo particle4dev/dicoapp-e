@@ -12,7 +12,7 @@
 
 import { fromJS } from 'immutable';
 
-import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR } from './constants';
+import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR, LOGOUT } from './constants';
 
 // The initial state of the App
 const initialState = fromJS({
@@ -31,6 +31,8 @@ function appReducer(state = initialState, { type, payload, error }) {
         .set('currentUser', fromJS(payload.user));
     case LOGIN_ERROR:
       return state.set('error', error).set('loading', false);
+    case LOGOUT:
+      return state.set('loading', false).set('currentUser', null);
     default:
       return state;
   }

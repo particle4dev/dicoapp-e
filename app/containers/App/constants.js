@@ -9,6 +9,9 @@
  * export const YOUR_ACTION_CONSTANT = 'yourproject/YourContainer/YOUR_ACTION_CONSTANT';
  */
 export const APP_STATE_NAME = 'global';
+
 export const LOGIN = 'dicoapp/App/LOGIN';
 export const LOGIN_SUCCESS = 'dicoapp/App/LOGIN_SUCCESS';
 export const LOGIN_ERROR = 'dicoapp/App/LOGIN_ERROR';
+
+export const LOGOUT = 'dicoapp/App/LOGOUT';
