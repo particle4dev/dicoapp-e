@@ -7,8 +7,11 @@ import WalletPage from '../WalletPage';
 import HelpPage from '../HelpPage';
 import SeedPage from '../SeedPage';
 import LoginPage from '../LoginPage';
+import injectSaga from '../../utils/inject-saga';
 import { makeSelectAuthenticated, makeSelectLoading } from './selectors';
 import connectedRouterRedirect from '../../utils/auth-wrapper/connected-router-redirect';
+import { APP_STATE_NAME } from './constants';
+import saga from './saga';
 import routes from '../../constants/routes.json';
 
 const userIsNotAuthenticatedRedir = connectedRouterRedirect({
@@ -40,7 +43,7 @@ const LoginFallback = userIsNotAuthenticatedRedir(
 
 type Props = {};
 
-export default class App extends Component<Props> {
+class App extends Component<Props> {
   render() {
     return (
       <React.Fragment>
@@ -57,3 +60,7 @@ export default class App extends Component<Props> {
     );
   }
 }
+
+const withSaga = injectSaga({ key: APP_STATE_NAME, saga });
+
+export default withSaga(App);
