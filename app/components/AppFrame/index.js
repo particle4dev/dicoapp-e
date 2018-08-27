@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
-import CssBaseline from '@material-ui/core/CssBaseline';
 // import AppBar from '@material-ui/core/AppBar';
 // import Toolbar from '@material-ui/core/Toolbar';
 // import IconButton from '@material-ui/core/IconButton';
@@ -40,7 +39,8 @@ class AppFrame extends Component {
     // match: PropTypes.object.isRequired,
     // location: PropTypes.object.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
-    history: PropTypes.object.isRequired
+    history: PropTypes.object.isRequired,
+    showDrawer: PropTypes.bool.isRequired
   };
 
   state = {
@@ -64,13 +64,12 @@ class AppFrame extends Component {
 
   render() {
     // eslint-disable-next-line react/prop-types
-    const { children, classes } = this.props;
+    const { children, classes, showDrawer } = this.props;
     // const { children, classes, uiTheme } = this.props;
     const { anchor } = this.state;
 
     return (
       <React.Fragment>
-        <CssBaseline />
         <div className={classes.root}>
           {/* <AppBar>
             <Toolbar>
@@ -82,42 +81,44 @@ class AppFrame extends Component {
               </IconButton>
             </Toolbar>
           </AppBar> */}
-          <Drawer
-            variant="permanent"
-            classes={{
-              paper: classes.drawerPaper
-            }}
-            anchor={anchor}
-          >
-            <div className={classes.toolbar} />
-            <Divider />
-            <List>
-              <ListItem button onClick={this.gotoWalletPage}>
-                <ListItemIcon>
-                  <AccountBalanceWalletIcon />
-                </ListItemIcon>
-                <ListItemText primary="Wallet" />
-              </ListItem>
-              <ListItem button onClick={this.gotoBuyPage}>
-                <ListItemIcon>
-                  <AddShoppingCartIcon />
-                </ListItemIcon>
-                <ListItemText primary="Buy" />
-              </ListItem>
-              <ListItem button onClick={this.gotoHelpPage}>
-                <ListItemIcon>
-                  <LiveHelpIcon />
-                </ListItemIcon>
-                <ListItemText primary="Help" />
-              </ListItem>
-              <ListItem button>
-                <ListItemIcon>
-                  <PowerSettingsNewIcon />
-                </ListItemIcon>
-                <ListItemText primary="Exit" />
-              </ListItem>
-            </List>
-          </Drawer>
+          {showDrawer && (
+            <Drawer
+              variant="permanent"
+              classes={{
+                paper: classes.drawerPaper
+              }}
+              anchor={anchor}
+            >
+              <div className={classes.toolbar} />
+              <Divider />
+              <List>
+                <ListItem button onClick={this.gotoWalletPage}>
+                  <ListItemIcon>
+                    <AccountBalanceWalletIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Wallet" />
+                </ListItem>
+                <ListItem button onClick={this.gotoBuyPage}>
+                  <ListItemIcon>
+                    <AddShoppingCartIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Buy" />
+                </ListItem>
+                <ListItem button onClick={this.gotoHelpPage}>
+                  <ListItemIcon>
+                    <LiveHelpIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Help" />
+                </ListItem>
+                <ListItem button>
+                  <ListItemIcon>
+                    <PowerSettingsNewIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Exit" />
+                </ListItem>
+              </List>
+            </Drawer>
+          )}
           {children}
         </div>
       </React.Fragment>
