@@ -8,6 +8,8 @@ const defaults = {
   wrapperDisplayName: 'AuthWrapper'
 };
 
+const debug = require('debug')('dicoapp:utils:auth-wrapper');
+
 export default args => {
   const { AuthenticatingComponent, FailureComponent, wrapperDisplayName } = {
     ...defaults,
@@ -32,12 +34,16 @@ export default args => {
       };
 
       render() {
+        debug(`render`);
         const { isAuthenticated, isAuthenticating } = this.props;
+        debug(
+          `isAuthenticated=${isAuthenticated}, isAuthenticating=${isAuthenticating}`
+        );
 
         if (isAuthenticated) {
           return <DecoratedComponent {...this.props} />;
           // eslint-disable-next-line no-else-return
-        } else if (isAuthenticating) {
+        } else if (isAuthenticating && AuthenticatingComponent) {
           return <AuthenticatingComponent {...this.props} />;
         }
         return <FailureComponent {...this.props} />;

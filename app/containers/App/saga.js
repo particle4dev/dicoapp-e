@@ -1,3 +1,4 @@
+// https://github.com/react-boilerplate/react-boilerplate/issues/1277#issuecomment-263267639
 import { fork, take, put } from 'redux-saga/effects';
 import { push } from 'react-router-redux';
 import routes from '../../constants/routes.json';
