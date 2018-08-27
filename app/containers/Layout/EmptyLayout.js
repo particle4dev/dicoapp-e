@@ -9,12 +9,7 @@ class EmptyLayout extends Component {
 
     const { children } = this.props;
 
-    return (
-      <React.Fragment>
-        EmptyLayout
-        {children}
-      </React.Fragment>
-    );
+    return <React.Fragment>{children}</React.Fragment>;
   }
 }
 
