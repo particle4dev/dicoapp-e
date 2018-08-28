@@ -48,6 +48,7 @@ const MarketMaker = () => {
       //   The process could not be killed, or
       //  Sending a message to the child process failed.
       marketmakerProcess.on('error', error => {
+        debug(error.message);
         state.isRunning = false;
         throw error;
       });
