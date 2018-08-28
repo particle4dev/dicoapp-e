@@ -1,7 +1,7 @@
 {
   "name": "dicoapp-e",
   "productName": "dICOApp",
-  "version": "0.1.0",
+  "version": "0.1.15",
   "description": "Lightweight GUI wallet with barterDEX swap capabilities",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -16,10 +16,6 @@
     "lint-fix": "yarn --silent lint --fix; exit 0",
     "lint-styles": "stylelint app/*.css app/components/*.css --syntax scss",
     "lint-styles-fix": "stylefmt -r app/*.css app/components/*.css",
-    "package": "yarn build && electron-builder build --publish never",
-    "package-all": "yarn build && electron-builder build -mwl",
-    "package-linux": "yarn build && electron-builder build --linux",
-    "package-win": "yarn build && electron-builder build --win --x64",
     "postinstall": "node -r babel-register internals/scripts/CheckNativeDep.js && yarn flow-typed && yarn build-dll && electron-builder install-app-deps package.json",
     "postlint-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.js'",
     "precommit": "lint-staged",
@@ -27,10 +23,16 @@
     "start": "cross-env NODE_ENV=production electron ./app/",
     "start-main-dev": "cross-env DEBUG=dicoapp:* HOT=1 NODE_ENV=development electron -r babel-register ./app/main.dev.js",
     "start-renderer-dev": "cross-env DEBUG=dicoapp:* NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack-dev-server/bin/webpack-dev-server --config webpack.config.renderer.dev.js",
-    "test": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js",
-    "test-all": "yarn lint && yarn flow && yarn build && yarn test && yarn test-e2e",
-    "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js e2e",
-    "test-watch": "yarn test --watch"
+    "package": "yarn build && electron-builder build --publish never",
+    "package:all": "yarn build && electron-builder build -mwl",
+    "package:linux": "yarn build && electron-builder build --linux",
+    "package:win": "yarn build && electron-builder build --win --x64",
+    "package:mac": "yarn build && electron-builder build --mac",
+    "release": "./node_modules/.bin/np",
+    "version:patch": "np patch --no-publish --any-branch --yolo",
+    "version:minor": "npm run release -- minor --no-publish --any-branch --yolo",
+    "version:major": "npm run release -- major --no-publish --any-branch --yolo",
+    "update-authors": "./bin/update-authors"
   },
   "browserslist": "electron 1.6",
   "lint-staged": {
@@ -103,7 +105,7 @@
     },
     "publish": {
       "provider": "github",
-      "publishAutoUpdate": false
+      "publishAutoUpdate": true
     }
   },
   "repository": {
@@ -204,6 +206,7 @@
     "mini-css-extract-plugin": "^0.4.1",
     "minimist": "^1.2.0",
     "node-sass": "^4.9.2",
+    "np": "^3.0.4",
     "npm-logical-tree": "^1.2.1",
     "optimize-css-assets-webpack-plugin": "^5.0.0",
     "prettier": "^1.14.0",

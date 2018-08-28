@@ -263,4 +263,13 @@ MIT © [C. T. Lin](https://github.com/chentsulin)
 [appveyor-image]: https://ci.appveyor.com/api/projects/status/github/chentsulin/electron-react-boilerplate?svg=true
 [appveyor-url]: https://ci.appveyor.com/project/chentsulin/electron-react-boilerplate/branch/master
 [david_img]: https://img.shields.io/david/chentsulin/electron-react-boilerplate.svg
+
 [david_site]: https://david-dm.org/chentsulin/electron-react-boilerplate
+
+"test": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js",
+"test-all": "yarn lint && yarn flow && yarn build && yarn test && yarn test-e2e",
+"test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js e2e",
+"test-watch": "yarn test --watch",
+
+upstream
+https://github.com/chentsulin/electron-react-boilerplate.git
