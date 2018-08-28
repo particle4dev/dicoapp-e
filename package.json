@@ -1,8 +1,8 @@
 {
-  "name": "electron-react-boilerplate",
-  "productName": "ElectronReact",
-  "version": "0.14.0",
-  "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
+  "name": "dicoapp-e",
+  "productName": "dICOApp",
+  "version": "0.1.0",
+  "description": "Lightweight GUI wallet with barterDEX swap capabilities",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.dev.dll.js --colors",
@@ -45,8 +45,9 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.develar.ElectronReact",
+    "productName": "dICOApp",
+    "compression": "maximum",
+    "appId": "com.komodoplatform.dICOApp",
     "extraResources": [
       {
         "from": "./app/bin/marketmaker/LINUX",
@@ -99,20 +100,24 @@
     "directories": {
       "buildResources": "resources",
       "output": "release"
+    },
+    "publish": {
+      "provider": "github",
+      "publishAutoUpdate": false
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chentsulin/electron-react-boilerplate.git"
+    "url": "git+https://github.com/particle4dev/dicoapp-e.git"
   },
   "author": {
-    "name": "C. T. Lin",
-    "email": "chentsulin@gmail.com",
-    "url": "https://github.com/chentsulin"
+    "name": "Hoang Nam",
+    "email": "particle4dev@gmail.com",
+    "url": "https://github.com/particle4dev"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/chentsulin/electron-react-boilerplate/issues"
+    "url": "https://github.com/particle4dev/dicoapp-e/issues"
   },
   "keywords": [
     "electron",
@@ -125,7 +130,7 @@
     "hot",
     "reload"
   ],
-  "homepage": "https://github.com/chentsulin/electron-react-boilerplate#readme",
+  "homepage": "https://github.com/particle4dev/dicoapp-e#readme",
   "jest": {
     "testURL": "http://localhost/",
     "moduleNameMapper": {
