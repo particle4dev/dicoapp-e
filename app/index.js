@@ -4,6 +4,8 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
 import { AppContainer } from 'react-hot-loader';
 import { createHashHistory } from 'history';
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import theme from './components/Theme';
 import configureStore from './store/configureStore';
 import App from './containers/App';
 import './app.global.css';
@@ -19,7 +21,9 @@ const render = AppComponent => {
     <AppContainer>
       <Provider store={store}>
         <ConnectedRouter history={history}>
-          <AppComponent />
+          <MuiThemeProvider theme={theme}>
+            <AppComponent />
+          </MuiThemeProvider>
         </ConnectedRouter>
       </Provider>
     </AppContainer>,

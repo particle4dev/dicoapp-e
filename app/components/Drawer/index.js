@@ -118,8 +118,8 @@ class DICDrawer extends Component<Props, State> {
         </div>
         <Divider />
         <List>
-          <ListItem button selected active onClick={this.gotoDashboardPage}>
-            <ListItemIcon selected active>
+          <ListItem button selected onClick={this.gotoDashboardPage}>
+            <ListItemIcon selected>
               <DashboardIcon />
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
