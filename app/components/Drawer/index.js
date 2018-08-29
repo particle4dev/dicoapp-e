@@ -8,11 +8,13 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import IconButton from '@material-ui/core/IconButton';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
-import Dashboard from '@material-ui/icons/Dashboard';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 import LiveHelpIcon from '@material-ui/icons/LiveHelp';
+import HomeIcon from '@material-ui/icons/Home';
 import { withStyles } from '@material-ui/core/styles';
 import routes from '../../constants/routes.json';
 
@@ -21,7 +23,13 @@ const debug = require('debug')('dicoapp:components:Drawer');
 const drawerWidth = 240;
 
 const styles = theme => ({
-  toolbar: theme.mixins.toolbar,
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: 12,
+    ...theme.mixins.toolbar
+  },
   drawerPaper: {
     position: 'relative',
     whiteSpace: 'nowrap',
@@ -63,9 +71,19 @@ class DICDrawer extends Component<Props, State> {
     anchor: 'left'
   };
 
+  gotoHomePage = () => {
+    const { history } = this.props;
+    history.push(routes.WALLET);
+  };
+
   gotoWalletPage = () => {
     const { history } = this.props;
     history.push(routes.WALLET);
+  };
+
+  gotoDashboardPage = () => {
+    const { history } = this.props;
+    history.push(routes.DASHBOARD);
   };
 
   gotoBuyPage = () => {
@@ -81,7 +99,6 @@ class DICDrawer extends Component<Props, State> {
   render() {
     debug(`render`);
 
-    // eslint-disable-next-line react/prop-types
     const { classes } = this.props;
     const { anchor } = this.state;
 
@@ -94,12 +111,16 @@ class DICDrawer extends Component<Props, State> {
         }}
         anchor={anchor}
       >
-        <div className={classes.toolbar} />
+        <div className={classes.toolbar}>
+          <IconButton onClick={this.gotoHomePage}>
+            <HomeIcon />
+          </IconButton>
+        </div>
         <Divider />
         <List>
-          <ListItem button selected active onClick={this.gotoWalletPage}>
+          <ListItem button selected active onClick={this.gotoDashboardPage}>
             <ListItemIcon selected active>
-              <Dashboard />
+              <DashboardIcon />
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
           </ListItem>
