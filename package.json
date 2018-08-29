@@ -1,7 +1,7 @@
 {
   "name": "dicoapp-e",
   "productName": "dICOApp",
-  "version": "0.1.15",
+  "version": "0.2.0",
   "description": "Lightweight GUI wallet with barterDEX swap capabilities",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
