@@ -13,6 +13,7 @@
 import { app, BrowserWindow } from 'electron';
 import MenuBuilder from './menu';
 import marketmaker from './plugins/marketmaker';
+import { loginWindowSize } from './config/config-default';
 
 let mainWindow = null;
 
@@ -63,8 +64,8 @@ app.on('ready', async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728
+    width: loginWindowSize.width,
+    height: loginWindowSize.height
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
