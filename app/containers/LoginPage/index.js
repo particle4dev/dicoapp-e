@@ -1,17 +1,23 @@
 // @flow
 import React, { Component } from 'react';
-import styled from 'styled-components';
 // import { Link } from 'react-router-dom';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import { withStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Typography from '@material-ui/core/Typography';
+import Avatar from '@material-ui/core/Avatar';
 import swal from 'sweetalert';
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
 import routes from '../../constants/routes.json';
 import { EmptyLayout } from '../Layout';
-import Logo from './Logo';
+import Passphrase from './components/Passphrase';
 import reducer from './reducer';
 import saga from './saga';
 import { login } from '../App/actions';
@@ -21,53 +27,76 @@ import {
   makeSelectError
 } from '../App/selectors';
 import { APP_STATE_NAME } from './constants';
-import styles from './Login.css';
+import image from './components/logo.png';
 
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 100px;
-`;
+// const styles = theme => ({
+const styles = () => ({
+  loginContainer: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    overflow: 'auto'
+  },
 
-const Notification = styled.div`
-  text-align: center;
-  color: #6a6a6a;
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  flex-direction: row;
-  align-items: center;
-`;
+  center: {
+    paddingBottom: 67,
+    paddingTop: 48,
+    minHeight: 350,
+    left: '50%',
+    position: 'absolute',
+    transform: 'translateX(-50%)'
+  },
 
-const Register = styled.div`
-  text-align: center;
-  flex: 1;
-`;
+  card: {
+    width: 400
+  },
 
-const Form = styled.form`
-  padding-bottom: 30px;
-  flex: 1;
-`;
+  logo: {
+    margin: '14px auto 0px',
+    position: 'relative',
+    height: 85,
+    width: 85
+  },
 
-const Submit = styled.div`
-  text-align: center;
-`;
+  content: {
+    width: 308,
+    margin: '0px auto',
+    textAlign: 'center'
+  },
 
-const Password = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: baseline;
-  padding-bottom: 30px;
-  i {
-    font-size: 12px;
+  item: {
+    marginBottom: 30
+  },
+
+  loginButton: {
+    boxShadow: 'none',
+    border: 0,
+    height: 36,
+    backgroundColor: '#005194'
+  },
+
+  bottomButton: {
+    height: 62,
+    backgroundColor: '#efefef',
+    color: '#333'
   }
-`;
+});
+
+const debug = require('debug')('dicoapp:containers:LoginPage');
 
 type Props = {
-  loading: boolean
+  loading: boolean,
+  authenticated: boolean,
+  // eslint-disable-next-line flowtype/no-weak-types
+  classes: Object,
+  // eslint-disable-next-line flowtype/no-weak-types
+  history: Object,
+  // eslint-disable-next-line flowtype/no-weak-types
+  error: Object | boolean,
+  // eslint-disable-next-line flowtype/no-weak-types
+  dispatchLogin: Function
 };
 
 type State = {
@@ -82,12 +111,7 @@ class HomePage extends Component<Props, State> {
   };
 
   componentDidUpdate = prevProps => {
-    const {
-      // eslint-disable-next-line react/prop-types
-      authenticated,
-      error,
-      history
-    } = this.props;
+    const { authenticated, error, history } = this.props;
     if (authenticated && !prevProps.authenticated) {
       swal('Success', 'Welcome to the GLX dICO Wallet!', 'success');
       history.push('/');
@@ -97,7 +121,7 @@ class HomePage extends Component<Props, State> {
     }
   };
 
-  onLoginButtonClick = async (evt: SyntheticEvent<*>) => {
+  onLoginButtonClick = async (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
     const { passphrase } = this.state;
     if (passphrase === '' || passphrase.length < 4) {
@@ -107,75 +131,81 @@ class HomePage extends Component<Props, State> {
         'error'
       );
     }
-    const {
-      // eslint-disable-next-line react/prop-types
-      dispatchLogin
-    } = this.props;
+    const { dispatchLogin } = this.props;
     dispatchLogin(passphrase);
   };
 
-  onChange = (evt: SyntheticEvent<*>) => {
+  onChange = (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
+    const { value } = evt.target;
     this.setState({
-      passphrase: evt.target.value
+      passphrase: value
     });
   };
 
-  gotoSeedPage = (evt: SyntheticEvent<*>) => {
+  gotoSeedPage = (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
-    const {
-      // eslint-disable-next-line react/prop-types
-      history
-    } = this.props;
-    history.push(routes.SEED);
+    const { history } = this.props;
+    setTimeout(() => {
+      history.push(routes.SEED);
+    }, 150);
   };
 
   render() {
-    const { loading } = this.props;
+    debug('render');
+    const { loading, classes } = this.props;
     const { passphrase } = this.state;
+
     return (
       <EmptyLayout>
-        <Container>
-          <Logo />
-          <Notification>
-            <p>Please type in your Seed to Login to your existing Account</p>
-          </Notification>
-          <Form>
-            <Password>
-              <i className={`fas fa-lock ${styles['padding-right-10']}`} />
-              <input
-                disabled={loading}
-                value={passphrase}
-                onChange={this.onChange}
-                className={styles.input}
-                type="password"
-                placeholder="Passphrase/Seed"
-              />
-              <i className={`fas fa-eye-slash ${styles['padding-left-10']}`} />
-            </Password>
-            <Submit>
+        <div className={classes.loginContainer}>
+          <div className={classes.center}>
+            <Card className={classes.card}>
+              {loading && <LinearProgress />}
+              <Avatar className={classes.logo} alt="logo" src={image} />
+              <CardContent className={classes.content}>
+                <Typography
+                  variant="headline"
+                  className={classes.item}
+                  gutterBottom
+                >
+                  Welcome to dICO App
+                </Typography>
+
+                <Typography variant="subheading" gutterBottom>
+                  Please type in your Seed to Login to your existing Account
+                </Typography>
+
+                <Passphrase
+                  loading={loading}
+                  passphrase={passphrase}
+                  className={classes.item}
+                  onChange={this.onChange}
+                />
+
+                <Button
+                  fullWidth
+                  variant="contained"
+                  disabled={loading}
+                  color="primary"
+                  type="submit"
+                  onClick={this.onLoginButtonClick}
+                  className={classNames(classes.item, classes.loginButton)}
+                >
+                  Log In
+                </Button>
+              </CardContent>
+
               <Button
-                disabled={loading}
-                variant="contained"
-                color="primary"
-                type="submit"
-                onClick={this.onLoginButtonClick}
+                fullWidth
+                className={classes.bottomButton}
+                onClick={this.gotoSeedPage}
               >
-                Log In
+                Click Here to Create a New Account
               </Button>
-            </Submit>
-          </Form>
-          <Register>
-            <Button
-              variant="contained"
-              color="secondary"
-              className={styles['button-white']}
-              onClick={this.gotoSeedPage}
-            >
-              Click Here to Create a New Account
-            </Button>
-          </Register>
-        </Container>
+            </Card>
+          </div>
+        </div>
       </EmptyLayout>
     );
   }
@@ -183,7 +213,7 @@ class HomePage extends Component<Props, State> {
 
 export function mapDispatchToProps(dispatch) {
   return {
-    dispatchLogin: passphrase => dispatch(login(passphrase))
+    dispatchLogin: (passphrase?: string) => dispatch(login(passphrase))
   };
 }
 
@@ -203,5 +233,6 @@ const withConnect = connect(
 export default compose(
   withReducer,
   withSaga,
-  withConnect
+  withConnect,
+  withStyles(styles)
 )(HomePage);
