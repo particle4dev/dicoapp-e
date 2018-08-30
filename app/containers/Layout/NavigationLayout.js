@@ -65,12 +65,6 @@ const styles = theme => ({
   }
 });
 
-// const DICTypography = styled.div`
-//   font-family: Roboto, sans-serif;
-//   -moz-osx-font-smoothing: grayscale;
-//   -webkit-font-smoothing: antialiased;
-// `;
-
 class NavigationLayout extends Component {
   // constructor(props) {
   //   super(props);
