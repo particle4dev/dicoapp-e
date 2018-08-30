@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-// import styled from 'styled-components';
-import { remote } from 'electron';
-import { setWindowBounds } from 'electron-util';
+// import { remote } from 'electron';
+// import { setWindowBounds } from 'electron-util';
 import { withStyles } from '@material-ui/core/styles';
 
 // import AppBar from '@material-ui/core/AppBar';
@@ -12,21 +11,21 @@ import { withStyles } from '@material-ui/core/styles';
 // import IconButton from '@material-ui/core/IconButton';
 // import MenuIcon from '@material-ui/icons/Menu';
 
-import { minWindowSize } from '../../config/config-default';
+// import { minWindowSize } from '../../config/config-default';
 import DICDrawer from '../../components/Drawer';
 // import routes from '../../constants/routes.json';
 
 const debug = require('debug')('dicoapp:containers:layout:NavigationLayout');
 
-const setAppWindowBounds = (size = minWindowSize) => {
-  const win = remote.getCurrentWindow();
-  win.setResizable(true);
-  win.setMaximizable(true);
-  win.setFullScreenable(true);
-  win.setMinimumSize(size.width, size.height);
-  setWindowBounds(size, { animated: true });
-  win.center();
-};
+// const setAppWindowBounds = (size = minWindowSize) => {
+//   const win = remote.getCurrentWindow();
+//   win.setResizable(true);
+//   win.setMaximizable(true);
+//   win.setFullScreenable(true);
+//   win.setMinimumSize(size.width, size.height);
+//   setWindowBounds(size, { animated: true });
+//   win.center();
+// };
 
 // const drawerWidth = 240;
 
@@ -39,21 +38,17 @@ const styles = theme => ({
     display: 'flex'
   },
 
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20
-  },
-
-  flex: {
-    flexGrow: 1
-  },
-
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3,
+    // padding: theme.spacing.unit * 3,
     marginLeft: 72,
-    marginTop: 64
+    // marginTop: 64,
+    minHeight: '100%'
+  },
+
+  header: {
+    marginLeft: 72
   },
 
   dicoDrawer: {
@@ -77,10 +72,10 @@ const styles = theme => ({
 // `;
 
 class NavigationLayout extends Component {
-  constructor(props) {
-    super(props);
-    setAppWindowBounds();
-  }
+  // constructor(props) {
+  //   super(props);
+  //   setAppWindowBounds();
+  // }
 
   render() {
     debug(`render`);
@@ -90,9 +85,13 @@ class NavigationLayout extends Component {
 
     return (
       <React.Fragment>
-        {/* <header className="mdc-toolbar mdc-toolbar--fixed fl-empty-layout__header">
-        header 123
-      </header> */}
+        {/* <header className={classes.header}>
+          <AppBar position="static" color="default">
+            <Toolbar>
+              <Button color="inherit">Login</Button>
+            </Toolbar>
+          </AppBar>
+        </header> */}
         <aside className={classes.dicoDrawer}>
           <DICDrawer />
         </aside>
@@ -100,25 +99,7 @@ class NavigationLayout extends Component {
         <div className={classes.root}>
           {/* <DICTypography> */}
           {/* <header className="mdc-toolbar mdc-toolbar--fixed fl-empty-layout__header"> */}
-          {/* <AppBar position="static">
-              <Toolbar>
-                <IconButton
-                  className={classes.menuButton}
-                  color="inherit"
-                  aria-label="Menu"
-                >
-                  <MenuIcon />
-                </IconButton>
-                <Typography
-                  variant="title"
-                  color="inherit"
-                  className={classes.flex}
-                >
-                  News
-                </Typography>
-                <Button color="inherit">Login</Button>
-              </Toolbar>
-            </AppBar> */}
+
           {/* </header> */}
           {/* <aside className="mdc-drawer mdc-drawer--temporary mdc-drawer--open mdc-drawer--animating"> */}
           {/* </aside> */}

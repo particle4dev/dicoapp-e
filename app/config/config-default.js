@@ -8,7 +8,9 @@ module.exports = {
     height: process.platform === 'darwin' ? 600 : 650
   },
   loginWindowSize: {
-    width: 680,
-    height: process.platform === 'darwin' ? 500 : 550
+    width: 1060,
+    height: process.platform === 'darwin' ? 600 : 650
+    // width: 680,
+    // height: process.platform === 'darwin' ? 500 : 550
   }
 };
