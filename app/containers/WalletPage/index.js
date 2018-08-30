@@ -41,6 +41,7 @@ const styles = () => ({
     height: '100%'
   }
 });
+
 const debug = require('debug')('dicoapp:containers:WalletPage');
 
 class WalletPage extends Component<Props> {
