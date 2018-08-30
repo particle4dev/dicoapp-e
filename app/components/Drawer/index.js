@@ -1,6 +1,8 @@
 // @flow
 import React, { Component } from 'react';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { withRouter } from 'react-router';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
@@ -16,6 +18,8 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import LiveHelpIcon from '@material-ui/icons/LiveHelp';
 import HomeIcon from '@material-ui/icons/Home';
 import { withStyles } from '@material-ui/core/styles';
+// FIXME: this is a quick way. We should move this function to layout
+import { showLogoutDialog } from '../../containers/LogoutDialog/actions';
 import routes from '../../constants/routes.json';
 
 const debug = require('debug')('dicoapp:components:Drawer');
@@ -59,7 +63,9 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   classes: Object,
   // eslint-disable-next-line flowtype/no-weak-types
-  history: Object
+  history: Object,
+  // eslint-disable-next-line flowtype/no-weak-types
+  dispatchShowLogoutDialog: Function
 };
 
 type State = {
@@ -99,7 +105,7 @@ class DICDrawer extends Component<Props, State> {
   render() {
     debug(`render`);
 
-    const { classes } = this.props;
+    const { classes, dispatchShowLogoutDialog } = this.props;
     const { anchor } = this.state;
 
     return (
@@ -145,7 +151,7 @@ class DICDrawer extends Component<Props, State> {
             </ListItemIcon>
             <ListItemText primary="Help" />
           </ListItem>
-          <ListItem button>
+          <ListItem button onClick={dispatchShowLogoutDialog}>
             <ListItemIcon>
               <PowerSettingsNewIcon />
             </ListItemIcon>
@@ -159,4 +165,18 @@ class DICDrawer extends Component<Props, State> {
 
 DICDrawer.displayName = 'DICDrawer';
 
-export default withRouter(withStyles(styles)(DICDrawer));
+export function mapDispatchToProps(dispatch) {
+  return {
+    dispatchShowLogoutDialog: () => dispatch(showLogoutDialog())
+  };
+}
+
+const withConnect = connect(
+  null,
+  mapDispatchToProps
+);
+
+export default compose(
+  withRouter,
+  withConnect
+)(withStyles(styles)(DICDrawer));

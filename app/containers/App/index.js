@@ -8,6 +8,7 @@ import HelpPage from '../HelpPage';
 import SeedPage from '../SeedPage';
 import LoginPage from '../LoginPage';
 import NotFoundPage from '../NotFoundPage';
+import LogoutDialog from '../LogoutDialog';
 import injectSaga from '../../utils/inject-saga';
 import { makeSelectAuthenticated, makeSelectLoading } from './selectors';
 import connectedRouterRedirect from '../../utils/auth-wrapper/connected-router-redirect';
@@ -49,6 +50,7 @@ class App extends Component<Props> {
     return (
       <React.Fragment>
         <CssBaseline />
+        <Route component={LogoutDialog} />
         <Switch>
           <Route path={routes.BUY} component={BuyFallback} />
           <Route path={routes.WALLET} component={WalletFallback} />
