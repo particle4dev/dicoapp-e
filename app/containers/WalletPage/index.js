@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -14,7 +13,6 @@ import injectSaga from '../../utils/inject-saga';
 import { NavigationLayout } from '../Layout';
 
 import Transactions from './components/Transactions';
-import { logout } from '../App/actions';
 import reducer from './reducer';
 import saga from './saga';
 import { makeSelectLoading, makeSelectTransactions } from './selectors';
@@ -70,15 +68,6 @@ class WalletPage extends Component<Props> {
     }
   };
 
-  onLogoutButtonClick = async (evt: SyntheticEvent<*>) => {
-    evt.preventDefault();
-    const {
-      // eslint-disable-next-line react/prop-types
-      dispatchLogout
-    } = this.props;
-    dispatchLogout();
-  };
-
   render() {
     // eslint-disable-next-line react/prop-types
     const { loading, transactions, classes } = this.props;
@@ -88,13 +77,7 @@ class WalletPage extends Component<Props> {
         {loading && <LinearProgress />}
         <Grid container spacing={0}>
           <Grid item xs={3} className={classes.nav1}>
-            <Button
-              // disabled={loading}
-              type="submit"
-              onClick={this.onLogoutButtonClick}
-            >
-              Log Out
-            </Button>
+            Grid item xs=3
           </Grid>
           <Grid item xs={9} className={classes.nav2}>
             <Transactions transactions={transactions} />
@@ -107,8 +90,7 @@ class WalletPage extends Component<Props> {
 
 export function mapDispatchToProps(dispatch) {
   return {
-    dispatchLoadWallet: () => dispatch(loadWallet()),
-    dispatchLogout: () => dispatch(logout())
+    dispatchLoadWallet: () => dispatch(loadWallet())
   };
 }
 
