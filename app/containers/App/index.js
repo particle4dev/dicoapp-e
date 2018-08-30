@@ -25,9 +25,9 @@ const userIsNotAuthenticatedRedir = connectedRouterRedirect({
 // const HomeFallback = userIsNotAuthenticatedRedir(WalletPage, (props, ...) => {
 //   return (<Redirect to={routes.LOGIN} />);
 // });
-// const HomeFallback = userIsNotAuthenticatedRedir(WalletPage, () => (
-//   <Redirect to={routes.LOGIN} />
-// ));
+const HomeFallback = userIsNotAuthenticatedRedir(WalletPage, () => (
+  <Redirect to={routes.LOGIN} />
+));
 const WalletFallback = userIsNotAuthenticatedRedir(WalletPage, () => (
   <Redirect to={routes.LOGIN} />
 ));
@@ -52,11 +52,10 @@ class App extends Component<Props> {
         <Switch>
           <Route path={routes.BUY} component={BuyFallback} />
           <Route path={routes.WALLET} component={WalletFallback} />
-          <Route path={routes.SEED} component={SeedPage} />
           <Route path={routes.HELP} component={HelpFallback} />
           <Route path={routes.LOGIN} component={LoginFallback} />
-          {/* <Route path={routes.HOME} component={HomeFallback} /> */}
-          <Route exact path={routes.HOME} component={HelpPage} />
+          <Route path={routes.SEED} component={SeedPage} />
+          <Route exact path={routes.HOME} component={HomeFallback} />
           <Route component={NotFoundPage} />
         </Switch>
       </React.Fragment>
