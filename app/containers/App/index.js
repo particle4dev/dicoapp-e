@@ -7,6 +7,7 @@ import WalletPage from '../WalletPage';
 import HelpPage from '../HelpPage';
 import SeedPage from '../SeedPage';
 import LoginPage from '../LoginPage';
+import NotFoundPage from '../NotFoundPage';
 import injectSaga from '../../utils/inject-saga';
 import { makeSelectAuthenticated, makeSelectLoading } from './selectors';
 import connectedRouterRedirect from '../../utils/auth-wrapper/connected-router-redirect';
@@ -51,10 +52,11 @@ class App extends Component<Props> {
         <Switch>
           <Route path={routes.BUY} component={BuyFallback} />
           <Route path={routes.WALLET} component={WalletFallback} />
-          <Route path={routes.SEED} component={SeedPage} />
           <Route path={routes.HELP} component={HelpFallback} />
           <Route path={routes.LOGIN} component={LoginFallback} />
-          <Route path={routes.HOME} component={HomeFallback} />
+          <Route path={routes.SEED} component={SeedPage} />
+          <Route exact path={routes.HOME} component={HomeFallback} />
+          <Route component={NotFoundPage} />
         </Switch>
       </React.Fragment>
     );

@@ -4,5 +4,6 @@
   "BUY": "/buy",
   "WALLET": "/wallet",
   "HELP": "/help",
-  "LOGIN": "/login"
+  "LOGIN": "/login",
+  "DASHBOARD": "/dashboard"
 }

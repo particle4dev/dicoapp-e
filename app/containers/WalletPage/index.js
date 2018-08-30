@@ -5,17 +5,15 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+import Grid from '@material-ui/core/Grid';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
 // import routes from '../../constants/routes.json';
 import { NavigationLayout } from '../Layout';
 
+import Transactions from './components/Transactions';
 import { logout } from '../App/actions';
 import reducer from './reducer';
 import saga from './saga';
@@ -30,17 +28,17 @@ type Props = {
 
 let idInterval = null;
 const LOAD_TRANSACTION_TIME = 90000;
-const explorer = {
-  KMD: 'http://kmdexplorer.io/tx',
-  BTC: 'https://blockchain.com/tx',
-  LTC: 'https://live.blockcypher.com/ltc/tx',
-  GLXT: 'http://glx.info/tx'
-};
 
 // const styles = theme => ({
 const styles = () => ({
   table: {
     maxHeight: 450
+  },
+  nav1: {
+    height: '100%'
+  },
+  nav2: {
+    height: '100%'
   }
 });
 const debug = require('debug')('dicoapp:containers:WalletPage');
@@ -86,51 +84,21 @@ class WalletPage extends Component<Props> {
 
     return (
       <NavigationLayout>
-        <div>
-          <Table className={classes.table}>
-            <TableHead>
-              <TableRow>
-                <TableCell>Coin</TableCell>
-                <TableCell>Block height</TableCell>
-                <TableCell>Transaction id</TableCell>
-                <TableCell>Amount</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {transactions.map(t => (
-                <TableRow key={t.get('tx_hash')}>
-                  <TableCell>{t.get('coin')}</TableCell>
-                  <TableCell>{t.get('height')}</TableCell>
-                  <TableCell>
-                    {/* eslint-disable-next-line react/jsx-no-target-blank */}
-                    {explorer[t.get('coin')] && (
-                      <a
-                        style={{ color: '#000' }}
-                        href={`${explorer[t.get('coin')]}/${t.get('tx_hash')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {t.get('tx_hash')}
-                      </a>
-                    )}
-                    {!explorer[t.get('coin')] && t.get('tx_hash')}
-                  </TableCell>
-                  <TableCell>N/A</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <br />
-          loading = {loading.toString()}
-          <br />
-          <Button
-            disabled={loading}
-            type="submit"
-            onClick={this.onLogoutButtonClick}
-          >
-            Log Out
-          </Button>
-        </div>
+        {loading && <LinearProgress />}
+        <Grid container spacing={0}>
+          <Grid item xs={3} className={classes.nav1}>
+            <Button
+              // disabled={loading}
+              type="submit"
+              onClick={this.onLogoutButtonClick}
+            >
+              Log Out
+            </Button>
+          </Grid>
+          <Grid item xs={9} className={classes.nav2}>
+            <Transactions transactions={transactions} />
+          </Grid>
+        </Grid>
       </NavigationLayout>
     );
   }

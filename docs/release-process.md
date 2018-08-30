@@ -57,6 +57,15 @@
 
 - Then, upload the release binaries to Github.
 
+  ```
+  latest.yml
+  latest-mac.yml
+  latest-linux.yml
+  dicoapp-e_0.1.15_amd64.deb
+  dICOApp-0.1.15.dmg
+  dICOApp Setup 0.1.15.exe
+  ```
+
 ### 3. Test it
 
 **This is the most important part.**

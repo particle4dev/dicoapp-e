@@ -28,10 +28,6 @@
     "package:linux": "yarn build && electron-builder build --linux",
     "package:win": "yarn build && electron-builder build --win --x64",
     "package:mac": "yarn build && electron-builder build --mac",
-    "release": "./node_modules/.bin/np",
-    "version:patch": "np patch --no-publish --any-branch --yolo",
-    "version:minor": "npm run release -- minor --no-publish --any-branch --yolo",
-    "version:major": "npm run release -- major --no-publish --any-branch --yolo",
     "update-authors": "./bin/update-authors"
   },
   "browserslist": "electron 1.6",
@@ -206,7 +202,6 @@
     "mini-css-extract-plugin": "^0.4.1",
     "minimist": "^1.2.0",
     "node-sass": "^4.9.2",
-    "np": "^3.0.4",
     "npm-logical-tree": "^1.2.1",
     "optimize-css-assets-webpack-plugin": "^5.0.0",
     "prettier": "^1.14.0",
@@ -230,12 +225,13 @@
     "yarn": "^1.9.2"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.2.0",
     "@material-ui/core": "^1.5.1",
     "@material-ui/icons": "^2.0.3",
+    "classnames": "^2.2.6",
     "debug": "^3.1.0",
     "devtron": "^1.4.0",
     "electron-debug": "^2.0.0",
+    "electron-util": "^0.9.0",
     "history": "^4.7.2",
     "hoist-non-react-statics": "^3.0.1",
     "immutable": "^3.8.2",

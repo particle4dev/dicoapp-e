@@ -1,107 +1,107 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
-import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
-import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
-import LiveHelpIcon from '@material-ui/icons/LiveHelp';
+// import { remote } from 'electron';
+// import { setWindowBounds } from 'electron-util';
 import { withStyles } from '@material-ui/core/styles';
-import routes from '../../constants/routes.json';
+
+// import AppBar from '@material-ui/core/AppBar';
+// import Toolbar from '@material-ui/core/Toolbar';
+// import Typography from '@material-ui/core/Typography';
+// import Button from '@material-ui/core/Button';
+// import IconButton from '@material-ui/core/IconButton';
+// import MenuIcon from '@material-ui/icons/Menu';
+
+// import { minWindowSize } from '../../config/config-default';
+import DICDrawer from '../../components/Drawer';
+// import routes from '../../constants/routes.json';
 
 const debug = require('debug')('dicoapp:containers:layout:NavigationLayout');
 
-const drawerWidth = 240;
+// const setAppWindowBounds = (size = minWindowSize) => {
+//   const win = remote.getCurrentWindow();
+//   win.setResizable(true);
+//   win.setMaximizable(true);
+//   win.setFullScreenable(true);
+//   win.setMinimumSize(size.width, size.height);
+//   setWindowBounds(size, { animated: true });
+//   win.center();
+// };
+
+// const drawerWidth = 240;
 
 const styles = theme => ({
   root: {
+    flexGrow: 1,
+    zIndex: 1,
+    overflow: 'hidden',
+    position: 'relative',
     display: 'flex'
   },
-  'appBar-left': {
-    marginLeft: drawerWidth
+
+  content: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.default,
+    // padding: theme.spacing.unit * 3,
+    marginLeft: 72,
+    // marginTop: 64,
+    minHeight: '100%'
   },
-  toolbar: theme.mixins.toolbar,
-  drawerPaper: {
-    position: 'relative',
-    width: drawerWidth
+
+  header: {
+    marginLeft: 72
+  },
+
+  dicoDrawer: {
+    color: 'rgba(0, 0, 0, .87)',
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    '-webkit-box-sizing': 'border-box',
+    boxSizing: 'border-box',
+    width: '100%',
+    height: '100%',
+    overflow: 'hidden',
+    contain: 'strict'
   }
 });
 
 class NavigationLayout extends Component {
-  state = {
-    anchor: 'left'
-  };
-
-  gotoWalletPage = () => {
-    // eslint-disable-next-line react/prop-types
-    const { history } = this.props;
-    history.push(routes.WALLET);
-  };
-
-  gotoBuyPage = () => {
-    // eslint-disable-next-line react/prop-types
-    const { history } = this.props;
-    history.push(routes.BUY);
-  };
-
-  gotoHelpPage = () => {
-    // eslint-disable-next-line react/prop-types
-    const { history } = this.props;
-    history.push(routes.HELP);
-  };
+  // constructor(props) {
+  //   super(props);
+  //   setAppWindowBounds();
+  // }
 
   render() {
     debug(`render`);
 
     // eslint-disable-next-line react/prop-types
     const { children, classes } = this.props;
-    const { anchor } = this.state;
 
     return (
-      <div className={classes.root}>
-        <Drawer
-          variant="permanent"
-          classes={{
-            paper: classes.drawerPaper
-          }}
-          anchor={anchor}
-        >
-          <div className={classes.toolbar} />
-          <Divider />
-          <List>
-            <ListItem button onClick={this.gotoWalletPage}>
-              <ListItemIcon>
-                <AccountBalanceWalletIcon />
-              </ListItemIcon>
-              <ListItemText primary="Wallet" />
-            </ListItem>
-            <ListItem button onClick={this.gotoBuyPage}>
-              <ListItemIcon>
-                <AddShoppingCartIcon />
-              </ListItemIcon>
-              <ListItemText primary="Buy" />
-            </ListItem>
-            <ListItem button onClick={this.gotoHelpPage}>
-              <ListItemIcon>
-                <LiveHelpIcon />
-              </ListItemIcon>
-              <ListItemText primary="Help" />
-            </ListItem>
-            <ListItem button>
-              <ListItemIcon>
-                <PowerSettingsNewIcon />
-              </ListItemIcon>
-              <ListItemText primary="Exit" />
-            </ListItem>
-          </List>
-        </Drawer>
-        {children}
-      </div>
+      <React.Fragment>
+        {/* <header className={classes.header}>
+          <AppBar position="static" color="default">
+            <Toolbar>
+              <Button color="inherit">Login</Button>
+            </Toolbar>
+          </AppBar>
+        </header> */}
+        <aside className={classes.dicoDrawer}>
+          <DICDrawer />
+        </aside>
+        <main className={classes.content}>{children}</main>
+        <div className={classes.root}>
+          {/* <DICTypography> */}
+          {/* <header className="mdc-toolbar mdc-toolbar--fixed fl-empty-layout__header"> */}
+
+          {/* </header> */}
+          {/* <aside className="mdc-drawer mdc-drawer--temporary mdc-drawer--open mdc-drawer--animating"> */}
+          {/* </aside> */}
+
+          {/* </DICTypography> */}
+        </div>
+        <div className="mdc-layout-grid">footer</div>
+      </React.Fragment>
     );
   }
 }
@@ -114,4 +114,4 @@ NavigationLayout.defaultProps = {};
 
 NavigationLayout.displayName = 'NavigationLayout';
 
-export default withRouter(withStyles(styles)(NavigationLayout));
+export default withStyles(styles)(NavigationLayout);
