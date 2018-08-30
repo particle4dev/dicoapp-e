@@ -43,13 +43,13 @@ class Passphrase extends Component<Props, State> {
     const { showPassword } = this.state;
 
     return (
-      <FormControl fullWidth disable={loading} className={className}>
+      <FormControl disabled={loading} fullWidth className={className}>
         <InputLabel htmlFor="login-adornment-passphrase">Passphrase</InputLabel>
         <Input
+          fullWidth
           id="login-adornment-passphrase"
           type={showPassword ? 'text' : 'password'}
           value={passphrase}
-          fullWidth
           onChange={onChange}
           endAdornment={
             <InputAdornment position="end">
