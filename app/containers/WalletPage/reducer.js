@@ -13,7 +13,7 @@ const initialState = fromJS({
   transactions: []
 });
 
-function appReducer(state = initialState, { type, payload, error }) {
+function walletReducer(state = initialState, { type, payload, error }) {
   switch (type) {
     case LOAD_WALLET:
       return state.set('loading', true).set('error', false);
@@ -28,4 +28,4 @@ function appReducer(state = initialState, { type, payload, error }) {
   }
 }
 
-export default appReducer;
+export default walletReducer;
