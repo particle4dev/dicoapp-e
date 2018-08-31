@@ -20,7 +20,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import routes from '../../constants/routes.json';
 import { EmptyLayout } from '../Layout';
-import { generateSeed, generateWif, clipboardCopy } from './utils';
+import { generateSeed, clipboardCopy } from './utils';
+// import { generateSeed,generateWif, clipboardCopy } from './utils';
 
 const styles = () => ({
   loginContainer: {
@@ -134,7 +135,6 @@ class SeedPage extends Component<Props, State> {
 
   constructor(props) {
     super(props);
-    // Don't call this.setState() here!
     this.state = {
       openSnackbar: false,
       passphrase: '',
@@ -153,11 +153,8 @@ class SeedPage extends Component<Props, State> {
 
   handleGenerateSeed = (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
-    const passphrase = generateSeed();
-    const wif = generateWif(passphrase);
     this.setState({
-      passphrase,
-      wif
+      passphrase: generateSeed()
     });
   };
 
@@ -196,6 +193,13 @@ class SeedPage extends Component<Props, State> {
     }
     evt.target.focus();
   };
+
+  // generateWtf = (evt: SyntheticInputEvent<>) => {
+  //   onChange
+  //   const { passphrase } = this.props;
+  //   const wif = generateWif(passphrase);
+
+  // }
 
   render() {
     debug('render');
@@ -273,11 +277,9 @@ class SeedPage extends Component<Props, State> {
                     Copy Seed to clipboard
                   </Button>
                 </div>
-                <ExpansionPanel>
+                <ExpansionPanel expanded>
                   <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography className={classes.heading}>
-                      Reveal private WIF key
-                    </Typography>
+                    <Typography>Reveal private WIF key</Typography>
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
                     <Typography>{wif}</Typography>
