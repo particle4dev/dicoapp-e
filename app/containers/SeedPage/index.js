@@ -19,7 +19,7 @@ import reducer from './reducer';
 import saga from './saga';
 import { EmptyLayout } from '../Layout';
 import Passphrase from './components/Passphrase';
-// import Wif from './components/Wif';
+import Wif from './components/Wif';
 import { APP_STATE_NAME } from './constants';
 import routes from '../../constants/routes.json';
 
@@ -183,7 +183,7 @@ class SeedPage extends Component<Props, State> {
                   handleCopySuccessfully={this.handleCopySuccessfully}
                   handleCopyFailed={this.handleCopyFailed}
                 />
-                {/* <Wif /> */}
+                <Wif />
               </CardContent>
               <Button
                 fullWidth
