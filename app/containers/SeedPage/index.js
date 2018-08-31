@@ -12,16 +12,16 @@ import IconButton from '@material-ui/core/IconButton';
 
 import Snackbar from '@material-ui/core/Snackbar';
 import CloseIcon from '@material-ui/icons/Close';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import routes from '../../constants/routes.json';
+import injectReducer from '../../utils/inject-reducer';
+import injectSaga from '../../utils/inject-saga';
+import reducer from './reducer';
+import saga from './saga';
 import { EmptyLayout } from '../Layout';
-import { generateSeed, clipboardCopy } from './utils';
-// import { generateSeed,generateWif, clipboardCopy } from './utils';
+import Passphrase from './components/Passphrase';
+// import Wif from './components/Wif';
+import { APP_STATE_NAME } from './constants';
+import routes from '../../constants/routes.json';
 
 const styles = () => ({
   loginContainer: {
@@ -77,39 +77,6 @@ const styles = () => ({
 
   textCenter: {
     textAlign: 'center'
-  },
-
-  well: {
-    borderRadius: 0,
-    backgroundColor: '#f7f7f7',
-    height: 80,
-    cursor: 'pointer',
-
-    // '&:hover': {
-    //   borderRadius: 0,
-    //   backgroundColor: '#6a6a6a',
-    //   color: '#fff'
-    // },
-
-    '& p': {
-      padding: '20px'
-    }
-  },
-
-  copyIcon: {
-    float: 'right',
-    marginTop: 5,
-    marginRight: 5
-  },
-
-  buttonAction: {
-    float: 'left',
-    marginRight: 10
-  },
-
-  actions: {
-    position: 'relative',
-    overflow: 'auto'
   }
 });
 
@@ -124,10 +91,7 @@ type Props = {
 
 type State = {
   openSnackbar: boolean,
-  messsageSnackbar: string,
-  passphrase: string,
-  wif: string,
-  supportedCopyCommandSupported: boolean
+  messsageSnackbar: string
 };
 
 class SeedPage extends Component<Props, State> {
@@ -137,10 +101,6 @@ class SeedPage extends Component<Props, State> {
     super(props);
     this.state = {
       openSnackbar: false,
-      passphrase: '',
-      wif: '',
-      supportedCopyCommandSupported:
-        document && document.queryCommandSupported('copy'),
       messsageSnackbar: ''
     };
   }
@@ -149,13 +109,6 @@ class SeedPage extends Component<Props, State> {
     evt.preventDefault();
     const { history } = this.props;
     history.push(routes.LOGIN);
-  };
-
-  handleGenerateSeed = (evt: SyntheticInputEvent<>) => {
-    evt.preventDefault();
-    this.setState({
-      passphrase: generateSeed()
-    });
   };
 
   handleCopySuccessfully = () => {
@@ -182,18 +135,6 @@ class SeedPage extends Component<Props, State> {
     });
   };
 
-  copySeedToClipboard = async (evt: SyntheticInputEvent<>) => {
-    evt.preventDefault();
-    const { passphrase } = this.state;
-    const success = clipboardCopy(passphrase);
-    if (success) {
-      this.handleCopySuccessfully();
-    } else {
-      this.handleCopyFailed();
-    }
-    evt.target.focus();
-  };
-
   // generateWtf = (evt: SyntheticInputEvent<>) => {
   //   onChange
   //   const { passphrase } = this.props;
@@ -204,13 +145,7 @@ class SeedPage extends Component<Props, State> {
   render() {
     debug('render');
     const { classes } = this.props;
-    const {
-      openSnackbar,
-      passphrase,
-      wif,
-      supportedCopyCommandSupported,
-      messsageSnackbar
-    } = this.state;
+    const { openSnackbar, messsageSnackbar } = this.state;
     return (
       <EmptyLayout>
         <div className={classes.loginContainer}>
@@ -244,53 +179,11 @@ class SeedPage extends Component<Props, State> {
                 >
                   Seed (click to copy)
                 </Typography>
-                <div className={classNames(classes.well, classes.item)}>
-                  {supportedCopyCommandSupported && (
-                    <IconButton
-                      disabled={passphrase === ''}
-                      className={classes.copyIcon}
-                      aria-label="Copy"
-                      onClick={this.copySeedToClipboard}
-                    >
-                      <FileCopyIcon />
-                    </IconButton>
-                  )}
-                  <p className={classes.seedText}>{passphrase}</p>
-                </div>
-                <div className={classNames(classes.actions, classes.item)}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    className={classes.buttonAction}
-                    onClick={this.handleGenerateSeed}
-                  >
-                    Generate
-                  </Button>
-                  <Button
-                    disabled={passphrase === ''}
-                    size="small"
-                    variant="outlined"
-                    color="primary"
-                    className={classes.buttonAction}
-                    onClick={this.copySeedToClipboard}
-                  >
-                    Copy Seed to clipboard
-                  </Button>
-                </div>
-                <ExpansionPanel expanded>
-                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>Reveal private WIF key</Typography>
-                  </ExpansionPanelSummary>
-                  <ExpansionPanelDetails>
-                    <Typography>{wif}</Typography>
-                    {wif &&
-                      supportedCopyCommandSupported && (
-                        <IconButton aria-label="Copy">
-                          <FileCopyIcon />
-                        </IconButton>
-                      )}
-                  </ExpansionPanelDetails>
-                </ExpansionPanel>
+                <Passphrase
+                  handleCopySuccessfully={this.handleCopySuccessfully}
+                  handleCopyFailed={this.handleCopyFailed}
+                />
+                {/* <Wif /> */}
               </CardContent>
               <Button
                 fullWidth
@@ -329,6 +222,8 @@ class SeedPage extends Component<Props, State> {
     );
   }
 }
+const withReducer = injectReducer({ key: APP_STATE_NAME, reducer });
+const withSaga = injectSaga({ key: APP_STATE_NAME, saga });
 
 const withConnect = connect(
   null,
@@ -336,6 +231,8 @@ const withConnect = connect(
 );
 
 export default compose(
+  withReducer,
+  withSaga,
   withConnect,
   withStyles(styles)
 )(SeedPage);
