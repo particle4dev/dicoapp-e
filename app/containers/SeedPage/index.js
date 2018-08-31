@@ -73,10 +73,6 @@ const styles = () => ({
 
   textLeft: {
     textAlign: 'left'
-  },
-
-  textCenter: {
-    textAlign: 'center'
   }
 });
 
