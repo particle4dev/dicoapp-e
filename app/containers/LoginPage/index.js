@@ -146,9 +146,7 @@ class HomePage extends Component<Props, State> {
   gotoSeedPage = (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
     const { history } = this.props;
-    setTimeout(() => {
-      history.push(routes.SEED);
-    }, 150);
+    history.push(routes.SEED);
   };
 
   render() {

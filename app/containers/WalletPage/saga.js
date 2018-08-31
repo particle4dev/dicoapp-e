@@ -63,11 +63,10 @@ export function* loadWalletProcess() {
         // eslint-disable-next-line arrow-body-style
       })
       .map(e => processTransactionsData(e.data, e.coin))
-      .reduce((a, b) => {
-        return a.concat(b);
-      }, []);
+      .reduce((a, b) => a.concat(b), []);
     return yield put(loadWalletSuccess(data));
   } catch (err) {
+    // FIXME: handling error
     console.log('123', err);
   }
 }
