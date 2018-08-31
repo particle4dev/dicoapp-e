@@ -183,7 +183,10 @@ class SeedPage extends Component<Props, State> {
                   handleCopySuccessfully={this.handleCopySuccessfully}
                   handleCopyFailed={this.handleCopyFailed}
                 />
-                <Wif />
+                <Wif
+                  handleCopySuccessfully={this.handleCopySuccessfully}
+                  handleCopyFailed={this.handleCopyFailed}
+                />
               </CardContent>
               <Button
                 fullWidth

@@ -13,20 +13,44 @@ import IconButton from '@material-ui/core/IconButton';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import { openWifExpansion, closeWifExpansion } from '../actions';
 import { makeSelectWif, makeSelectWifExpansion } from '../selectors';
+import { clipboardCopy } from '../utils';
 
-const styles = () => ({});
+const styles = () => ({
+  wifContainer: {
+    '-ms-box-orient': 'horizontal',
+    // display: '-webkit-box',
+    // display: '-moz-box',
+    // display: '-ms-flexbox',
+    // display: '-moz-flex',
+    // display: '-webkit-flex',
+    display: 'flex',
+    '-webkit-justify-content': 'space-around',
+    'justify-content': 'space-around',
+    '-webkit-flex-flow': 'row wrap',
+    'flex-flow': 'row wrap',
+    '-webkit-align-items': 'stretch',
+    'align-items': 'stretch'
+  },
+  wifContent: {
+    padding: '13px 0'
+  }
+});
 
 const debug = require('debug')('dicoapp:containers:SeedPage:Wif');
 
 type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
-  // classes: Object,
+  classes: Object,
   wif: string,
   open: boolean,
   // eslint-disable-next-line flowtype/no-weak-types
   dispatchOpenWifExpansion: Function,
   // eslint-disable-next-line flowtype/no-weak-types
-  dispatchCloseWifExpansion: Function
+  dispatchCloseWifExpansion: Function,
+  // eslint-disable-next-line flowtype/no-weak-types
+  handleCopyFailed: Function,
+  // eslint-disable-next-line flowtype/no-weak-types
+  handleCopySuccessfully: Function
 };
 
 type State = {
@@ -44,6 +68,18 @@ class Wif extends Component<Props, State> {
     };
   }
 
+  copyWifToClipboard = async (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    const { wif, handleCopySuccessfully, handleCopyFailed } = this.props;
+    const success = clipboardCopy(wif);
+    if (success) {
+      handleCopySuccessfully();
+    } else {
+      handleCopyFailed();
+    }
+    evt.target.focus();
+  };
+
   onChange = (evt: SyntheticInputEvent<>, expanded: boolean) => {
     evt.preventDefault();
     const { dispatchOpenWifExpansion, dispatchCloseWifExpansion } = this.props;
@@ -56,19 +92,18 @@ class Wif extends Component<Props, State> {
 
   render() {
     debug('render');
-    // const { classes, wif, open } = this.props;
-    const { wif, open } = this.props;
+    const { classes, wif, open } = this.props;
     const { supportedCopyCommandSupported } = this.state;
     return (
       <ExpansionPanel expanded={open} onChange={this.onChange}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <Typography>Reveal private WIF key</Typography>
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <Typography>{wif}</Typography>
+        <ExpansionPanelDetails className={classes.wifContainer}>
+          <Typography className={classes.wifContent}>{wif}</Typography>
           {wif &&
             supportedCopyCommandSupported && (
-              <IconButton aria-label="Copy">
+              <IconButton aria-label="Copy" onClick={this.copyWifToClipboard}>
                 <FileCopyIcon />
               </IconButton>
             )}
