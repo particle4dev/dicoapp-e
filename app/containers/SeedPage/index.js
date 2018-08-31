@@ -12,10 +12,15 @@ import IconButton from '@material-ui/core/IconButton';
 
 import Snackbar from '@material-ui/core/Snackbar';
 import CloseIcon from '@material-ui/icons/Close';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import routes from '../../constants/routes.json';
 import { EmptyLayout } from '../Layout';
+import { generateSeed, generateWif, clipboardCopy } from './utils';
 
 const styles = () => ({
   loginContainer: {
@@ -28,8 +33,8 @@ const styles = () => ({
   },
 
   center: {
-    paddingBottom: 67,
-    paddingTop: 48,
+    // paddingBottom: 47,
+    paddingTop: 28,
     minHeight: 350,
     left: '50%',
     position: 'absolute',
@@ -37,21 +42,21 @@ const styles = () => ({
   },
 
   card: {
-    width: 600
+    width: 780
   },
 
   content: {
-    width: 558,
+    width: 758,
     margin: '0px auto',
     textAlign: 'center'
   },
 
   bottom30: {
-    marginBottom: 30
+    marginBottom: 20
   },
 
   item: {
-    marginBottom: 15
+    marginBottom: 12
   },
 
   description: {
@@ -76,7 +81,7 @@ const styles = () => ({
   well: {
     borderRadius: 0,
     backgroundColor: '#f7f7f7',
-    height: 110,
+    height: 80,
     cursor: 'pointer',
 
     // '&:hover': {
@@ -86,19 +91,24 @@ const styles = () => ({
     // },
 
     '& p': {
-      padding: '25px 15px'
+      padding: '20px'
     }
   },
 
   copyIcon: {
     float: 'right',
-    marginTop: 15,
-    marginRight: 15
+    marginTop: 5,
+    marginRight: 5
   },
 
   buttonAction: {
     float: 'left',
     marginRight: 10
+  },
+
+  actions: {
+    position: 'relative',
+    overflow: 'auto'
   }
 });
 
@@ -112,15 +122,28 @@ type Props = {
 };
 
 type State = {
-  openSnackbar: boolean
+  openSnackbar: boolean,
+  messsageSnackbar: string,
+  passphrase: string,
+  wif: string,
+  supportedCopyCommandSupported: boolean
 };
 
 class SeedPage extends Component<Props, State> {
   props: Props;
 
-  state = {
-    openSnackbar: true
-  };
+  constructor(props) {
+    super(props);
+    // Don't call this.setState() here!
+    this.state = {
+      openSnackbar: false,
+      passphrase: '',
+      wif: '',
+      supportedCopyCommandSupported:
+        document && document.queryCommandSupported('copy'),
+      messsageSnackbar: ''
+    };
+  }
 
   gotoLoginPage = (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
@@ -128,22 +151,62 @@ class SeedPage extends Component<Props, State> {
     history.push(routes.LOGIN);
   };
 
-  handleClick = () => {
-    this.setState({ openSnackbar: true });
+  handleGenerateSeed = (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    const passphrase = generateSeed();
+    const wif = generateWif(passphrase);
+    this.setState({
+      passphrase,
+      wif
+    });
   };
 
-  handleClose = (event, reason) => {
+  handleCopySuccessfully = () => {
+    this.setState({
+      openSnackbar: true,
+      messsageSnackbar: 'Copied!'
+    });
+  };
+
+  handleCopyFailed = () => {
+    this.setState({
+      openSnackbar: true,
+      messsageSnackbar: 'Failed to copy file from text!'
+    });
+  };
+
+  handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
 
-    this.setState({ openSnackbar: false });
+    this.setState({
+      openSnackbar: false
+    });
+  };
+
+  copySeedToClipboard = async (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    const { passphrase } = this.state;
+    const success = clipboardCopy(passphrase);
+    if (success) {
+      this.handleCopySuccessfully();
+    } else {
+      this.handleCopyFailed();
+    }
+    evt.target.focus();
   };
 
   render() {
     debug('render');
     const { classes } = this.props;
-    const { openSnackbar } = this.state;
+    const {
+      openSnackbar,
+      passphrase,
+      wif,
+      supportedCopyCommandSupported,
+      messsageSnackbar
+    } = this.state;
     return (
       <EmptyLayout>
         <div className={classes.loginContainer}>
@@ -178,37 +241,54 @@ class SeedPage extends Component<Props, State> {
                   Seed (click to copy)
                 </Typography>
                 <div className={classNames(classes.well, classes.item)}>
-                  {document.queryCommandSupported('copy') && (
-                    <IconButton className={classes.copyIcon} aria-label="Copy">
+                  {supportedCopyCommandSupported && (
+                    <IconButton
+                      disabled={passphrase === ''}
+                      className={classes.copyIcon}
+                      aria-label="Copy"
+                      onClick={this.copySeedToClipboard}
+                    >
                       <FileCopyIcon />
                     </IconButton>
                   )}
-                  {/* <p className={classes.seedText}></p> */}
+                  <p className={classes.seedText}>{passphrase}</p>
                 </div>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  className={classes.buttonAction}
-                  onClick={this.handleClick}
-                >
-                  Generate
-                </Button>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  color="primary"
-                  className={classes.buttonAction}
-                >
-                  Copy Seed to clipboard
-                </Button>
-                <Button
-                  size="small"
-                  variant="contained"
-                  color="secondary"
-                  className={classes.buttonAction}
-                >
-                  Reveal private WIF key
-                </Button>
+                <div className={classNames(classes.actions, classes.item)}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    className={classes.buttonAction}
+                    onClick={this.handleGenerateSeed}
+                  >
+                    Generate
+                  </Button>
+                  <Button
+                    disabled={passphrase === ''}
+                    size="small"
+                    variant="outlined"
+                    color="primary"
+                    className={classes.buttonAction}
+                    onClick={this.copySeedToClipboard}
+                  >
+                    Copy Seed to clipboard
+                  </Button>
+                </div>
+                <ExpansionPanel>
+                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography className={classes.heading}>
+                      Reveal private WIF key
+                    </Typography>
+                  </ExpansionPanelSummary>
+                  <ExpansionPanelDetails>
+                    <Typography>{wif}</Typography>
+                    {wif &&
+                      supportedCopyCommandSupported && (
+                        <IconButton aria-label="Copy">
+                          <FileCopyIcon />
+                        </IconButton>
+                      )}
+                  </ExpansionPanelDetails>
+                </ExpansionPanel>
               </CardContent>
               <Button
                 fullWidth
@@ -227,18 +307,17 @@ class SeedPage extends Component<Props, State> {
           }}
           open={openSnackbar}
           autoHideDuration={2000}
-          onClose={this.handleClose}
+          onClose={this.handleCloseSnackbar}
           ContentProps={{
             'aria-describedby': 'message-id'
           }}
-          message={<span id="message-id">Copied!</span>}
+          message={<span id="message-id">{messsageSnackbar}</span>}
           action={[
             <IconButton
               key="close"
               aria-label="Close"
               color="inherit"
-              // className={classes.close}
-              onClick={this.handleClose}
+              onClick={this.handleCloseSnackbar}
             >
               <CloseIcon />
             </IconButton>
