@@ -1,14 +1,11 @@
 // @flow
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { createStructuredSelector } from 'reselect';
 import QRCode from 'qrcode.react';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
 
 import AppBar from '@material-ui/core/AppBar';
@@ -21,22 +18,12 @@ import { NavigationLayout } from '../Layout';
 import Transactions from './components/Transactions';
 import reducer from './reducer';
 import saga from './saga';
-import { makeSelectLoading, makeSelectTransactions } from './selectors';
 import { APP_STATE_NAME } from './constants';
-import { loadWallet } from './actions';
 
 type Props = {
-  loading: boolean,
   // eslint-disable-next-line flowtype/no-weak-types
-  classes: Object,
-  // eslint-disable-next-line flowtype/no-weak-types
-  transactions: Object,
-  // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadWallet: Function
+  classes: Object
 };
-
-let idInterval = null;
-const LOAD_TRANSACTION_TIME = 90000;
 
 // const styles = theme => ({
 const styles = () => ({
@@ -64,30 +51,10 @@ const debug = require('debug')('dicoapp:containers:WalletPage');
 class WalletPage extends Component<Props> {
   props: Props;
 
-  componentDidMount = () => {
-    debug('watch transactions');
-
-    const { dispatchLoadWallet } = this.props;
-    if (idInterval) {
-      clearInterval(idInterval);
-      idInterval = null;
-    }
-    idInterval = setInterval(() => {
-      dispatchLoadWallet();
-    }, LOAD_TRANSACTION_TIME);
-
-    dispatchLoadWallet();
-  };
-
-  componentWillUnmount = () => {
-    if (idInterval) {
-      clearInterval(idInterval);
-      idInterval = null;
-    }
-  };
-
   render() {
-    const { loading, transactions, classes } = this.props;
+    debug(`render`);
+
+    const { classes } = this.props;
 
     return (
       <NavigationLayout>
@@ -98,7 +65,6 @@ class WalletPage extends Component<Props> {
             </Typography>
           </Toolbar>
         </AppBar>
-        {loading && <LinearProgress />}
         <Grid container spacing={0} className={classes.container}>
           <Grid item xs={12} className={classes.containerSection}>
             <Card>
@@ -135,7 +101,7 @@ class WalletPage extends Component<Props> {
           </Grid>
 
           <Grid item xs={12} className={classes.containerSection}>
-            <Transactions transactions={transactions} />
+            <Transactions />
           </Grid>
         </Grid>
       </NavigationLayout>
@@ -143,27 +109,11 @@ class WalletPage extends Component<Props> {
   }
 }
 
-export function mapDispatchToProps(dispatch) {
-  return {
-    dispatchLoadWallet: () => dispatch(loadWallet())
-  };
-}
-
-const mapStateToProps = createStructuredSelector({
-  loading: makeSelectLoading(),
-  transactions: makeSelectTransactions()
-});
-
 const withReducer = injectReducer({ key: APP_STATE_NAME, reducer });
 const withSaga = injectSaga({ key: APP_STATE_NAME, saga });
-const withConnect = connect(
-  mapStateToProps,
-  mapDispatchToProps
-);
 
 export default compose(
   withReducer,
   withSaga,
-  withConnect,
   withStyles(styles)
 )(WalletPage);
