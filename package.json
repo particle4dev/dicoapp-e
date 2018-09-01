@@ -23,7 +23,6 @@
     "lint-fix": "yarn --silent lint --fix; exit 0",
     "lint-styles": "stylelint app/*.css app/components/*.css --syntax scss",
     "lint-styles-fix": "stylefmt -r app/*.css app/components/*.css",
-    
     "test": "yarn lint && yarn flow && yarn build && yarn test && yarn test-e2e",
     "test:tdd": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js",
     "test:e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js e2e",
@@ -246,6 +245,7 @@
     "lodash": "^4.17.10",
     "node-fetch": "^2.2.0",
     "normalizr": "^3.2.4",
+    "qrcode.react": "^0.8.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-hot-loader": "^4.3.4",
