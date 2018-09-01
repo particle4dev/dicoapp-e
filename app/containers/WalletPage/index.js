@@ -3,13 +3,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import QRCode from 'qrcode.react';
 import { withStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Typography from '@material-ui/core/Typography';
 
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
-// import routes from '../../constants/routes.json';
 import { NavigationLayout } from '../Layout';
 
 import Transactions from './components/Transactions';
@@ -20,8 +23,13 @@ import { APP_STATE_NAME } from './constants';
 import { loadWallet } from './actions';
 
 type Props = {
-  loading: boolean
-  // transactions: array,
+  loading: boolean,
+  // eslint-disable-next-line flowtype/no-weak-types
+  classes: Object,
+  // eslint-disable-next-line flowtype/no-weak-types
+  transactions: Object,
+  // eslint-disable-next-line flowtype/no-weak-types
+  dispatchLoadWallet: Function
 };
 
 let idInterval = null;
@@ -29,6 +37,14 @@ const LOAD_TRANSACTION_TIME = 90000;
 
 // const styles = theme => ({
 const styles = () => ({
+  container: {
+    padding: 24
+  },
+
+  containerSection: {
+    paddingBottom: 30
+  },
+
   table: {
     maxHeight: 450
   },
@@ -46,10 +62,9 @@ class WalletPage extends Component<Props> {
   props: Props;
 
   componentDidMount = () => {
-    // eslint-disable-next-line react/prop-types
-    const { dispatchLoadWallet } = this.props;
-
     debug('watch transactions');
+
+    const { dispatchLoadWallet } = this.props;
     if (idInterval) {
       clearInterval(idInterval);
       idInterval = null;
@@ -57,7 +72,7 @@ class WalletPage extends Component<Props> {
     idInterval = setInterval(() => {
       dispatchLoadWallet();
     }, LOAD_TRANSACTION_TIME);
-    //
+
     dispatchLoadWallet();
   };
 
@@ -69,17 +84,47 @@ class WalletPage extends Component<Props> {
   };
 
   render() {
-    // eslint-disable-next-line react/prop-types
     const { loading, transactions, classes } = this.props;
 
     return (
       <NavigationLayout>
         {loading && <LinearProgress />}
-        <Grid container spacing={0}>
-          <Grid item xs={3} className={classes.nav1}>
-            Grid item xs=3
+        <Grid container spacing={0} className={classes.container}>
+          <Grid item xs={12} className={classes.containerSection}>
+            <Card>
+              <CardContent>
+                <Typography variant="title" gutterBottom>
+                  Overview
+                </Typography>
+              </CardContent>
+            </Card>
           </Grid>
-          <Grid item xs={9} className={classes.nav2}>
+
+          <Grid item xs={12} className={classes.containerSection}>
+            <Card>
+              <CardContent>
+                <Typography variant="title" gutterBottom>
+                  Send
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} className={classes.containerSection}>
+            <Card>
+              <CardContent>
+                <Typography variant="title" gutterBottom>
+                  Receive
+                </Typography>
+                <Typography className={classes.pos} color="textSecondary">
+                  adjective
+                </Typography>
+                <QRCode value="http://facebook.github.io/react/" />
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} className={classes.containerSection}>
             <Transactions transactions={transactions} />
           </Grid>
         </Grid>
