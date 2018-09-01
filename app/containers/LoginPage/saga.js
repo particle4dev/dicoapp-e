@@ -22,7 +22,6 @@ export function* authorize(passphrase) {
       results.push(api.addServer(servers[i]));
     }
     yield Promise.all(results);
-
     console.log(
       'GLXT',
       yield api.getBalance({
