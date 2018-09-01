@@ -1,26 +1,29 @@
 import {
-  LOAD_WALLET,
-  LOAD_WALLET_SUCCESS,
-  LOAD_WALLET_ERROR
+  LOAD_TRANSACTIONS,
+  LOAD_TRANSACTIONS_SUCCESS,
+  LOAD_TRANSACTIONS_ERROR
 } from './constants';
 
-export function loadWallet() {
+export function loadTransactions() {
   return {
-    type: LOAD_WALLET
+    type: LOAD_TRANSACTIONS
   };
 }
 
-export function loadWalletSuccess(transactions) {
+export function loadTransactionsSuccess(transactions) {
   return {
-    type: LOAD_WALLET_SUCCESS,
+    type: LOAD_TRANSACTIONS_SUCCESS,
     payload: {
       transactions
     }
   };
 }
 
-export function loadWalletError() {
+export function loadTransactionsError(message) {
   return {
-    type: LOAD_WALLET_ERROR
+    type: LOAD_TRANSACTIONS_ERROR,
+    error: {
+      message
+    }
   };
 }

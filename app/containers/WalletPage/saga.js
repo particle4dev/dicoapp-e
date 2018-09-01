@@ -1,9 +1,9 @@
 import isArray from 'lodash/isArray';
 import { put, select, takeLatest } from 'redux-saga/effects';
-import { LOAD_WALLET } from './constants';
+import { LOAD_TRANSACTIONS } from './constants';
 import { makeSelectCurrentUser } from '../App/selectors';
 import api from '../../utils/barter-dex-api';
-import { loadWalletSuccess } from './actions';
+import { loadTransactionsSuccess, loadTransactionsError } from './actions';
 
 const debug = require('debug')('dicoapp:containers:WalletPage:saga');
 
@@ -23,13 +23,16 @@ export function processTransactionsData(data, coin) {
   return result;
 }
 
-export function* loadWalletProcess() {
+let i = 0;
+
+export function* loadTransactionsProcess() {
   try {
     // load user data
     const user = yield select(makeSelectCurrentUser());
-    if (!user) {
-      // NOTE: what if user is not found
-      console.log('FIXME: if user is not logged in');
+    // if (!user) {
+    i += 1;
+    if (i % 2 === 0) {
+      throw new Error('not found user');
     }
     const userpass = user.get('userpass');
     const coins = user.get('coins');
@@ -64,10 +67,9 @@ export function* loadWalletProcess() {
       })
       .map(e => processTransactionsData(e.data, e.coin))
       .reduce((a, b) => a.concat(b), []);
-    return yield put(loadWalletSuccess(data));
+    return yield put(loadTransactionsSuccess(data));
   } catch (err) {
-    // FIXME: handling error
-    console.log('123', err);
+    return yield put(loadTransactionsError(err.message));
   }
 }
 
@@ -75,5 +77,5 @@ export function* loadWalletProcess() {
  * Root saga manages watcher lifecycle
  */
 export default function* walletData() {
-  yield takeLatest(LOAD_WALLET, loadWalletProcess);
+  yield takeLatest(LOAD_TRANSACTIONS, loadTransactionsProcess);
 }

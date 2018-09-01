@@ -14,9 +14,14 @@ import TableRow from '@material-ui/core/TableRow';
 import Card from '@material-ui/core/Card';
 import IconButton from '@material-ui/core/IconButton';
 import CardContent from '@material-ui/core/CardContent';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
 import CachedIcon from '@material-ui/icons/Cached';
-import { makeSelectLoading, makeSelectTransactions } from '../selectors';
-import { loadWallet } from '../actions';
+import {
+  makeSelectLoading,
+  makeSelectTransactions,
+  makeSelectError
+} from '../selectors';
+import { loadTransactions } from '../actions';
 
 const debug = require('debug')('dicoapp:containers:WalletPage:Transactions');
 
@@ -48,11 +53,13 @@ const LOAD_TRANSACTION_TIME = 90000;
 type Props = {
   loading: boolean,
   // eslint-disable-next-line flowtype/no-weak-types
+  error: boolean | Object,
+  // eslint-disable-next-line flowtype/no-weak-types
   classes: Object,
   // eslint-disable-next-line flowtype/no-weak-types
   transactions: Object,
   // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadWallet: Function
+  dispatchLoadTransactions: Function
 };
 
 type State = {};
@@ -63,16 +70,16 @@ class Transactions extends Component<Props, State> {
   componentDidMount = () => {
     debug('watch transactions');
 
-    const { dispatchLoadWallet } = this.props;
+    const { dispatchLoadTransactions } = this.props;
     if (idInterval) {
       clearInterval(idInterval);
       idInterval = null;
     }
     idInterval = setInterval(() => {
-      dispatchLoadWallet();
+      dispatchLoadTransactions();
     }, LOAD_TRANSACTION_TIME);
 
-    dispatchLoadWallet();
+    dispatchLoadTransactions();
   };
 
   componentWillUnmount = () => {
@@ -84,14 +91,14 @@ class Transactions extends Component<Props, State> {
 
   onClickReloadTranstactions = (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
-    const { dispatchLoadWallet } = this.props;
-    dispatchLoadWallet();
+    const { dispatchLoadTransactions } = this.props;
+    dispatchLoadTransactions();
   };
 
   render() {
     debug(`render`);
 
-    const { loading, classes, transactions } = this.props;
+    const { loading, classes, transactions, error } = this.props;
 
     return (
       <React.Fragment>
@@ -109,6 +116,13 @@ class Transactions extends Component<Props, State> {
                 <CachedIcon />
               </IconButton>
             </div>
+            {error && (
+              <SnackbarContent
+                // className={classNames(classes[variant], className)}
+                aria-describedby="client-snackbar"
+                message={error.message}
+              />
+            )}
             <Table className={classes.table}>
               <TableHead>
                 <TableRow>
@@ -156,12 +170,13 @@ Transactions.displayName = 'Transactions';
 
 export function mapDispatchToProps(dispatch) {
   return {
-    dispatchLoadWallet: () => dispatch(loadWallet())
+    dispatchLoadTransactions: () => dispatch(loadTransactions())
   };
 }
 
 const mapStateToProps = createStructuredSelector({
   loading: makeSelectLoading(),
+  error: makeSelectError(),
   transactions: makeSelectTransactions()
 });
 
