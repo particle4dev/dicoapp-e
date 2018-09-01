@@ -6,6 +6,8 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
 
 import { NavigationLayout } from '../Layout';
 import routes from '../../constants/routes.json';
@@ -33,6 +35,13 @@ class BuyPage extends Component<Props> {
 
     return (
       <NavigationLayout>
+        <AppBar position="static" color="default">
+          <Toolbar>
+            <Typography variant="title" color="inherit">
+              Buy
+            </Typography>
+          </Toolbar>
+        </AppBar>
         <Grid container spacing={0} className={classes.container}>
           <Grid item xs={12} className={classes.containerSection}>
             <Card>

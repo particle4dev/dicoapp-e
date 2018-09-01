@@ -56,6 +56,10 @@ const styles = theme => ({
   },
   docked: {
     height: '100%'
+  },
+
+  logoButton: {
+    height: 'auto'
   }
 });
 
@@ -118,7 +122,10 @@ class DICDrawer extends Component<Props, State> {
         anchor={anchor}
       >
         <div className={classes.toolbar}>
-          <IconButton onClick={this.gotoHomePage}>
+          <IconButton
+            className={classes.logoButton}
+            onClick={this.gotoHomePage}
+          >
             <HomeIcon />
           </IconButton>
         </div>

@@ -11,6 +11,9 @@ import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
 
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
 import { NavigationLayout } from '../Layout';
@@ -88,6 +91,13 @@ class WalletPage extends Component<Props> {
 
     return (
       <NavigationLayout>
+        <AppBar position="static" color="default">
+          <Toolbar>
+            <Typography variant="title" color="inherit">
+              Wallet
+            </Typography>
+          </Toolbar>
+        </AppBar>
         {loading && <LinearProgress />}
         <Grid container spacing={0} className={classes.container}>
           <Grid item xs={12} className={classes.containerSection}>
