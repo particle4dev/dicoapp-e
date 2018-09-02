@@ -8,21 +8,27 @@ import {
 
 // The initial state of the App
 const initialState = fromJS({
-  loading: false,
-  error: false,
-  transactions: []
+  transactions: {
+    loading: false,
+    error: false,
+    list: []
+  }
 });
 
 function walletReducer(state = initialState, { type, payload, error }) {
   switch (type) {
     case LOAD_TRANSACTIONS:
-      return state.set('loading', true).set('error', false);
+      return state
+        .setIn(['transactions', 'loading'], true)
+        .setIn(['transactions', 'error'], false);
     case LOAD_TRANSACTIONS_SUCCESS:
       return state
-        .set('loading', false)
-        .set('transactions', fromJS(payload.transactions));
+        .setIn(['transactions', 'loading'], false)
+        .setIn(['transactions', 'list'], fromJS(payload.transactions));
     case LOAD_TRANSACTIONS_ERROR:
-      return state.set('error', error).set('loading', false);
+      return state
+        .setIn(['transactions', 'error'], error)
+        .setIn(['transactions', 'loading'], false);
     default:
       return state;
   }

@@ -70,6 +70,14 @@ export function* authorize(passphrase) {
         address: 'LbS4NWacqe5wyqvbryiZH9e4xoRHk9WNUJ'
       })
     );
+    console.log(
+      'COQUI',
+      yield api.getBalance({
+        userpass: data.userpass,
+        coin: 'COQUI',
+        address: 'LbS4NWacqe5wyqvbryiZH9e4xoRHk9WNUJ'
+      })
+    );
     return data;
   } catch (err) {
     yield put(

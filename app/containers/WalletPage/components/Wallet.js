@@ -32,14 +32,9 @@ const styles = () => ({
   details: {
     display: 'block'
   },
-  containerSection: {
-    paddingBottom: 30
-  },
-
   hr: {
     marginBottom: 20
   },
-
   formItem: {
     margin: '0 0 17px 0',
     position: 'relative',
