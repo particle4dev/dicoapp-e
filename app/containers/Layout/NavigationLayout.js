@@ -3,11 +3,7 @@ import PropTypes from 'prop-types';
 // import { remote } from 'electron';
 // import { setWindowBounds } from 'electron-util';
 import { withStyles } from '@material-ui/core/styles';
-
-// import AppBar from '@material-ui/core/AppBar';
-// import Toolbar from '@material-ui/core/Toolbar';
 // import Typography from '@material-ui/core/Typography';
-// import Button from '@material-ui/core/Button';
 // import IconButton from '@material-ui/core/IconButton';
 // import MenuIcon from '@material-ui/icons/Menu';
 
@@ -30,14 +26,6 @@ const debug = require('debug')('dicoapp:containers:layout:NavigationLayout');
 // const drawerWidth = 240;
 
 const styles = theme => ({
-  root: {
-    flexGrow: 1,
-    zIndex: 1,
-    overflow: 'hidden',
-    position: 'relative',
-    display: 'flex'
-  },
-
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
@@ -45,10 +33,6 @@ const styles = theme => ({
     marginLeft: 72,
     // marginTop: 64,
     minHeight: '100%'
-  },
-
-  header: {
-    marginLeft: 72
   },
 
   dicoDrawer: {
@@ -79,28 +63,21 @@ class NavigationLayout extends Component {
 
     return (
       <React.Fragment>
-        {/* <header className={classes.header}>
-          <AppBar position="static" color="default">
-            <Toolbar>
-              <Button color="inherit">Login</Button>
-            </Toolbar>
-          </AppBar>
-        </header> */}
         <aside className={classes.dicoDrawer}>
           <DICDrawer />
         </aside>
         <main className={classes.content}>{children}</main>
-        <div className={classes.root}>
-          {/* <DICTypography> */}
-          {/* <header className="mdc-toolbar mdc-toolbar--fixed fl-empty-layout__header"> */}
+        {/* <div className={classes.root}> */}
+        {/* <DICTypography> */}
+        {/* <header className="mdc-toolbar mdc-toolbar--fixed fl-empty-layout__header"> */}
 
-          {/* </header> */}
-          {/* <aside className="mdc-drawer mdc-drawer--temporary mdc-drawer--open mdc-drawer--animating"> */}
-          {/* </aside> */}
+        {/* </header> */}
+        {/* <aside className="mdc-drawer mdc-drawer--temporary mdc-drawer--open mdc-drawer--animating"> */}
+        {/* </aside> */}
 
-          {/* </DICTypography> */}
-        </div>
-        <div className="mdc-layout-grid">footer</div>
+        {/* </DICTypography> */}
+        {/* </div> */}
+        {/* <div className="mdc-layout-grid">footer</div> */}
       </React.Fragment>
     );
   }

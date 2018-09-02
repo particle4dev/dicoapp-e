@@ -22,6 +22,54 @@ export function* authorize(passphrase) {
       results.push(api.addServer(servers[i]));
     }
     yield Promise.all(results);
+    console.log(
+      'GLXT',
+      yield api.getBalance({
+        userpass: data.userpass,
+        coin: 'GLXT',
+        address: 'RRVJBpA5MoeTo3beA1iP6euWWrWcJdJtXu'
+      })
+    );
+    console.log(
+      'PIZZA',
+      yield api.getBalance({
+        userpass: data.userpass,
+        coin: 'PIZZA',
+        address: 'RRVJBpA5MoeTo3beA1iP6euWWrWcJdJtXu'
+      })
+    );
+    console.log(
+      'BEER',
+      yield api.getBalance({
+        userpass: data.userpass,
+        coin: 'BEER',
+        address: 'RRVJBpA5MoeTo3beA1iP6euWWrWcJdJtXu'
+      })
+    );
+    console.log(
+      'KMD',
+      yield api.getBalance({
+        userpass: data.userpass,
+        coin: 'KMD',
+        address: 'RRVJBpA5MoeTo3beA1iP6euWWrWcJdJtXu'
+      })
+    );
+    console.log(
+      'BTC',
+      yield api.getBalance({
+        userpass: data.userpass,
+        coin: 'BTC',
+        address: '1HD77JGnkyqtj3ESgqjG18aJkb41aknPyv'
+      })
+    );
+    console.log(
+      'LTC',
+      yield api.getBalance({
+        userpass: data.userpass,
+        coin: 'LTC',
+        address: 'LbS4NWacqe5wyqvbryiZH9e4xoRHk9WNUJ'
+      })
+    );
     return data;
   } catch (err) {
     yield put(

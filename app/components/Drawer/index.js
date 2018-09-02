@@ -14,7 +14,7 @@ import IconButton from '@material-ui/core/IconButton';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
-import DashboardIcon from '@material-ui/icons/Dashboard';
+// import DashboardIcon from '@material-ui/icons/Dashboard';
 import LiveHelpIcon from '@material-ui/icons/LiveHelp';
 import HomeIcon from '@material-ui/icons/Home';
 import { withStyles } from '@material-ui/core/styles';
@@ -56,6 +56,10 @@ const styles = theme => ({
   },
   docked: {
     height: '100%'
+  },
+
+  logoButton: {
+    height: 'auto'
   }
 });
 
@@ -87,10 +91,10 @@ class DICDrawer extends Component<Props, State> {
     history.push(routes.WALLET);
   };
 
-  gotoDashboardPage = () => {
-    const { history } = this.props;
-    history.push(routes.DASHBOARD);
-  };
+  // gotoDashboardPage = () => {
+  //   const { history } = this.props;
+  //   history.push(routes.DASHBOARD);
+  // };
 
   gotoBuyPage = () => {
     const { history } = this.props;
@@ -118,18 +122,21 @@ class DICDrawer extends Component<Props, State> {
         anchor={anchor}
       >
         <div className={classes.toolbar}>
-          <IconButton onClick={this.gotoHomePage}>
+          <IconButton
+            className={classes.logoButton}
+            onClick={this.gotoHomePage}
+          >
             <HomeIcon />
           </IconButton>
         </div>
         <Divider />
         <List>
-          <ListItem button selected onClick={this.gotoDashboardPage}>
+          {/* <ListItem button selected onClick={this.gotoDashboardPage}>
             <ListItemIcon selected>
               <DashboardIcon />
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
-          </ListItem>
+          </ListItem> */}
           <ListItem button onClick={this.gotoWalletPage}>
             <ListItemIcon>
               <AccountBalanceWalletIcon />
@@ -142,15 +149,15 @@ class DICDrawer extends Component<Props, State> {
             </ListItemIcon>
             <ListItemText primary="Buy" />
           </ListItem>
-        </List>
-        <Divider />
-        <List>
           <ListItem button onClick={this.gotoHelpPage}>
             <ListItemIcon>
               <LiveHelpIcon />
             </ListItemIcon>
             <ListItemText primary="Help" />
           </ListItem>
+        </List>
+        <Divider />
+        <List>
           <ListItem button onClick={dispatchShowLogoutDialog}>
             <ListItemIcon>
               <PowerSettingsNewIcon />

@@ -15,7 +15,7 @@ import { fromJS } from 'immutable';
 import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR, LOGOUT } from './constants';
 
 // The initial state of the App
-const initialState = fromJS({
+export const initialState = fromJS({
   loading: false,
   error: false,
   currentUser: null
