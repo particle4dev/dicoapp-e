@@ -1,9 +1,14 @@
 import isArray from 'lodash/isArray';
 import { put, select, takeLatest } from 'redux-saga/effects';
-import { LOAD_TRANSACTIONS } from './constants';
+import { LOAD_TRANSACTIONS, LOAD_BALANCE } from './constants';
 import { makeSelectCurrentUser } from '../App/selectors';
 import api from '../../utils/barter-dex-api';
-import { loadTransactionsSuccess, loadTransactionsError } from './actions';
+import {
+  loadTransactionsSuccess,
+  loadTransactionsError,
+  loadBalanceSuccess,
+  loadBalanceError
+} from './actions';
 
 const debug = require('debug')('dicoapp:containers:WalletPage:saga');
 
@@ -63,9 +68,59 @@ export function* loadTransactionsProcess() {
       })
       .map(e => processTransactionsData(e.data, e.coin))
       .reduce((a, b) => a.concat(b), []);
+
     return yield put(loadTransactionsSuccess(data));
   } catch (err) {
     return yield put(loadTransactionsError(err.message));
+  }
+}
+
+export function* loadBalanceProcess() {
+  try {
+    // load user data
+    const user = yield select(makeSelectCurrentUser());
+    if (!user) {
+      throw new Error('not found user');
+    }
+    const userpass = user.get('userpass');
+    const coins = user.get('coins');
+    // eslint-disable-next-line arrow-body-style
+    const requests = coins.map(e => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const params = {
+            userpass,
+            coin: e.get('coin'),
+            address: e.get('smartaddress')
+          };
+          const data = await api.getBalance(params);
+          data.address = e.get('smartaddress');
+          return resolve(data);
+        } catch (err) {
+          return reject(err);
+        }
+      });
+    });
+
+    let data = yield Promise.all(requests);
+    data = data
+      .filter(e => {
+        const r = e.result === 'success';
+        if (!r) {
+          debug(`not found ${e.coin}`);
+        }
+        return r;
+        // eslint-disable-next-line arrow-body-style
+      })
+      .map(e => ({
+        address: e.address,
+        balance: e.balance,
+        coin: e.coin
+      }));
+
+    return yield put(loadBalanceSuccess(data));
+  } catch (err) {
+    return yield put(loadBalanceError(err.message));
   }
 }
 
@@ -74,4 +129,5 @@ export function* loadTransactionsProcess() {
  */
 export default function* walletData() {
   yield takeLatest(LOAD_TRANSACTIONS, loadTransactionsProcess);
+  yield takeLatest(LOAD_BALANCE, loadBalanceProcess);
 }

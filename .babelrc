@@ -10,7 +10,7 @@
     "stage-0",
     "react"
   ],
-  "plugins": ["add-module-exports"],
+  "plugins": ["add-module-exports", "inline-react-svg"],
   "env": {
     "production": {
       "presets": ["react-optimize"],

@@ -5,3 +5,6 @@ export const LOAD_TRANSACTIONS_SUCCESS =
   'dicoapp/WalletPage/LOAD_TRANSACTIONS_SUCCESS';
 export const LOAD_TRANSACTIONS_ERROR =
   'dicoapp/WalletPage/LOAD_TRANSACTIONS_ERROR';
+export const LOAD_BALANCE = 'dicoapp/WalletPage/LOAD_BALANCE';
+export const LOAD_BALANCE_SUCCESS = 'dicoapp/WalletPage/LOAD_BALANCE_SUCCESS';
+export const LOAD_BALANCE_ERROR = 'dicoapp/WalletPage/LOAD_BALANCE_ERROR';

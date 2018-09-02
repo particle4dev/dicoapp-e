@@ -1,7 +1,6 @@
 // @flow
 import React, { Component } from 'react';
 import { compose } from 'redux';
-import QRCode from 'qrcode.react';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -15,6 +14,7 @@ import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
 import { NavigationLayout } from '../Layout';
 
+import Overview from './components/Overview';
 import Transactions from './components/Transactions';
 import reducer from './reducer';
 import saga from './saga';
@@ -29,20 +29,6 @@ type Props = {
 const styles = () => ({
   container: {
     padding: 24
-  },
-
-  containerSection: {
-    paddingBottom: 30
-  },
-
-  table: {
-    maxHeight: 450
-  },
-  nav1: {
-    height: '100%'
-  },
-  nav2: {
-    height: '100%'
   }
 });
 
@@ -66,7 +52,7 @@ class WalletPage extends Component<Props> {
           </Toolbar>
         </AppBar>
         <Grid container spacing={0} className={classes.container}>
-          <Grid item xs={12} className={classes.containerSection}>
+          <Grid item xs={12}>
             <Card>
               <CardContent>
                 <Typography variant="title" gutterBottom>
@@ -75,35 +61,10 @@ class WalletPage extends Component<Props> {
               </CardContent>
             </Card>
           </Grid>
-
-          <Grid item xs={12} className={classes.containerSection}>
-            <Card>
-              <CardContent>
-                <Typography variant="title" gutterBottom>
-                  Send
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} className={classes.containerSection}>
-            <Card>
-              <CardContent>
-                <Typography variant="title" gutterBottom>
-                  Receive
-                </Typography>
-                <Typography className={classes.pos} color="textSecondary">
-                  adjective
-                </Typography>
-                <QRCode value="http://facebook.github.io/react/" />
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} className={classes.containerSection}>
-            <Transactions />
-          </Grid>
         </Grid>
+
+        <Overview className={classes.container} />
+        <Transactions className={classes.container} />
       </NavigationLayout>
     );
   }
