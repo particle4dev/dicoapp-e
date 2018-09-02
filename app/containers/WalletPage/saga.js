@@ -63,6 +63,7 @@ export function* loadTransactionsProcess() {
       })
       .map(e => processTransactionsData(e.data, e.coin))
       .reduce((a, b) => a.concat(b), []);
+
     return yield put(loadTransactionsSuccess(data));
   } catch (err) {
     return yield put(loadTransactionsError(err.message));

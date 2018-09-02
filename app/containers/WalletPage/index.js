@@ -1,7 +1,6 @@
 // @flow
 import React, { Component } from 'react';
 import { compose } from 'redux';
-import QRCode from 'qrcode.react';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -16,6 +15,7 @@ import injectSaga from '../../utils/inject-saga';
 import { NavigationLayout } from '../Layout';
 
 import Transactions from './components/Transactions';
+import Wallet from './components/Wallet';
 import reducer from './reducer';
 import saga from './saga';
 import { APP_STATE_NAME } from './constants';
@@ -75,31 +75,11 @@ class WalletPage extends Component<Props> {
               </CardContent>
             </Card>
           </Grid>
+        </Grid>
 
-          <Grid item xs={12} className={classes.containerSection}>
-            <Card>
-              <CardContent>
-                <Typography variant="title" gutterBottom>
-                  Send
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+        <Wallet className={classes.container} />
 
-          <Grid item xs={12} className={classes.containerSection}>
-            <Card>
-              <CardContent>
-                <Typography variant="title" gutterBottom>
-                  Receive
-                </Typography>
-                <Typography className={classes.pos} color="textSecondary">
-                  adjective
-                </Typography>
-                <QRCode value="http://facebook.github.io/react/" />
-              </CardContent>
-            </Card>
-          </Grid>
-
+        <Grid container spacing={0} className={classes.container}>
           <Grid item xs={12} className={classes.containerSection}>
             <Transactions />
           </Grid>
