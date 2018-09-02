@@ -7,9 +7,6 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import QRCode from 'qrcode.react';
 
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
 // import Avatar from '@material-ui/core/Avatar';
 // import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
@@ -24,8 +21,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
-
-import { BTC, ETH } from '../../../components/CryptoIcons';
+import { BTC } from '../../../components/CryptoIcons';
 
 const debug = require('debug')('dicoapp:containers:WalletPage:Wallet');
 
@@ -52,6 +48,38 @@ const styles = () => ({
   },
   rightIcon: {
     top: 23
+  },
+  bitcoinContainer: {
+    width: '100%'
+  },
+  bitcoinTitle: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row'
+  },
+  bitcoinQRCodeContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'no-wrap',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%'
+  },
+  bitcoinQRCodeItem: {
+    marginRight: 10
+  },
+  transactionsForm: {
+    width: '100%',
+    maxWidth: 450
+  },
+  rightLogo: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    flexWrap: 'no-wrap',
+    alignItems: 'center'
+  },
+  coinName: {
+    paddingLeft: 5
   }
 });
 
@@ -82,19 +110,25 @@ class Wallet extends Component<Props, State> {
                 }}
                 expandIcon={<ExpandMoreIcon />}
               >
-                <div>
-                  <BTC />
-                  20 BTC
-                  <br />
-                  <br />
-                  <br />
-                  <Typography variant="title" gutterBottom>
-                    RRVJBpA5MoeTo3beA1iP6euWWrWcJdJtXu
-                  </Typography>
-                  <Typography variant="subheading" gutterBottom>
-                    Your deposit address
-                  </Typography>
-                  <QRCode value="RRVJBpA5MoeTo3beA1iP6euWWrWcJdJtXu" />
+                <div className={classes.bitcoinContainer}>
+                  <div className={classes.bitcoinTitle}>
+                    <div className={classes.rightLogo}>
+                      <BTC />
+                      <div className={classes.coinName}>BTC</div>
+                    </div>
+                    <div>20 BTC</div>
+                  </div>
+                  <div className={classes.bitcoinQRCodeContainer}>
+                    <div className={classes.bitcoinQRCodeItem}>
+                      <Typography variant="subheading" gutterBottom>
+                        Your deposit address
+                      </Typography>
+                      <Typography variant="title" gutterBottom>
+                        RRVJBpA5MoeTo3beA1iP6euWWrWcJdJtXu
+                      </Typography>
+                    </div>
+                    <QRCode value="RRVJBpA5MoeTo3beA1iP6euWWrWcJdJtXu" />
+                  </div>
                 </div>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails className={classes.details}>
@@ -132,50 +166,6 @@ class Wallet extends Component<Props, State> {
                 </form>
               </ExpansionPanelDetails>
             </ExpansionPanel>
-          </Grid>
-
-          <Grid item xs={12} className={classes.containerSection}>
-            <ExpansionPanel>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                <div>
-                  <ETH />
-                  <br />
-                  <br />
-                  <br />
-                  <Typography variant="title" gutterBottom>
-                    RRVJBpA5MoeTo3beA1iP6euWWrWcJdJtXu
-                  </Typography>
-                  <Typography variant="subheading" gutterBottom>
-                    Your deposit address
-                  </Typography>
-                  <QRCode value="RRVJBpA5MoeTo3beA1iP6euWWrWcJdJtXu" />
-                </div>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className={classes.details}>
-                <Typography variant="button" gutterBottom>
-                  Send
-                </Typography>
-                <Divider />
-                <Typography variant="button" gutterBottom>
-                  Receive
-                </Typography>
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Card className={classes.card}>
-              <CardHeader
-                avatar={<BTC />}
-                action={<span>20 btc</span>}
-                title="BTC"
-                // subheader="September 14, 2016"
-              />
-              <CardContent>
-                RRVJBpA5MoeTo3beA1iP6euWWrWcJdJtXu
-                <QRCode value="RRVJBpA5MoeTo3beA1iP6euWWrWcJdJtXu" />
-              </CardContent>
-            </Card>
           </Grid>
         </Grid>
       </React.Fragment>

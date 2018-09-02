@@ -23,6 +23,8 @@ import {
 } from '../selectors';
 import { loadTransactions } from '../actions';
 
+const tableHeads = ['#', 'Coin', 'Block height', 'Transaction id'];
+
 const debug = require('debug')('dicoapp:containers:WalletPage:Transactions');
 
 const styles = () => ({
@@ -37,6 +39,10 @@ const styles = () => ({
     right: 8,
     display: 'flex',
     position: 'absolute'
+  },
+  th: {
+    color: '#555555',
+    fontSize: 15
   }
 });
 
@@ -99,6 +105,7 @@ class Transactions extends Component<Props, State> {
     debug(`render`);
 
     const { loading, classes, transactions, error } = this.props;
+    console.log(classes);
 
     return (
       <React.Fragment>
@@ -126,10 +133,9 @@ class Transactions extends Component<Props, State> {
             <Table className={classes.table}>
               <TableHead>
                 <TableRow>
-                  <TableCell>#</TableCell>
-                  <TableCell>Coin</TableCell>
-                  <TableCell>Block height</TableCell>
-                  <TableCell>Transaction id</TableCell>
+                  {tableHeads.map(tableHead => (
+                    <TableCell className={classes.th}>{tableHead}</TableCell>
+                  ))}
                 </TableRow>
               </TableHead>
               <TableBody>
