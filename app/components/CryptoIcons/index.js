@@ -20,6 +20,7 @@ import NANOIcon from './nano.svg';
 import USDTIcon from './usdt.svg';
 import MONEROIcon from './xmr.svg';
 import CARDANOIcon from './ada.svg';
+import KMDIcon from './kmd.svg';
 import UNKNOWIcon from './unknow.svg';
 
 export default {
@@ -42,6 +43,7 @@ export default {
   usdt: USDTIcon,
   xmr: MONEROIcon,
   ada: CARDANOIcon,
+  kmd: KMDIcon,
   unknow: UNKNOWIcon,
 
   AION: AionIcon,
@@ -63,6 +65,7 @@ export default {
   USDT: USDTIcon,
   XMR: MONEROIcon,
   ADA: CARDANOIcon,
+  KMD: KMDIcon,
   UNKNOW: UNKNOWIcon
 };
 
@@ -86,5 +89,6 @@ export {
   USDTIcon as USDT,
   MONEROIcon as XMR,
   CARDANOIcon as ADA,
+  KMDIcon as KMD,
   UNKNOWIcon as UNKNOW
 };

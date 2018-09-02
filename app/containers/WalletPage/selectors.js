@@ -21,10 +21,30 @@ const makeSelectTransactionsList = () =>
     transactionsState.get('list')
   );
 
+const makeSelectBalance = () =>
+  createSelector(selectWallet, walletState => walletState.get('balance'));
+
+const makeSelectBalanceLoading = () =>
+  createSelector(makeSelectBalance(), balanceState =>
+    balanceState.get('loading')
+  );
+
+const makeSelectBalanceError = () =>
+  createSelector(makeSelectBalance(), balanceState =>
+    balanceState.get('error')
+  );
+
+const makeSelectBalanceList = () =>
+  createSelector(makeSelectBalance(), balanceState => balanceState.get('list'));
+
 export {
   selectWallet,
   makeSelectTransactionsLoading,
   makeSelectTransactionsError,
   makeSelectTransactionsList,
-  makeSelectTransactions
+  makeSelectTransactions,
+  makeSelectBalance,
+  makeSelectBalanceLoading,
+  makeSelectBalanceError,
+  makeSelectBalanceList
 };

@@ -1,12 +1,7 @@
 // @flow
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
-import { createStructuredSelector } from 'reselect';
 import QRCode from 'qrcode.react';
-
 // import Avatar from '@material-ui/core/Avatar';
 // import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
@@ -21,7 +16,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
-import { BTC } from '../../../components/CryptoIcons';
+import CryptoIcons, { UNKNOW } from '../../../components/CryptoIcons';
 
 const debug = require('debug')('dicoapp:containers:WalletPage:Wallet');
 
@@ -81,7 +76,8 @@ const styles = () => ({
 type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   classes: Object,
-  className: string
+  // eslint-disable-next-line flowtype/no-weak-types
+  data: Object
 };
 
 type State = {};
@@ -92,11 +88,15 @@ class Wallet extends Component<Props, State> {
   render() {
     debug(`render`);
 
-    const { classes, className } = this.props;
+    const { classes, data } = this.props;
+    let CIcon = CryptoIcons[data.get('coin')];
+    if (!CIcon) {
+      CIcon = UNKNOW;
+    }
 
     return (
       <React.Fragment>
-        <Grid container spacing={0} className={classNames(className)}>
+        <Grid container spacing={0}>
           <Grid item xs={12} className={classes.containerSection}>
             <ExpansionPanel>
               <ExpansionPanelSummary
@@ -108,10 +108,12 @@ class Wallet extends Component<Props, State> {
                 <div className={classes.bitcoinContainer}>
                   <div className={classes.bitcoinTitle}>
                     <div className={classes.rightLogo}>
-                      <BTC />
-                      <div className={classes.coinName}>BTC</div>
+                      <CIcon />
+                      <div className={classes.coinName}>{data.get('coin')}</div>
                     </div>
-                    <div>20 BTC</div>
+                    <div>
+                      {data.get('balance')} {data.get('coin')}
+                    </div>
                   </div>
                   <div className={classes.bitcoinQRCodeContainer}>
                     <div className={classes.bitcoinQRCodeItem}>
@@ -119,20 +121,20 @@ class Wallet extends Component<Props, State> {
                         Your deposit address
                       </Typography>
                       <Typography variant="title" gutterBottom>
-                        RRVJBpA5MoeTo3beA1iP6euWWrWcJdJtXu
+                        {data.get('address')}
                       </Typography>
                     </div>
-                    <QRCode value="RRVJBpA5MoeTo3beA1iP6euWWrWcJdJtXu" />
+                    <QRCode value={data.get('address')} />
                   </div>
                 </div>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails className={classes.details}>
                 <Divider className={classes.hr} />
                 <Typography variant="button" gutterBottom>
-                  Withdraw Bitcoin (BTC)
+                  Withdraw {data.get('coin')}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  Available: 20 BTC
+                  Available: {data.get('balance')} {data.get('coin')}
                 </Typography>
                 <form>
                   <TextField
@@ -170,18 +172,4 @@ class Wallet extends Component<Props, State> {
 
 Wallet.displayName = 'Wallet';
 
-export function mapDispatchToProps() {
-  return {};
-}
-
-const mapStateToProps = createStructuredSelector({});
-
-const withConnect = connect(
-  mapStateToProps,
-  mapDispatchToProps
-);
-
-export default compose(
-  withConnect,
-  withStyles(styles)
-)(Wallet);
+export default withStyles(styles)(Wallet);

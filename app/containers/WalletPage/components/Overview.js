@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 // @flow
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
@@ -5,8 +6,13 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import Grid from '@material-ui/core/Grid';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import { makeSelectCurrentUser } from '../../App/selectors';
+import { makeSelectBalanceList } from '../selectors';
+import { loadBalance } from '../actions';
+import Wallet from './Wallet';
+
+// makeSelectBalance,
+// makeSelectBalanceLoading,
+// makeSelectBalanceError,
 
 const debug = require('debug')('dicoapp:containers:WalletPage:Overview');
 
@@ -20,8 +26,10 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   classes: Object,
   // eslint-disable-next-line flowtype/no-weak-types
-  user: Object,
-  className: string
+  list: Object,
+  className: string,
+  // eslint-disable-next-line flowtype/no-weak-types
+  dispatchLoadBalance: Function
 };
 
 type State = {};
@@ -29,22 +37,26 @@ type State = {};
 class Overview extends Component<Props, State> {
   state = {};
 
+  componentDidMount = () => {
+    debug('watch transactions');
+
+    const { dispatchLoadBalance } = this.props;
+
+    dispatchLoadBalance();
+  };
+
   render() {
     debug(`render`);
 
-    const { classes, className, user } = this.props;
-
-    const wallets = user.get('coins').filter(i => {
-      console.log(i.get('balance'));
-      return i.get('balance') !== 0;
-    });
-    console.log(wallets.toJS(), user.get('coins').toJS(), 'wallets 123 zzz');
+    const { classes, className, list } = this.props;
 
     return (
       <Grid container spacing={0} className={className}>
-        <Grid item xs={12} className={classes.containerSection}>
-          <ExpansionPanel>123 zzz</ExpansionPanel>
-        </Grid>
+        {list.map((t, k) => (
+          <Grid item xs={12} className={classes.containerSection}>
+            <Wallet key={k} data={t} />
+          </Grid>
+        ))}
       </Grid>
     );
   }
@@ -52,12 +64,14 @@ class Overview extends Component<Props, State> {
 
 Overview.displayName = 'Overview';
 
-export function mapDispatchToProps() {
-  return {};
+export function mapDispatchToProps(dispatch) {
+  return {
+    dispatchLoadBalance: () => dispatch(loadBalance())
+  };
 }
 
 const mapStateToProps = createStructuredSelector({
-  user: makeSelectCurrentUser()
+  list: makeSelectBalanceList()
 });
 
 const withConnect = connect(
@@ -69,3 +83,4 @@ export default compose(
   withConnect,
   withStyles(styles)
 )(Overview);
+/* eslint-enable react/no-array-index-key */
