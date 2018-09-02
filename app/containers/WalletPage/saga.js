@@ -23,15 +23,11 @@ export function processTransactionsData(data, coin) {
   return result;
 }
 
-let i = 0;
-
 export function* loadTransactionsProcess() {
   try {
     // load user data
     const user = yield select(makeSelectCurrentUser());
-    // if (!user) {
-    i += 1;
-    if (i % 2 === 0) {
+    if (!user) {
       throw new Error('not found user');
     }
     const userpass = user.get('userpass');
