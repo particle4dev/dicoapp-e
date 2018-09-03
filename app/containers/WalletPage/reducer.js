@@ -61,7 +61,7 @@ function walletReducer(state = initialState, { type, payload, error }) {
       );
       // step two: add key in coins list
       const coins = state.getIn(['balance', 'coins']);
-      if (!coins.has(payload.coin)) {
+      if (!coins.find(obj => obj === payload.coin)) {
         state = state.setIn(['balance', 'coins'], coins.push(payload.coin));
       }
       return state;

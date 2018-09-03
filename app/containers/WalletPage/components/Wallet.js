@@ -12,13 +12,45 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 // import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-// import Chip from '@material-ui/core/Chip';
+
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
+import { required, requiredNumber } from '../../../components/Form/helper';
+import validate from '../../../components/Form/validate';
 import CryptoIcons, { UNKNOW } from '../../../components/CryptoIcons';
 
 const debug = require('debug')('dicoapp:containers:WalletPage:Wallet');
+
+export const lessThan = (value: mixed, props: mixed) =>
+  new Promise((resolve, reject) => {
+    const { balance } = props;
+    const n = Number(value);
+    const b = Number(balance);
+    if (n >= b) {
+      return reject(new Error('Value is large than balance'));
+    }
+    return resolve(true);
+  });
+
+// eslint-disable-next-line react/prop-types
+const TextInput = ({ onChange, value, error, isError, ...props }) => (
+  <TextField
+    {...props}
+    error={isError}
+    helperText={error}
+    value={value}
+    onChange={onChange}
+  />
+);
+
+const ValidationAmountInput = validate(TextInput, [requiredNumber, lessThan], {
+  onChange: true
+});
+
+const ValidationAddressInput = validate(TextInput, [required], {
+  onChange: true
+});
 
 const styles = () => ({
   column: {
@@ -77,61 +109,48 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   classes: Object,
   // eslint-disable-next-line flowtype/no-weak-types
-  data: Object,
+  data: Object
   // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadWithdraw: Function
+  // dispatchLoadWithdraw: Function
 };
 
-type State = {
-  amount: number,
-  address: string
-};
+type State = {};
 
 class Wallet extends Component<Props, State> {
-  state = {
-    amount: 0.1,
-    address: 'RDhjCHgYCU8fCy7NLotvL5dBkmSA2SkaS5' // Fake BEER
-  };
+  constructor(props) {
+    super(props);
 
-  onAmountChange = (evt: SyntheticInputEvent<>) => {
-    evt.preventDefault();
-    const { value } = evt.target;
-    debug(`onAmountChange: ${value}`);
-    this.setState({
-      amount: Number(value)
-    });
-  };
+    this.amountInput = React.createRef();
+    this.addressInput = React.createRef();
+  }
 
-  onAddressChange = (evt: SyntheticInputEvent<>) => {
+  handleWithdraw = async (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
-    const { value } = evt.target;
-    debug(`onAddressChange: ${value}`);
-    this.setState({
-      address: value
-    });
-  };
-
-  handleWithdraw = (evt: SyntheticInputEvent<>) => {
-    evt.preventDefault();
-    const { amount, address } = this.state;
+    // const { address } = this.state;
     // const { dispatchLoadWithdraw, data } = this.props;
-    const { dispatchLoadWithdraw } = this.props;
-    console.log(
-      dispatchLoadWithdraw({
-        amount,
-        address,
-        // coin: data.get('coin'),
-        coin: 'BEER'
-      }),
-      'dispatchLoadWithdraw'
-    );
+    // const { dispatchLoadWithdraw } = this.props;
+    // console.log(
+    //   dispatchLoadWithdraw({
+    //     amount,
+    //     address,
+    //     // coin: data.get('coin'),
+    //     coin: 'BEER'
+    //   }),
+    //   'dispatchLoadWithdraw'
+    // );
+    try {
+      const amountInput = this.amountInput.current;
+      const amount = await amountInput.value();
+      console.log(amount, 'amountInput');
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   render() {
     debug(`render`);
 
     const { classes, data } = this.props;
-    const { amount, address } = this.state;
 
     let CIcon = CryptoIcons[data.get('coin')];
     if (!CIcon) {
@@ -181,27 +200,25 @@ class Wallet extends Component<Props, State> {
                   Available: {data.get('balance')} {data.get('coin')}
                 </Typography>
                 <form>
-                  <TextField
+                  <ValidationAmountInput
                     id="amount"
-                    type="number"
                     label="Amount to withdraw"
-                    className={classes.formItem}
-                    value={amount}
                     margin="normal"
-                    onChange={this.onAmountChange}
+                    balance={data.get('balance')}
+                    className={classes.formItem}
+                    ref={this.amountInput}
                   />
-                  <TextField
-                    id="name"
+
+                  <ValidationAddressInput
+                    id="address"
                     label="Withdraw to address"
-                    className={classes.formItem}
-                    value={address}
                     margin="normal"
-                    inputProps={{
-                      required: true
-                    }}
-                    onChange={this.onAddressChange}
+                    className={classes.formItem}
+                    ref={this.addressInput}
                   />
+
                   <br />
+
                   <Button
                     variant="contained"
                     color="primary"
