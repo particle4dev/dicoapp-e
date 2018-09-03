@@ -4,7 +4,10 @@ import {
   LOAD_TRANSACTIONS_ERROR,
   LOAD_BALANCE,
   LOAD_BALANCE_SUCCESS,
-  LOAD_BALANCE_ERROR
+  LOAD_BALANCE_ERROR,
+  LOAD_WITHDRAW,
+  LOAD_WITHDRAW_SUCCESS,
+  LOAD_WITHDRAW_ERROR
 } from './constants';
 
 export function loadTransactions() {
@@ -52,5 +55,23 @@ export function loadBalanceError(message) {
     error: {
       message
     }
+  };
+}
+
+export function loadWithdraw() {
+  return {
+    type: LOAD_WITHDRAW
+  };
+}
+
+export function loadWithdrawSuccess() {
+  return {
+    type: LOAD_WITHDRAW_SUCCESS
+  };
+}
+
+export function loadWithdrawError() {
+  return {
+    type: LOAD_WITHDRAW_ERROR
   };
 }
