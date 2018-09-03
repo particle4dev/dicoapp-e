@@ -1,3 +1,5 @@
+// @flow
+
 import {
   LOAD_TRANSACTIONS,
   LOAD_TRANSACTIONS_SUCCESS,
@@ -7,6 +9,7 @@ import {
   LOAD_BALANCE_ERROR,
   LOAD_WITHDRAW,
   LOAD_WITHDRAW_SUCCESS,
+  LOAD_COIN_BALANCE_SUCCESS,
   LOAD_WITHDRAW_ERROR
 } from './constants';
 
@@ -40,12 +43,20 @@ export function loadBalance() {
   };
 }
 
-export function loadBalanceSuccess(balance) {
+export function loadBalanceSuccess() {
   return {
-    type: LOAD_BALANCE_SUCCESS,
-    payload: {
-      balance
-    }
+    type: LOAD_BALANCE_SUCCESS
+  };
+}
+
+export function loadCoinBalanceSuccess(payload: {
+  address: string,
+  balance: number,
+  coin: string
+}) {
+  return {
+    type: LOAD_COIN_BALANCE_SUCCESS,
+    payload
   };
 }
 
@@ -58,9 +69,14 @@ export function loadBalanceError(message) {
   };
 }
 
-export function loadWithdraw() {
+export function loadWithdraw(payload: {
+  amount: number,
+  address: string,
+  coin: string
+}) {
   return {
-    type: LOAD_WITHDRAW
+    type: LOAD_WITHDRAW,
+    payload
   };
 }
 
@@ -70,8 +86,11 @@ export function loadWithdrawSuccess() {
   };
 }
 
-export function loadWithdrawError() {
+export function loadWithdrawError(message) {
   return {
-    type: LOAD_WITHDRAW_ERROR
+    type: LOAD_WITHDRAW_ERROR,
+    error: {
+      message
+    }
   };
 }

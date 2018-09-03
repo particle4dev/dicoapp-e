@@ -35,7 +35,14 @@ const makeSelectBalanceError = () =>
   );
 
 const makeSelectBalanceList = () =>
-  createSelector(makeSelectBalance(), balanceState => balanceState.get('list'));
+  createSelector(makeSelectBalance(), balanceState =>
+    balanceState.get('coins')
+  );
+
+const makeSelectBalanceEntities = () =>
+  createSelector(makeSelectBalance(), balanceState =>
+    balanceState.get('entities')
+  );
 
 export {
   selectWallet,
@@ -46,5 +53,6 @@ export {
   makeSelectBalance,
   makeSelectBalanceLoading,
   makeSelectBalanceError,
-  makeSelectBalanceList
+  makeSelectBalanceList,
+  makeSelectBalanceEntities
 };

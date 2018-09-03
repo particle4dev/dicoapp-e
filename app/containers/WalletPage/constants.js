@@ -8,6 +8,8 @@ export const LOAD_TRANSACTIONS_ERROR =
 
 export const LOAD_BALANCE = 'dicoapp/WalletPage/LOAD_BALANCE';
 export const LOAD_BALANCE_SUCCESS = 'dicoapp/WalletPage/LOAD_BALANCE_SUCCESS';
+export const LOAD_COIN_BALANCE_SUCCESS =
+  'dicoapp/WalletPage/LOAD_COIN_BALANCE_SUCCESS';
 export const LOAD_BALANCE_ERROR = 'dicoapp/WalletPage/LOAD_BALANCE_ERROR';
 
 export const LOAD_WITHDRAW = 'dicoapp/WalletPage/LOAD_WITHDRAW';

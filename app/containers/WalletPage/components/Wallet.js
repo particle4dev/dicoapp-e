@@ -77,18 +77,62 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   classes: Object,
   // eslint-disable-next-line flowtype/no-weak-types
-  data: Object
+  data: Object,
+  // eslint-disable-next-line flowtype/no-weak-types
+  dispatchLoadWithdraw: Function
 };
 
-type State = {};
+type State = {
+  amount: number,
+  address: string
+};
 
 class Wallet extends Component<Props, State> {
-  state = {};
+  state = {
+    amount: 0.1,
+    address: 'RDhjCHgYCU8fCy7NLotvL5dBkmSA2SkaS5' // Fake BEER
+  };
+
+  onAmountChange = (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    const { value } = evt.target;
+    debug(`onAmountChange: ${value}`);
+    this.setState({
+      amount: Number(value)
+    });
+  };
+
+  onAddressChange = (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    const { value } = evt.target;
+    debug(`onAddressChange: ${value}`);
+    this.setState({
+      address: value
+    });
+  };
+
+  handleWithdraw = (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    const { amount, address } = this.state;
+    // const { dispatchLoadWithdraw, data } = this.props;
+    const { dispatchLoadWithdraw } = this.props;
+    console.log(
+      dispatchLoadWithdraw({
+        amount,
+        address,
+        // coin: data.get('coin'),
+        coin: 'BEER'
+      }),
+      'dispatchLoadWithdraw'
+    );
+  };
 
   render() {
     debug(`render`);
 
     const { classes, data } = this.props;
+    const { amount, address } = this.state;
+
     let CIcon = CryptoIcons[data.get('coin')];
     if (!CIcon) {
       CIcon = UNKNOW;
@@ -138,25 +182,31 @@ class Wallet extends Component<Props, State> {
                 </Typography>
                 <form>
                   <TextField
-                    id="name"
+                    id="amount"
+                    type="number"
                     label="Amount to withdraw"
                     className={classes.formItem}
-                    value=""
+                    value={amount}
                     margin="normal"
+                    onChange={this.onAmountChange}
                   />
-                  <br />
                   <TextField
                     id="name"
                     label="Withdraw to address"
                     className={classes.formItem}
-                    value=""
+                    value={address}
                     margin="normal"
+                    inputProps={{
+                      required: true
+                    }}
+                    onChange={this.onAddressChange}
                   />
                   <br />
                   <Button
                     variant="contained"
                     color="primary"
                     className={classes.button}
+                    onClick={this.handleWithdraw}
                   >
                     Withdraw
                   </Button>
