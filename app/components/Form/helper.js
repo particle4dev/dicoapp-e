@@ -19,11 +19,3 @@ export const requiredNumber = (value: mixed) =>
     }
     return resolve(true);
   });
-
-// export const condition = (func: Function) => (new Promise((resolve, reject) => {
-//   const n = Number(value);
-//   if (!isNumber(n) || isNaN(n)) {
-//     return reject(new Error('Required Number'));
-//   }
-//   return resolve(true);
-// }));
