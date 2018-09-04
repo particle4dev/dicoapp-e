@@ -32,7 +32,7 @@ function appReducer(state = initialState, { type, payload, error }) {
     case LOGIN_ERROR:
       return state.set('error', error).set('loading', false);
     case LOGOUT:
-      return state.set('loading', false).set('currentUser', null);
+      return initialState;
     default:
       return state;
   }

@@ -1,10 +1,12 @@
 // @flow
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import classNames from 'classnames';
 import QRCode from 'qrcode.react';
 // import Avatar from '@material-ui/core/Avatar';
 // import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
+import LinearProgress from '@material-ui/core/LinearProgress';
 // import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -12,15 +14,58 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 // import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-// import Chip from '@material-ui/core/Chip';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
+import { required, requiredNumber } from '../../../components/Form/helper';
+import validate from '../../../components/Form/validate';
 import CryptoIcons, { UNKNOW } from '../../../components/CryptoIcons';
+import clipboardCopy from '../../../utils/clipboard-copy';
 
 const debug = require('debug')('dicoapp:containers:WalletPage:Wallet');
 
-const styles = () => ({
+export const lessThan = (value: mixed, props: mixed) =>
+  new Promise((resolve, reject) => {
+    const { balance } = props;
+    const n = Number(value);
+    const b = Number(balance);
+    if (n >= b) {
+      return reject(new Error('Value is large than balance'));
+    }
+    return resolve(true);
+  });
+
+export const notSameAddress = (value: mixed, props: mixed) =>
+  new Promise((resolve, reject) => {
+    const { address } = props;
+    if (address.trim() === value.trim()) {
+      return reject(new Error('You can not withdraw same address'));
+    }
+    return resolve(true);
+  });
+
+// eslint-disable-next-line react/prop-types
+const TextInput = ({ onChange, value, error, isError, ...props }) => (
+  <TextField
+    {...props}
+    error={isError}
+    helperText={error}
+    value={value}
+    onChange={onChange}
+  />
+);
+
+const ValidationAmountInput = validate(TextInput, [requiredNumber, lessThan], {
+  onChange: true
+});
+
+const ValidationAddressInput = validate(TextInput, [required, notSameAddress], {
+  onChange: true
+});
+
+const styles = theme => ({
   column: {
     flexBasis: '33.33%'
   },
@@ -70,6 +115,13 @@ const styles = () => ({
   },
   coinName: {
     paddingLeft: 5
+  },
+
+  leftIcon: {
+    marginRight: theme.spacing.unit
+  },
+  iconSmall: {
+    fontSize: 20
   }
 });
 
@@ -77,18 +129,95 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   classes: Object,
   // eslint-disable-next-line flowtype/no-weak-types
-  data: Object
+  data: Object,
+  // eslint-disable-next-line flowtype/no-weak-types
+  dispatchLoadWithdraw: Function
 };
 
-type State = {};
+type State = {
+  expanded: boolean
+};
 
 class Wallet extends Component<Props, State> {
-  state = {};
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      expanded: false
+    };
+    this.amountInput = React.createRef();
+    this.addressInput = React.createRef();
+  }
+
+  getSnapshotBeforeUpdate(prevProps) {
+    // eslint-disable-next-line react/destructuring-assignment
+    const currData = this.props.data;
+    const prevData = prevProps.data;
+    const currLoading = currData.get('loading');
+    const prevLoading = prevData.get('loading');
+    const currError = currData.get('error');
+    return {
+      done: currLoading === false && prevLoading === true && currError === false
+    };
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (snapshot && snapshot.done) {
+      // reset input
+      const amountInput = this.amountInput.current;
+      const addressInput = this.addressInput.current;
+      amountInput.reset();
+      addressInput.reset();
+    }
+  }
+
+  handleWithdraw = async (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    const { dispatchLoadWithdraw, data } = this.props;
+    const coin = data.get('coin');
+
+    try {
+      const amountInput = this.amountInput.current;
+      const amount = await amountInput.value();
+
+      const addressInput = this.addressInput.current;
+      const address = await addressInput.value();
+
+      dispatchLoadWithdraw({
+        amount: Number(amount),
+        address,
+        coin
+      });
+    } catch (err) {
+      debug(`handleWithdraw ${err.message}`);
+    }
+  };
+
+  copyAddressToClipboard = async (evt: SyntheticInputEvent<>) => {
+    evt.stopPropagation();
+    const { data } = this.props;
+    const address = data.get('address');
+    clipboardCopy(address);
+    // const success = clipboardCopy(address);
+    // if (success) {
+    // } else {
+    // }
+    evt.target.focus();
+  };
+
+  toggleExpansionPanel = (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    this.setState(prevState => ({
+      expanded: !prevState.expanded
+    }));
+  };
 
   render() {
     debug(`render`);
 
     const { classes, data } = this.props;
+    const { expanded } = this.state;
+    const loading = data.get('loading');
     let CIcon = CryptoIcons[data.get('coin')];
     if (!CIcon) {
       CIcon = UNKNOW;
@@ -98,12 +227,14 @@ class Wallet extends Component<Props, State> {
       <React.Fragment>
         <Grid container spacing={0}>
           <Grid item xs={12} className={classes.containerSection}>
-            <ExpansionPanel>
+            <ExpansionPanel expanded={expanded}>
               <ExpansionPanelSummary
                 classes={{
                   expandIcon: classes.rightIcon
                 }}
-                expandIcon={<ExpandMoreIcon />}
+                expandIcon={
+                  <ExpandMoreIcon onClick={this.toggleExpansionPanel} />
+                }
               >
                 <div className={classes.bitcoinContainer}>
                   <div className={classes.bitcoinTitle}>
@@ -123,6 +254,19 @@ class Wallet extends Component<Props, State> {
                       <Typography variant="title" gutterBottom>
                         {data.get('address')}
                       </Typography>
+                      <Button
+                        size="small"
+                        color="primary"
+                        onClick={this.copyAddressToClipboard}
+                      >
+                        <FileCopyIcon
+                          className={classNames(
+                            classes.leftIcon,
+                            classes.iconSmall
+                          )}
+                        />
+                        Copy to keyboard
+                      </Button>
                     </div>
                     <QRCode value={data.get('address')} />
                   </div>
@@ -130,6 +274,9 @@ class Wallet extends Component<Props, State> {
               </ExpansionPanelSummary>
               <ExpansionPanelDetails className={classes.details}>
                 <Divider className={classes.hr} />
+
+                {loading && <LinearProgress className={classes.hr} />}
+
                 <Typography variant="button" gutterBottom>
                   Withdraw {data.get('coin')}
                 </Typography>
@@ -137,26 +284,34 @@ class Wallet extends Component<Props, State> {
                   Available: {data.get('balance')} {data.get('coin')}
                 </Typography>
                 <form>
-                  <TextField
-                    id="name"
+                  <ValidationAmountInput
+                    id="amount"
                     label="Amount to withdraw"
-                    className={classes.formItem}
-                    value=""
                     margin="normal"
+                    balance={data.get('balance')}
+                    className={classes.formItem}
+                    ref={this.amountInput}
+                    disabled={loading}
                   />
-                  <br />
-                  <TextField
-                    id="name"
+
+                  <ValidationAddressInput
+                    id="address"
                     label="Withdraw to address"
-                    className={classes.formItem}
-                    value=""
                     margin="normal"
+                    className={classes.formItem}
+                    address={data.get('address')}
+                    ref={this.addressInput}
+                    disabled={loading}
                   />
+
                   <br />
+
                   <Button
                     variant="contained"
                     color="primary"
                     className={classes.button}
+                    onClick={this.handleWithdraw}
+                    disabled={loading}
                   >
                     Withdraw
                   </Button>
