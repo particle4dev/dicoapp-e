@@ -1,5 +1,9 @@
 # Change Log
 
+# 0.6.0 (2018.9.04)
+
+- 5d632f7 implement-send-section-in-wallet-page (#48)
+
 # 0.5.0 (2018.9.01)
 
 - 2dbed9e implement-seed-page (#39)
