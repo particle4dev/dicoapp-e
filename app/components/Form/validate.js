@@ -98,11 +98,6 @@ export default function validate(
           value={value}
           error={error}
           isError={error !== ''}
-          // validate={this.validate}
-          // validateAll={this.validateAll}
-          // getValues={this.getValues}
-          // showError={this.showError}
-          // hideError={this.hideError}
         />
       );
     }
