@@ -5,6 +5,7 @@ import QRCode from 'qrcode.react';
 // import Avatar from '@material-ui/core/Avatar';
 // import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
+import LinearProgress from '@material-ui/core/LinearProgress';
 // import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -33,6 +34,15 @@ export const lessThan = (value: mixed, props: mixed) =>
     return resolve(true);
   });
 
+export const notSameAddress = (value: mixed, props: mixed) =>
+  new Promise((resolve, reject) => {
+    const { address } = props;
+    if (address.trim() === value.trim()) {
+      return reject(new Error('You can not withdraw same address'));
+    }
+    return resolve(true);
+  });
+
 // eslint-disable-next-line react/prop-types
 const TextInput = ({ onChange, value, error, isError, ...props }) => (
   <TextField
@@ -48,7 +58,7 @@ const ValidationAmountInput = validate(TextInput, [requiredNumber, lessThan], {
   onChange: true
 });
 
-const ValidationAddressInput = validate(TextInput, [required], {
+const ValidationAddressInput = validate(TextInput, [required, notSameAddress], {
   onChange: true
 });
 
@@ -124,6 +134,28 @@ class Wallet extends Component<Props, State> {
     this.addressInput = React.createRef();
   }
 
+  getSnapshotBeforeUpdate(prevProps) {
+    // eslint-disable-next-line react/destructuring-assignment
+    const currData = this.props.data;
+    const prevData = prevProps.data;
+    const currLoading = currData.get('loading');
+    const prevLoading = prevData.get('loading');
+    const currError = currData.get('error');
+    return {
+      done: currLoading === false && prevLoading === true && currError === false
+    };
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (snapshot && snapshot.done) {
+      // reset input
+      const amountInput = this.amountInput.current;
+      const addressInput = this.addressInput.current;
+      amountInput.reset();
+      addressInput.reset();
+    }
+  }
+
   handleWithdraw = async (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
     const { dispatchLoadWithdraw, data } = this.props;
@@ -142,7 +174,7 @@ class Wallet extends Component<Props, State> {
         coin
       });
     } catch (err) {
-      console.log(err);
+      debug(`handleWithdraw ${err.message}`);
     }
   };
 
@@ -150,7 +182,7 @@ class Wallet extends Component<Props, State> {
     debug(`render`);
 
     const { classes, data } = this.props;
-
+    const loading = data.get('loading');
     let CIcon = CryptoIcons[data.get('coin')];
     if (!CIcon) {
       CIcon = UNKNOW;
@@ -192,6 +224,9 @@ class Wallet extends Component<Props, State> {
               </ExpansionPanelSummary>
               <ExpansionPanelDetails className={classes.details}>
                 <Divider className={classes.hr} />
+
+                {loading && <LinearProgress className={classes.hr} />}
+
                 <Typography variant="button" gutterBottom>
                   Withdraw {data.get('coin')}
                 </Typography>
@@ -206,6 +241,7 @@ class Wallet extends Component<Props, State> {
                     balance={data.get('balance')}
                     className={classes.formItem}
                     ref={this.amountInput}
+                    disabled={loading}
                   />
 
                   <ValidationAddressInput
@@ -213,7 +249,9 @@ class Wallet extends Component<Props, State> {
                     label="Withdraw to address"
                     margin="normal"
                     className={classes.formItem}
+                    address={data.get('address')}
                     ref={this.addressInput}
+                    disabled={loading}
                   />
 
                   <br />
@@ -223,6 +261,7 @@ class Wallet extends Component<Props, State> {
                     color="primary"
                     className={classes.button}
                     onClick={this.handleWithdraw}
+                    disabled={loading}
                   >
                     Withdraw
                   </Button>

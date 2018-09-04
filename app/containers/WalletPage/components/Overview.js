@@ -6,9 +6,6 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import Grid from '@material-ui/core/Grid';
-
-import Button from '@material-ui/core/Button';
-
 import { makeSelectBalanceList, makeSelectBalanceEntities } from '../selectors';
 import { loadBalance, loadWithdraw } from '../actions';
 import Wallet from './Wallet';
@@ -50,12 +47,6 @@ class Overview extends Component<Props, State> {
     dispatchLoadBalance();
   };
 
-  onClickReloadBalance = (evt: SyntheticInputEvent<>) => {
-    evt.preventDefault();
-    const { dispatchLoadBalance } = this.props;
-    dispatchLoadBalance();
-  };
-
   render() {
     debug(`render`);
 
@@ -69,8 +60,6 @@ class Overview extends Component<Props, State> {
 
     return (
       <Grid container spacing={0} className={className}>
-        <Button onClick={this.onClickReloadBalance}>Load balance</Button>
-
         {list.map((t, k) => (
           <Grid key={k} item xs={12} className={classes.containerSection}>
             <Wallet

@@ -44,6 +44,19 @@ const makeSelectBalanceEntities = () =>
     balanceState.get('entities')
   );
 
+const makeSelectWithdraw = () =>
+  createSelector(selectWallet, walletState => walletState.get('withdraw'));
+
+const makeSelectWithdrawLoading = () =>
+  createSelector(makeSelectWithdraw(), withdrawState =>
+    withdrawState.get('loading')
+  );
+
+const makeSelectWithdrawError = () =>
+  createSelector(makeSelectWithdraw(), withdrawState =>
+    withdrawState.get('error')
+  );
+
 export {
   selectWallet,
   makeSelectTransactionsLoading,
@@ -54,5 +67,8 @@ export {
   makeSelectBalanceLoading,
   makeSelectBalanceError,
   makeSelectBalanceList,
-  makeSelectBalanceEntities
+  makeSelectBalanceEntities,
+  makeSelectWithdraw,
+  makeSelectWithdrawLoading,
+  makeSelectWithdrawError
 };

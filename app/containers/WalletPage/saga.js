@@ -14,6 +14,8 @@ import {
 
 const debug = require('debug')('dicoapp:containers:WalletPage:saga');
 
+const numcoin = 100000000;
+
 export function* loadCoinTransactionsProcess(coin, address, userpass) {
   try {
     debug(`loadCoinTransactionsProcess running${coin}`);
@@ -146,15 +148,19 @@ export function* loadWithdrawProcess({ payload }) {
     };
 
     const resultWithdraw = yield api.withdraw(sendparams);
-    console.log(resultWithdraw, 'resultWithdraw');
+
+    const { hex, txfee } = resultWithdraw;
 
     const sendrawtx = {
       userpass,
       coin,
-      signedtx: resultWithdraw.hex
+      signedtx: hex
     };
     const resultSendrawtx = yield api.sendRawTransaction(sendrawtx);
-    console.log(resultSendrawtx, 'resultSendrawtx');
+    debug(`resultSendrawtx = ${resultSendrawtx}`);
+
+    // eslint-disable-next-line no-param-reassign
+    payload.amount += txfee / numcoin;
 
     return yield put(loadWithdrawSuccess(payload));
   } catch (err) {

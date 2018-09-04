@@ -42,6 +42,13 @@ export default function validate(
       }
     };
 
+    reset = () => {
+      this.setState({
+        error: '',
+        value: ''
+      });
+    };
+
     setErrors = async () => {
       const { value } = this.state;
       try {
