@@ -28,7 +28,7 @@ export function loadTransactionsSuccess(transactions) {
   };
 }
 
-export function loadTransactionsError(message) {
+export function loadTransactionsError(message: string) {
   return {
     type: LOAD_TRANSACTIONS_ERROR,
     error: {
@@ -60,7 +60,7 @@ export function loadCoinBalanceSuccess(payload: {
   };
 }
 
-export function loadBalanceError(message) {
+export function loadBalanceError(message: string) {
   return {
     type: LOAD_BALANCE_ERROR,
     error: {
@@ -80,13 +80,18 @@ export function loadWithdraw(payload: {
   };
 }
 
-export function loadWithdrawSuccess() {
+export function loadWithdrawSuccess(payload: {
+  amount: number,
+  address: string,
+  coin: string
+}) {
   return {
-    type: LOAD_WITHDRAW_SUCCESS
+    type: LOAD_WITHDRAW_SUCCESS,
+    payload
   };
 }
 
-export function loadWithdrawError(message) {
+export function loadWithdrawError(message: string) {
   return {
     type: LOAD_WITHDRAW_ERROR,
     error: {

@@ -39,7 +39,35 @@ class FetchService extends Base {
       });
   }
 
+  requestText(options) {
+    const fetchOptions = Object.assign({}, options);
+    fetchOptions.headers = omit(fetchOptions.headers, ignoreFieldsInHeader);
+
+    fetchOptions.headers = Object.assign(
+      {
+        Accept: 'text/plain'
+      },
+      this.options.headers,
+      fetchOptions.headers
+    );
+
+    if (options.body) {
+      fetchOptions.body = JSON.stringify(options.body);
+    }
+
+    // const f = this.connection
+
+    return fetch(options.url, fetchOptions).then(response => {
+      if (response.status === 204) {
+        return null;
+      }
+
+      return response.text();
+    });
+  }
+
   static checkStatus(response) {
+    // https://developer.mozilla.org/en-US/docs/Web/API/Response/ok
     if (response.ok) {
       return response;
     }

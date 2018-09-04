@@ -109,9 +109,9 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   classes: Object,
   // eslint-disable-next-line flowtype/no-weak-types
-  data: Object
+  data: Object,
   // eslint-disable-next-line flowtype/no-weak-types
-  // dispatchLoadWithdraw: Function
+  dispatchLoadWithdraw: Function
 };
 
 type State = {};
@@ -126,22 +126,21 @@ class Wallet extends Component<Props, State> {
 
   handleWithdraw = async (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
-    // const { address } = this.state;
-    // const { dispatchLoadWithdraw, data } = this.props;
-    // const { dispatchLoadWithdraw } = this.props;
-    // console.log(
-    //   dispatchLoadWithdraw({
-    //     amount,
-    //     address,
-    //     // coin: data.get('coin'),
-    //     coin: 'BEER'
-    //   }),
-    //   'dispatchLoadWithdraw'
-    // );
+    const { dispatchLoadWithdraw, data } = this.props;
+    const coin = data.get('coin');
+
     try {
       const amountInput = this.amountInput.current;
       const amount = await amountInput.value();
-      console.log(amount, 'amountInput');
+
+      const addressInput = this.addressInput.current;
+      const address = await addressInput.value();
+
+      dispatchLoadWithdraw({
+        amount: Number(amount),
+        address,
+        coin
+      });
     } catch (err) {
       console.log(err);
     }

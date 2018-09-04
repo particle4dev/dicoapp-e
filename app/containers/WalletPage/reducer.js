@@ -1,5 +1,6 @@
 /* eslint-disable no-case-declarations, no-param-reassign */
 import { fromJS } from 'immutable';
+import { handleActions } from 'redux-actions';
 
 import {
   LOAD_TRANSACTIONS,
@@ -8,9 +9,9 @@ import {
   LOAD_BALANCE,
   LOAD_BALANCE_SUCCESS,
   LOAD_COIN_BALANCE_SUCCESS,
-  LOAD_BALANCE_ERROR
+  LOAD_BALANCE_ERROR,
   // LOAD_WITHDRAW,
-  // LOAD_WITHDRAW_SUCCESS,
+  LOAD_WITHDRAW_SUCCESS
   // LOAD_WITHDRAW_ERROR
 } from './constants';
 
@@ -31,28 +32,29 @@ const initialState = fromJS({
   }
 });
 
-function walletReducer(state = initialState, { type, payload, error }) {
-  switch (type) {
-    case LOAD_TRANSACTIONS:
-      return state
+const walletReducer = handleActions(
+  {
+    [LOAD_TRANSACTIONS]: state =>
+      state
         .setIn(['transactions', 'loading'], true)
-        .setIn(['transactions', 'error'], false);
-    case LOAD_TRANSACTIONS_SUCCESS:
-      return state
-        .setIn(['transactions', 'loading'], false)
-        .setIn(['transactions', 'list'], fromJS(payload.transactions));
-    case LOAD_TRANSACTIONS_ERROR:
-      return state
-        .setIn(['transactions', 'error'], error)
-        .setIn(['transactions', 'loading'], false);
+        .setIn(['transactions', 'error'], false),
 
-    case LOAD_BALANCE:
-      return state
+    [LOAD_TRANSACTIONS_SUCCESS]: (state, { payload }) =>
+      state
+        .setIn(['transactions', 'loading'], false)
+        .setIn(['transactions', 'list'], fromJS(payload.transactions)),
+
+    [LOAD_TRANSACTIONS_ERROR]: (state, { error }) =>
+      state
+        .setIn(['transactions', 'error'], error)
+        .setIn(['transactions', 'loading'], false),
+
+    [LOAD_BALANCE]: state =>
+      state
         .setIn(['balance', 'loading'], true)
-        .setIn(['balance', 'error'], false);
-    case LOAD_BALANCE_SUCCESS:
-      return state.setIn(['balance', 'loading'], false);
-    case LOAD_COIN_BALANCE_SUCCESS:
+        .setIn(['balance', 'error'], false),
+
+    [LOAD_COIN_BALANCE_SUCCESS]: (state, { payload }) => {
       // step one: update entities
       const entities = state.getIn(['balance', 'entities']);
       state = state.setIn(
@@ -65,17 +67,31 @@ function walletReducer(state = initialState, { type, payload, error }) {
         state = state.setIn(['balance', 'coins'], coins.push(payload.coin));
       }
       return state;
-    case LOAD_BALANCE_ERROR:
-      return state
-        .setIn(['balance', 'error'], error)
-        .setIn(['balance', 'loading'], false);
+    },
 
-    case LOGOUT:
-      return initialState;
-    default:
-      return state;
-  }
-}
+    [LOAD_BALANCE_SUCCESS]: state => state.setIn(['balance', 'loading'], false),
+
+    [LOAD_BALANCE_ERROR]: (state, { error }) =>
+      state
+        .setIn(['balance', 'error'], error)
+        .setIn(['balance', 'loading'], false),
+
+    [LOAD_WITHDRAW_SUCCESS]: (state, { payload }) => {
+      // step one: get coin
+      let entities = state.getIn(['balance', 'entities']);
+      const coin = entities.get(payload.coin);
+      const balance = coin.get('balance');
+      entities = entities.set(
+        payload.coin,
+        coin.set('balance', balance - payload.amount)
+      );
+      return state.setIn(['balance', 'entities'], entities);
+    },
+
+    [LOGOUT]: () => initialState
+  },
+  initialState
+);
 
 export default walletReducer;
 /* eslint-enable no-case-declarations, no-param-reassign */

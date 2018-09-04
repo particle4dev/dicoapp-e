@@ -102,12 +102,14 @@ class BarterDexAPI {
     return this.create(serverparams);
   }
 
-  sendRawTransaction(params, ...rest) {
+  sendRawTransaction(params: Object) {
     // FIXME: verify params
     const serverparams = Object.assign({}, params, {
       method: 'sendrawtransaction'
     });
-    return this.create(serverparams, ...rest);
+    return this.create(serverparams, {
+      toJSON: false
+    });
   }
 }
 

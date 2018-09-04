@@ -145,16 +145,16 @@ export function* loadWithdrawProcess({ payload }) {
       outputs: JSON.parse(outputs)
     };
 
-    const result = yield api.withdraw(sendparams);
-    console.log('RAWTX: ', result);
+    const resultWithdraw = yield api.withdraw(sendparams);
+    console.log(resultWithdraw, 'resultWithdraw');
 
     const sendrawtx = {
       userpass,
       coin,
-      signedtx: result.hex
+      signedtx: resultWithdraw.hex
     };
-    const result2 = yield api.sendRawTransaction(sendrawtx);
-    console.log(result2, 'result2');
+    const resultSendrawtx = yield api.sendRawTransaction(sendrawtx);
+    console.log(resultSendrawtx, 'resultSendrawtx');
 
     return yield put(loadWithdrawSuccess(payload));
   } catch (err) {

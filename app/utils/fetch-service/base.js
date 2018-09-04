@@ -1,4 +1,5 @@
 import query from 'qs';
+import omit from 'lodash/omit';
 import isObject from 'lodash/isObject';
 
 // Removes all leading and trailing slashes from a path
@@ -62,7 +63,13 @@ class Base {
     }).catch(toError);
   }
 
-  create(id, body, params = {}) {
+  create(
+    id,
+    body,
+    params = {
+      toJSON: true
+    }
+  ) {
     let path = id;
     let data = body;
     let options = params;
@@ -72,14 +79,26 @@ class Base {
       path = null;
     }
 
-    return this.request({
+    const { toJSON } = params;
+    options = omit(options, ['toJSON']);
+
+    if (toJSON) {
+      return this.request({
+        url: this.makeUrl(options.query, path),
+        body: data,
+        method: 'POST',
+        headers: Object.assign(
+          { 'Content-Type': 'application/json' },
+          options.headers
+        )
+      }).catch(toError);
+    }
+
+    return this.requestText({
       url: this.makeUrl(options.query, path),
       body: data,
       method: 'POST',
-      headers: Object.assign(
-        { 'Content-Type': 'application/json' },
-        options.headers
-      )
+      headers: Object.assign({ 'Content-Type': 'text/plain' }, options.headers)
     }).catch(toError);
   }
 
