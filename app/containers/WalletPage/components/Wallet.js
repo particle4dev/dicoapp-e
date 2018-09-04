@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import classNames from 'classnames';
 import QRCode from 'qrcode.react';
 // import Avatar from '@material-ui/core/Avatar';
 // import IconButton from '@material-ui/core/IconButton';
@@ -13,6 +14,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 // import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -20,6 +22,7 @@ import Divider from '@material-ui/core/Divider';
 import { required, requiredNumber } from '../../../components/Form/helper';
 import validate from '../../../components/Form/validate';
 import CryptoIcons, { UNKNOW } from '../../../components/CryptoIcons';
+import clipboardCopy from '../../../utils/clipboard-copy';
 
 const debug = require('debug')('dicoapp:containers:WalletPage:Wallet');
 
@@ -62,7 +65,7 @@ const ValidationAddressInput = validate(TextInput, [required, notSameAddress], {
   onChange: true
 });
 
-const styles = () => ({
+const styles = theme => ({
   column: {
     flexBasis: '33.33%'
   },
@@ -112,6 +115,13 @@ const styles = () => ({
   },
   coinName: {
     paddingLeft: 5
+  },
+
+  leftIcon: {
+    marginRight: theme.spacing.unit
+  },
+  iconSmall: {
+    fontSize: 20
   }
 });
 
@@ -124,12 +134,17 @@ type Props = {
   dispatchLoadWithdraw: Function
 };
 
-type State = {};
+type State = {
+  expanded: boolean
+};
 
 class Wallet extends Component<Props, State> {
   constructor(props) {
     super(props);
 
+    this.state = {
+      expanded: false
+    };
     this.amountInput = React.createRef();
     this.addressInput = React.createRef();
   }
@@ -178,10 +193,30 @@ class Wallet extends Component<Props, State> {
     }
   };
 
+  copyAddressToClipboard = async (evt: SyntheticInputEvent<>) => {
+    evt.stopPropagation();
+    const { data } = this.props;
+    const address = data.get('address');
+    clipboardCopy(address);
+    // const success = clipboardCopy(address);
+    // if (success) {
+    // } else {
+    // }
+    evt.target.focus();
+  };
+
+  toggleExpansionPanel = (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    this.setState(prevState => ({
+      expanded: !prevState.expanded
+    }));
+  };
+
   render() {
     debug(`render`);
 
     const { classes, data } = this.props;
+    const { expanded } = this.state;
     const loading = data.get('loading');
     let CIcon = CryptoIcons[data.get('coin')];
     if (!CIcon) {
@@ -192,12 +227,14 @@ class Wallet extends Component<Props, State> {
       <React.Fragment>
         <Grid container spacing={0}>
           <Grid item xs={12} className={classes.containerSection}>
-            <ExpansionPanel>
+            <ExpansionPanel expanded={expanded}>
               <ExpansionPanelSummary
                 classes={{
                   expandIcon: classes.rightIcon
                 }}
-                expandIcon={<ExpandMoreIcon />}
+                expandIcon={
+                  <ExpandMoreIcon onClick={this.toggleExpansionPanel} />
+                }
               >
                 <div className={classes.bitcoinContainer}>
                   <div className={classes.bitcoinTitle}>
@@ -217,6 +254,19 @@ class Wallet extends Component<Props, State> {
                       <Typography variant="title" gutterBottom>
                         {data.get('address')}
                       </Typography>
+                      <Button
+                        size="small"
+                        color="primary"
+                        onClick={this.copyAddressToClipboard}
+                      >
+                        <FileCopyIcon
+                          className={classNames(
+                            classes.leftIcon,
+                            classes.iconSmall
+                          )}
+                        />
+                        Copy to keyboard
+                      </Button>
                     </div>
                     <QRCode value={data.get('address')} />
                   </div>
