@@ -52,3 +52,5 @@ main.js.map
 npm-debug.log.*
 myipaddr
 **/DB/*
+
+test-account.md

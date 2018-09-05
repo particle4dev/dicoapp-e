@@ -27,6 +27,7 @@
     "test:tdd": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js",
     "test:e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js e2e",
     "test:watch": "yarn test --watch",
+    "test:watch-tdd": "yarn test:tdd --watch",
     "package": "yarn build && electron-builder build --publish never",
     "package:all": "yarn build && electron-builder build -mwl",
     "package:linux": "yarn build && electron-builder build --linux",
