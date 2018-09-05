@@ -91,22 +91,22 @@ module.exports = [
       }
     ]
   },
-  {
-    coin: 'GLXT',
-    name: 'GLX Token',
-    asset: 'GLXT',
-    rpcport: 13109,
-    electrumServers: [
-      {
-        host: 'electrum1.glx.co',
-        port: 60012
-      },
-      {
-        host: 'electrum2.glx.co',
-        port: 60012
-      }
-    ]
-  },
+  // {
+  //   coin: 'GLXT',
+  //   name: 'GLX Token',
+  //   asset: 'GLXT',
+  //   rpcport: 13109,
+  //   electrumServers: [
+  //     {
+  //       host: 'electrum1.glx.co',
+  //       port: 60012
+  //     },
+  //     {
+  //       host: 'electrum2.glx.co',
+  //       port: 60012
+  //     }
+  //   ]
+  // },
   {
     coin: 'COQUI',
     name: 'Coqui Cash',

@@ -36,18 +36,18 @@ module.exports = [
     ipaddr: 'electrum2.cipig.net',
     port: 10065
   },
-  {
-    method: 'electrum',
-    coin: 'GLXT',
-    ipaddr: 'electrum1.glx.co',
-    port: 60012
-  },
-  {
-    method: 'electrum',
-    coin: 'GLXT',
-    ipaddr: 'electrum2.glx.co',
-    port: 60012
-  },
+  // {
+  //   method: 'electrum',
+  //   coin: 'GLXT',
+  //   ipaddr: 'electrum1.glx.co',
+  //   port: 60012
+  // },
+  // {
+  //   method: 'electrum',
+  //   coin: 'GLXT',
+  //   ipaddr: 'electrum2.glx.co',
+  //   port: 60012
+  // },
   {
     method: 'electrum',
     coin: 'EQL',

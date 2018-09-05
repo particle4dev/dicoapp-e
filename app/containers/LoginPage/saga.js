@@ -1,7 +1,7 @@
 // https://github.com/sotojuan/saga-login-flow/blob/master/app/sagas/index.js
 
 import { remote } from 'electron';
-import { fork, take, race, call, put } from 'redux-saga/effects';
+import { all, fork, take, race, call, put } from 'redux-saga/effects';
 import { LOGIN, LOGOUT } from '../App/constants';
 import { loginSuccess, loginError } from '../App/actions';
 import api from '../../utils/barter-dex-api';
@@ -17,11 +17,21 @@ export function* authorize(passphrase) {
       e.userpass = data.userpass;
       return e;
     });
-    const results = [];
+
+    const requests = [];
     for (let i = 0; i < servers.length; i += 1) {
-      results.push(api.addServer(servers[i]));
+      requests.push(call([api, 'addServer'], servers[i]));
     }
-    yield Promise.all(results);
+
+    const result = yield all(requests);
+    result.forEach(element => {
+      if (element.result === 'success') {
+        debug(`adding ${element.ipaddr}:${element.port} is successfully`);
+      }
+      if (element.error) {
+        debug(`${element.ipaddr}:${element.port} ${element.error}`);
+      }
+    });
     return data;
   } catch (err) {
     yield put(
