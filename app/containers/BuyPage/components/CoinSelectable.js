@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import type { Node, ChildrenArray } from 'react';
 import ClassNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
@@ -76,19 +76,31 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   children?: ChildrenArray<any> | null,
   // eslint-disable-next-line flowtype/no-weak-types
-  onClick?: Function | null
+  onClick?: Function | null,
+  // eslint-disable-next-line flowtype/no-weak-types
+  data?: string
 };
 
-type State = {};
-
-class CoinSelectable extends Component<Props, State> {
+class CoinSelectable extends PureComponent<Props> {
   static defaultProps = {
     title: null,
     subTitle: null,
     selected: false,
     disabled: false,
     children: null,
-    onClick: null
+    onClick: null,
+    data: ''
+  };
+
+  onClick = (evt: SyntheticInputEvent<>) => {
+    const { onClick, data } = this.props;
+    if (onClick) {
+      if (data) {
+        // eslint-disable-next-line no-param-reassign
+        evt.target.value = data;
+      }
+      onClick(evt);
+    }
   };
 
   render() {
@@ -101,8 +113,7 @@ class CoinSelectable extends Component<Props, State> {
       subTitle,
       selected,
       disabled,
-      children,
-      onClick
+      children
     } = this.props;
 
     const buttonClasses = ClassNames(classes.btn, {
@@ -117,7 +128,7 @@ class CoinSelectable extends Component<Props, State> {
         key="title"
         className={buttonClasses}
         focusVisibleClassName={classes.focusVisible}
-        onClick={onClick}
+        onClick={this.onClick}
       >
         <span className={classes.btn__content}>
           {icon}
@@ -154,3 +165,4 @@ class CoinSelectable extends Component<Props, State> {
 CoinSelectable.displayName = 'CoinSelectable';
 
 export default withStyles(styles)(CoinSelectable);
+// export default CoinSelectable;

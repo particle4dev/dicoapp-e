@@ -19,11 +19,11 @@ import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
-import { BTC, ETH, LTC } from '../../components/CryptoIcons';
+import { getCoinIcon } from '../../components/CryptoIcons';
 import { Circle, Line, LineWrapper } from '../../components/placeholder';
 
 import { NavigationLayout } from '../Layout';
-import { APP_STATE_NAME } from './constants';
+import { APP_STATE_NAME, COIN_BASE1 } from './constants';
 import reducer from './reducer';
 import saga from './saga';
 import CoinSelectable from './components/CoinSelectable';
@@ -54,14 +54,22 @@ type Props = {
   dispatchLoadPrices: Function
 };
 
-class BuyPage extends Component<Props> {
+type State = {
+  baseCoin: string
+};
+
+class BuyPage extends Component<Props, State> {
   props: Props;
 
-  componentDidMount = () => {
-    const { dispatchLoadPrices } = this.props;
-
-    dispatchLoadPrices();
+  state = {
+    baseCoin: COIN_BASE1[0].symbol
   };
+
+  // componentDidMount = () => {
+  //   const { dispatchLoadPrices } = this.props;
+
+  //   dispatchLoadPrices();
+  // };
 
   onReloadPrices = (evt: SyntheticInputEvent<>) => {
     evt.stopPropagation();
@@ -72,7 +80,25 @@ class BuyPage extends Component<Props> {
 
   onClickCoin = (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
-    console.log('I wanna dance');
+    const { value } = evt.target;
+    this.setState({
+      baseCoin: value
+    });
+  };
+
+  renderBaseCoin = coin => {
+    const { baseCoin } = this.state;
+    const icon = getCoinIcon(coin.symbol);
+    return (
+      <CoinSelectable
+        key={`baseCoin${coin.symbol}`}
+        selected={baseCoin === coin.symbol}
+        data={coin.symbol}
+        icon={icon}
+        title={coin.name}
+        onClick={this.onClickCoin}
+      />
+    );
   };
 
   render() {
@@ -99,32 +125,25 @@ class BuyPage extends Component<Props> {
                 </Typography>
                 <Divider className={classes.hr} />
 
-                <CoinSelectable
-                  selected
-                  icon={<BTC />}
-                  title="Bitcoin"
-                  onClick={this.onClickCoin}
-                />
-
-                <CoinSelectable icon={<ETH />} title="Ethereum" />
+                {COIN_BASE1.map(this.renderBaseCoin)}
               </CardContent>
               <CardContent>
                 <Typography variant="title" gutterBottom>
                   Payment
                 </Typography>
                 <Divider className={classes.hr} />
-
                 <CoinSelectable
-                  icon={<BTC />}
-                  title="Bitcoin"
-                  subTitle="1.2 BTC"
+                  selected
+                  icon={getCoinIcon('KMD')}
+                  title="Komodo"
+                  subTitle="3000 KMD"
                 >
-                  1 BTC = 1 BTC
+                  1 BTC = 2000 KMD
                 </CoinSelectable>
 
                 <CoinSelectable
                   disabled
-                  icon={<ETH />}
+                  icon={getCoinIcon('ETH')}
                   title="Ethereum"
                   subTitle="5.7 ETH"
                 >
@@ -132,8 +151,7 @@ class BuyPage extends Component<Props> {
                 </CoinSelectable>
 
                 <CoinSelectable
-                  selected
-                  icon={<LTC />}
+                  icon={getCoinIcon('LTC')}
                   title="Litecoin"
                   subTitle="1.3 LTC"
                 >
@@ -141,8 +159,7 @@ class BuyPage extends Component<Props> {
                 </CoinSelectable>
 
                 <CoinSelectable
-                  selected
-                  icon={<LTC />}
+                  icon={getCoinIcon('LTC')}
                   title="Litecoin"
                   subTitle={<Line width={90} />}
                 >
@@ -159,11 +176,11 @@ class BuyPage extends Component<Props> {
                   Amount
                 </Typography>
                 <Divider className={classes.hr} />
-                <TextField id="BTC" label="BTC" value="" margin="normal" />
+                <TextField id="BTC" label="BTC" value="1" margin="normal" />
                 <br />
                 <SwapHorizIcon />
                 <br />
-                <TextField id="KMD" label="KMD" value="" margin="normal" />
+                <TextField id="KMD" label="KMD" value="2000" margin="normal" />
                 <br />
                 <Button color="primary" variant="contained">
                   Buy BTC
