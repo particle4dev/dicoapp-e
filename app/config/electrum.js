@@ -95,5 +95,17 @@ module.exports = [
     coin: 'COQUI',
     ipaddr: 'electrum2.cipig.net',
     port: 10011
+  },
+  {
+    method: 'electrum',
+    coin: 'CHIPS',
+    ipaddr: 'electrum2.cipig.net',
+    port: 10053
+  },
+  {
+    method: 'electrum',
+    coin: 'CHIPS',
+    ipaddr: 'electrum2.cipig.net',
+    port: 10053
   }
 ];
