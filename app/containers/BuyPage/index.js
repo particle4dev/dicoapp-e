@@ -19,6 +19,7 @@ import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
+import ErrorBoundary from '../../components/ErrorBoundary';
 import { getCoinIcon } from '../../components/CryptoIcons';
 import { Circle, Line, LineWrapper } from '../../components/placeholder';
 
@@ -107,7 +108,7 @@ class BuyPage extends Component<Props, State> {
     const { classes, loading } = this.props;
 
     return (
-      <NavigationLayout>
+      <React.Fragment>
         <AppBar position="static" color="default">
           <Toolbar>
             <Typography variant="title" color="inherit">
@@ -207,7 +208,7 @@ class BuyPage extends Component<Props, State> {
             </Card>
           </Grid>
         </Grid>
-      </NavigationLayout>
+      </React.Fragment>
     );
   }
 }
@@ -230,9 +231,23 @@ const withConnect = connect(
 const withReducer = injectReducer({ key: APP_STATE_NAME, reducer });
 const withSaga = injectSaga({ key: APP_STATE_NAME, saga });
 
-export default compose(
+const BuyPageWapper = compose(
   withReducer,
   withSaga,
   withConnect,
   withStyles(styles)
 )(BuyPage);
+
+const Index = () => (
+  <NavigationLayout>
+    <ErrorBoundary>
+      <BuyPageWapper />
+    </ErrorBoundary>
+  </NavigationLayout>
+);
+
+Index.propTypes = {};
+
+Index.defaultProps = {};
+
+export default Index;

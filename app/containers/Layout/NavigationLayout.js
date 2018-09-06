@@ -42,7 +42,8 @@ const styles = theme => ({
     left: 0,
     '-webkit-box-sizing': 'border-box',
     boxSizing: 'border-box',
-    width: '100%',
+    width: 72,
+    maxWidth: 72,
     height: '100%',
     overflow: 'hidden',
     contain: 'strict'

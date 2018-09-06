@@ -57,7 +57,6 @@ const styles = theme => ({
   docked: {
     height: '100%'
   },
-
   logoButton: {
     height: 'auto'
   }

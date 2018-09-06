@@ -6,7 +6,6 @@ import { withStyles } from '@material-ui/core/styles';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import Typography from '@material-ui/core/Typography';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-// import { UNKNOW } from '../../../components/CryptoIcons';
 
 const debug = require('debug')('dicoapp:containers:BuyPage:CoinSelectable');
 
