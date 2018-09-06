@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Grid from '@material-ui/core/Grid';
+import ErrorBoundary from '../../components/ErrorBoundary';
 import { NavigationLayout } from '../Layout';
 
 const styles = {
@@ -27,8 +28,9 @@ class HelpPage extends Component<Props> {
 
   render() {
     const { classes } = this.props;
+
     return (
-      <NavigationLayout>
+      <React.Fragment>
         <AppBar position="static" color="default">
           <Toolbar>
             <Typography variant="title" color="inherit">
@@ -101,9 +103,23 @@ class HelpPage extends Component<Props> {
             </ol>
           </Grid>
         </Grid>
-      </NavigationLayout>
+      </React.Fragment>
     );
   }
 }
 
-export default withStyles(styles)(HelpPage);
+const HelpPageWapper = withStyles(styles)(HelpPage);
+
+const Index = () => (
+  <NavigationLayout>
+    <ErrorBoundary>
+      <HelpPageWapper />
+    </ErrorBoundary>
+  </NavigationLayout>
+);
+
+Index.propTypes = {};
+
+Index.defaultProps = {};
+
+export default Index;
