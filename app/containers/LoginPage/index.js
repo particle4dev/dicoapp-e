@@ -15,6 +15,7 @@ import Avatar from '@material-ui/core/Avatar';
 import swal from 'sweetalert';
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
+import ErrorBoundary from '../../components/ErrorBoundary';
 import routes from '../../constants/routes.json';
 import { EmptyLayout } from '../Layout';
 import Passphrase from './components/Passphrase';
@@ -103,7 +104,7 @@ type State = {
   passphrase: string
 };
 
-class HomePage extends Component<Props, State> {
+class LoginPage extends Component<Props, State> {
   props: Props;
 
   state = {
@@ -155,7 +156,7 @@ class HomePage extends Component<Props, State> {
     const { passphrase } = this.state;
 
     return (
-      <EmptyLayout>
+      <React.Fragment>
         <div className={classes.loginContainer}>
           <div className={classes.center}>
             <Card className={classes.card}>
@@ -204,7 +205,7 @@ class HomePage extends Component<Props, State> {
             </Card>
           </div>
         </div>
-      </EmptyLayout>
+      </React.Fragment>
     );
   }
 }
@@ -228,9 +229,28 @@ const withConnect = connect(
   mapDispatchToProps
 );
 
-export default compose(
+const LoginPageWapper = compose(
   withReducer,
   withSaga,
   withConnect,
   withStyles(styles)
-)(HomePage);
+)(LoginPage);
+
+type RouterType = {
+  // eslint-disable-next-line flowtype/no-weak-types
+  history: Object
+};
+
+const Index = ({ history }: RouterType) => (
+  <EmptyLayout>
+    <ErrorBoundary>
+      <LoginPageWapper history={history} />
+    </ErrorBoundary>
+  </EmptyLayout>
+);
+
+Index.propTypes = {};
+
+Index.defaultProps = {};
+
+export default Index;
