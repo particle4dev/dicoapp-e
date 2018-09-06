@@ -47,7 +47,11 @@ const styles = () => ({
   },
 
   btn__title: {
-    marginTop: 5
+    margin: '5px 0px'
+  },
+
+  btn__subtitle: {
+    marginTop: 8
   },
 
   btn__selected: {
@@ -67,8 +71,8 @@ type Props = {
   icon: Node,
   selected?: boolean,
   disabled?: boolean,
-  title?: string | null,
-  subTitle?: string | null,
+  title?: Node | null,
+  subTitle?: Node | null,
   // eslint-disable-next-line flowtype/no-weak-types
   children?: ChildrenArray<any> | null,
   // eslint-disable-next-line flowtype/no-weak-types
@@ -128,7 +132,12 @@ class CoinSelectable extends Component<Props, State> {
             </Typography>
           )}
           {subTitle && (
-            <Typography component="div" variant="subheading" color="inherit">
+            <Typography
+              component="div"
+              variant="subheading"
+              color="inherit"
+              className={classes.btn__subtitle}
+            >
               {subTitle}
             </Typography>
           )}

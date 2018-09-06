@@ -20,7 +20,7 @@ import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
 import { BTC, ETH, LTC } from '../../components/CryptoIcons';
-import { Circle, Line } from '../../components/placeholder';
+import { Circle, Line, LineWrapper } from '../../components/placeholder';
 
 import { NavigationLayout } from '../Layout';
 import { APP_STATE_NAME } from './constants';
@@ -139,6 +139,20 @@ class BuyPage extends Component<Props> {
                 >
                   1 BTC = 10 LTC
                 </CoinSelectable>
+
+                <CoinSelectable
+                  selected
+                  icon={<LTC />}
+                  title="Litecoin"
+                  subTitle={<Line width={90} />}
+                >
+                  <Line
+                    width={60}
+                    style={{
+                      margin: 0
+                    }}
+                  />
+                </CoinSelectable>
               </CardContent>
               <CardContent>
                 <Typography variant="title" gutterBottom>
@@ -155,8 +169,14 @@ class BuyPage extends Component<Props> {
                   Buy BTC
                 </Button>
 
+                <br />
                 <Circle />
-                <Line />
+
+                <br />
+                <LineWrapper>
+                  <Line width={160} />
+                  <Line />
+                </LineWrapper>
               </CardContent>
               <CardContent>
                 <Button
