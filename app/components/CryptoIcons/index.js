@@ -4,6 +4,7 @@ import React from 'react';
 import AionIcon from './aion.svg';
 import BTCIcon from './btc.svg';
 import ETHIcon from './eth.svg';
+import CHIPSIcon from './chips.svg';
 import RDNIcon from './rdn.svg';
 import LTCIcon from './ltc.svg';
 import NEOIcon from './neo.svg';
@@ -27,6 +28,7 @@ export default {
   aion: AionIcon,
   btc: BTCIcon,
   eth: ETHIcon,
+  chips: CHIPSIcon,
   bch: BCHIcon,
   bnb: BNBIcon,
   eos: EOSIcon,
@@ -49,6 +51,7 @@ export default {
   AION: AionIcon,
   BTC: BTCIcon,
   ETH: ETHIcon,
+  CHIPS: CHIPSIcon,
   BCH: BCHIcon,
   BNB: BNBIcon,
   EOS: EOSIcon,
@@ -73,6 +76,7 @@ export {
   AionIcon as AION,
   BTCIcon as BTC,
   ETHIcon as ETH,
+  CHIPSIcon as CHIPS,
   BCHIcon as BCH,
   BNBIcon as BNB,
   EOSIcon as EOS,
