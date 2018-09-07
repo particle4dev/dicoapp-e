@@ -9,6 +9,7 @@ import {
   userDataDir
 } from '../config/paths';
 import coinsdata from '../config/coins-data';
+import { tokenconfig } from '../config/tokenconfig';
 
 // const { marketmakerCrashedDialog } = require('../dialogs');
 const debug = require('debug')('dicoapp:plugins:marketmaker');
@@ -26,13 +27,14 @@ const MarketMaker = () => {
       debug('start');
       killProcess('marketmaker');
 
+      const coins = coinsdata.concat([tokenconfig]);
       const startparams = Object.assign({}, options, {
         client: 1,
         canbind: 0,
         gui: 'dICOapp-cm',
         passphrase: 'default',
         userhome: homeDir,
-        coins: coinsdata
+        coins
       });
 
       marketmakerProcess = childProcess.spawn(

@@ -7,13 +7,14 @@ import { loginSuccess, loginError } from '../App/actions';
 import api from '../../utils/barter-dex-api';
 
 const electrum = remote.require('./config/electrum');
+const tokenconfig = remote.require('./config/tokenconfig');
 const debug = require('debug')('dicoapp:containers:LoginPage:saga');
 
 export function* authorize(passphrase) {
   try {
     debug(`authorize is running`);
     const data = yield api.login(passphrase);
-    const servers = electrum.map(e => {
+    const servers = electrum.concat(tokenconfig.electrum).map(e => {
       e.userpass = data.userpass;
       return e;
     });
