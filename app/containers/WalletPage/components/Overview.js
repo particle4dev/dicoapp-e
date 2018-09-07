@@ -10,8 +10,7 @@ import {
   makeSelectBalanceList,
   makeSelectBalanceEntities
 } from '../../App/selectors';
-import { loadBalance } from '../../App/actions';
-import { loadWithdraw } from '../actions';
+import { loadBalance, loadWithdraw } from '../../App/actions';
 import Wallet from './Wallet';
 
 const debug = require('debug')('dicoapp:containers:WalletPage:Overview');

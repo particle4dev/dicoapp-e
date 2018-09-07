@@ -24,7 +24,7 @@ import { getCoinIcon } from '../../components/CryptoIcons';
 // import { Circle, Line, LineWrapper } from '../../components/placeholder';
 
 import { NavigationLayout } from '../Layout';
-import { makeSelectBalanceEntities } from '../WalletPage/selectors';
+import { makeSelectBalanceEntities } from '../App/selectors';
 import { APP_STATE_NAME, COIN_BASE } from './constants';
 import reducer from './reducer';
 import saga from './saga';
