@@ -11,15 +11,19 @@ import {
 import { push } from 'react-router-redux';
 import api from '../../utils/barter-dex-api';
 import routes from '../../constants/routes.json';
-import { LOGOUT, LOAD_BALANCE } from './constants';
+import { LOGOUT, LOAD_BALANCE, LOAD_WITHDRAW } from './constants';
 import { makeSelectCurrentUser } from './selectors';
 import {
   loadBalanceSuccess,
   loadCoinBalanceSuccess,
-  loadBalanceError
+  loadBalanceError,
+  loadWithdrawSuccess,
+  loadWithdrawError
 } from './actions';
 
 const debug = require('debug')('dicoapp:containers:App:saga');
+
+const numcoin = 100000000;
 
 export function* logoutFlow() {
   debug(`logout flow`);
@@ -83,7 +87,51 @@ export function* loadBalanceProcess() {
   }
 }
 
+export function* loadWithdrawProcess({ payload }) {
+  try {
+    // load user data
+    const user = yield select(makeSelectCurrentUser());
+    if (!user) {
+      throw new Error('not found user');
+    }
+    const userpass = user.get('userpass');
+
+    const { amount, address, coin } = payload;
+
+    let outputs = `[{${address}: ${Number(amount)}}]`;
+
+    // eslint-disable-next-line no-eval
+    outputs = JSON.stringify(eval(`(${outputs})`));
+
+    const sendparams = {
+      userpass,
+      coin,
+      outputs: JSON.parse(outputs)
+    };
+
+    const resultWithdraw = yield api.withdraw(sendparams);
+
+    const { hex, txfee } = resultWithdraw;
+
+    const sendrawtx = {
+      userpass,
+      coin,
+      signedtx: hex
+    };
+    const resultSendrawtx = yield api.sendRawTransaction(sendrawtx);
+    debug(`resultSendrawtx = ${resultSendrawtx}`);
+
+    // eslint-disable-next-line no-param-reassign
+    payload.amount += txfee / numcoin;
+
+    return yield put(loadWithdrawSuccess(payload));
+  } catch (err) {
+    return yield put(loadWithdrawError(err.message));
+  }
+}
+
 export default function* root() {
   yield takeLatest(LOAD_BALANCE, loadBalanceProcess);
+  yield takeLatest(LOAD_WITHDRAW, loadWithdrawProcess);
   yield fork(logoutFlow);
 }
