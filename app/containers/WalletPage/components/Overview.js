@@ -6,13 +6,13 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import Grid from '@material-ui/core/Grid';
-import { makeSelectBalanceList, makeSelectBalanceEntities } from '../selectors';
-import { loadBalance, loadWithdraw } from '../actions';
+import {
+  makeSelectBalanceList,
+  makeSelectBalanceEntities
+} from '../../App/selectors';
+import { loadBalance } from '../../App/actions';
+import { loadWithdraw } from '../actions';
 import Wallet from './Wallet';
-
-// makeSelectBalance,
-// makeSelectBalanceLoading,
-// makeSelectBalanceError,
 
 const debug = require('debug')('dicoapp:containers:WalletPage:Overview');
 

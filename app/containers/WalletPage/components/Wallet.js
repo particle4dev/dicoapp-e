@@ -15,13 +15,13 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
-
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
 import { required, requiredNumber } from '../../../components/Form/helper';
 import validate from '../../../components/Form/validate';
-import CryptoIcons, { UNKNOW } from '../../../components/CryptoIcons';
+import { getCoinIcon } from '../../../components/CryptoIcons';
+
 import clipboardCopy from '../../../utils/clipboard-copy';
 
 const debug = require('debug')('dicoapp:containers:WalletPage:Wallet');
@@ -218,10 +218,7 @@ class Wallet extends Component<Props, State> {
     const { classes, data } = this.props;
     const { expanded } = this.state;
     const loading = data.get('loading');
-    let CIcon = CryptoIcons[data.get('coin')];
-    if (!CIcon) {
-      CIcon = UNKNOW;
-    }
+    const CIcon = getCoinIcon(data.get('coin'));
 
     return (
       <React.Fragment>
@@ -239,7 +236,7 @@ class Wallet extends Component<Props, State> {
                 <div className={classes.bitcoinContainer}>
                   <div className={classes.bitcoinTitle}>
                     <div className={classes.rightLogo}>
-                      <CIcon />
+                      {CIcon}
                       <div className={classes.coinName}>{data.get('coin')}</div>
                     </div>
                     <div>
