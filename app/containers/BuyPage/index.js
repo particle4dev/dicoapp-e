@@ -12,7 +12,6 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import TextField from '@material-ui/core/TextField';
 
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
@@ -30,6 +29,7 @@ import { APP_STATE_NAME, COIN_BASE } from './constants';
 import reducer from './reducer';
 import saga from './saga';
 import CoinSelectable from './components/CoinSelectable';
+import AmountInput from './components/AmountInput';
 import BuyButton from './components/BuyButton';
 import { loadPrices } from './actions';
 import {
@@ -65,33 +65,13 @@ const styles = theme => ({
       marginTop: theme.spacing.unit * 3
     }
   },
-  bootstrapInput: {
-    borderRadius: 4,
-    backgroundColor: theme.palette.common.white,
-    border: '1px solid #ced4da',
-    fontSize: 16,
-    padding: '10px 12px',
-    width: 'calc(100% - 24px)',
-    transition: theme.transitions.create(['border-color', 'box-shadow']),
-    fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      'Roboto',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"'
-    ].join(','),
-    '&:focus': {
-      borderColor: '#80bdff',
-      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)'
-    }
+
+  amountform: {
+    width: '50%'
   },
-  bootstrapFormLabel: {
-    fontSize: 18
+
+  amountform__item: {
+    width: '100%'
   }
 });
 
@@ -215,54 +195,34 @@ class BuyPage extends Component<Props, State> {
                   Amount
                 </Typography>
                 <Divider className={classes.hr} />
-                <TextField
-                  style={{
-                    width: '50%'
-                  }}
-                  defaultValue="1"
-                  label="BTC"
-                  id="BTC"
-                  InputProps={{
-                    disableUnderline: true,
-                    classes: {
-                      root: classes.bootstrapRoot,
-                      input: classes.bootstrapInput
-                    }
-                  }}
-                  InputLabelProps={{
-                    shrink: true,
-                    className: classes.bootstrapFormLabel
-                  }}
-                />
-                <br />
-                <br />
-                <SwapHorizIcon />
-                <br />
-                <br />
-                <TextField
-                  style={{
-                    width: '50%'
-                  }}
-                  defaultValue="2000"
-                  label="KMD"
-                  id="KMD"
-                  InputProps={{
-                    disableUnderline: true,
-                    classes: {
-                      root: classes.bootstrapRoot,
-                      input: classes.bootstrapInput
-                    }
-                  }}
-                  InputLabelProps={{
-                    shrink: true,
-                    className: classes.bootstrapFormLabel
-                  }}
-                />
-                <br />
-                <br />
-                <BuyButton color="secondary" variant="contained">
-                  Buy BEER - 1 BTC
-                </BuyButton>
+                <form className={classes.amountform}>
+                  <AmountInput
+                    defaultValue="1"
+                    label="BTC"
+                    id="BTC"
+                    className={classes.amountform__item}
+                  />
+                  <br />
+                  <br />
+                  <SwapHorizIcon />
+                  <br />
+                  <br />
+                  <AmountInput
+                    defaultValue="2000"
+                    label="KMD"
+                    id="KMD"
+                    className={classes.amountform__item}
+                  />
+                  <br />
+                  <br />
+                  <BuyButton
+                    color="secondary"
+                    variant="contained"
+                    className={classes.amountform__item}
+                  >
+                    Buy BEER - 1 BTC
+                  </BuyButton>
+                </form>
               </CardContent>
               <CardContent>
                 <Button
