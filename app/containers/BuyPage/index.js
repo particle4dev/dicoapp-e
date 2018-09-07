@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import type { List, Map } from 'immutable';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -24,6 +25,7 @@ import { getCoinIcon } from '../../components/CryptoIcons';
 import { Circle, Line, LineWrapper } from '../../components/placeholder';
 
 import { NavigationLayout } from '../Layout';
+import { makeSelectBalanceEntities } from '../WalletPage/selectors';
 import { APP_STATE_NAME, COIN_BASE } from './constants';
 import reducer from './reducer';
 import saga from './saga';
@@ -34,6 +36,12 @@ import {
   makeSelectPricesCoins,
   makeSelectPricesEntities
 } from './selectors';
+
+function floor(number, after = 1) {
+  // eslint-disable-next-line no-restricted-properties
+  const p = Math.pow(10, after);
+  return Math.floor(number * p) / p;
+}
 
 const debug = require('debug')('dicoapp:containers:BuyPage');
 
@@ -56,7 +64,11 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   classes: Object,
   // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadPrices: Function
+  dispatchLoadPrices: Function,
+  // eslint-disable-next-line flowtype/no-weak-types
+  balance: Object,
+  coins: List<*>,
+  entities: Map<*, *>
 };
 
 type State = {
@@ -107,10 +119,33 @@ class BuyPage extends Component<Props, State> {
     );
   };
 
+  renderPaymentCoin = coin => {
+    const { entities, balance } = this.props;
+    const symbol = coin.get('symbol');
+    const c = entities.get(symbol);
+    const b = balance.get(symbol);
+    const icon = getCoinIcon(symbol);
+
+    return (
+      <CoinSelectable
+        disabled={c.get('bestPrice') === 0}
+        key={`paymentCoin${symbol}`}
+        data={symbol}
+        icon={icon}
+        title={coin.get('coin')}
+        subTitle={`${floor(b.get('balance'), 3)} ${b.get('coin')}`}
+      >
+        1 {COIN_BASE.get('coin')} = {c.get('bestPrice')} {coin.get('symbol')}
+      </CoinSelectable>
+    );
+  };
+
   render() {
     debug('render');
 
-    const { classes, loading } = this.props;
+    const { classes, loading, coins } = this.props;
+
+    console.log(coins.toJS(), 'coins, entities');
 
     return (
       <React.Fragment>
@@ -130,6 +165,7 @@ class BuyPage extends Component<Props, State> {
                   Currency
                 </Typography>
                 <Divider className={classes.hr} />
+
                 {this.renderBaseCoin()}
               </CardContent>
               <CardContent>
@@ -137,31 +173,8 @@ class BuyPage extends Component<Props, State> {
                   Payment
                 </Typography>
                 <Divider className={classes.hr} />
-                <CoinSelectable
-                  selected
-                  icon={getCoinIcon('KMD')}
-                  title="Komodo"
-                  subTitle="3000 KMD"
-                >
-                  1 BTC = 2000 KMD
-                </CoinSelectable>
 
-                <CoinSelectable
-                  disabled
-                  icon={getCoinIcon('ETH')}
-                  title="Ethereum"
-                  subTitle="5.7 ETH"
-                >
-                  1 BTC = 0 ETH
-                </CoinSelectable>
-
-                <CoinSelectable
-                  icon={getCoinIcon('LTC')}
-                  title="Litecoin"
-                  subTitle="1.3 LTC"
-                >
-                  1 BTC = 10 LTC
-                </CoinSelectable>
+                {coins.map(this.renderPaymentCoin)}
 
                 <CoinSelectable
                   icon={getCoinIcon('LTC')}
@@ -226,7 +239,8 @@ export function mapDispatchToProps(dispatch) {
 const mapStateToProps = createStructuredSelector({
   loading: makeSelectPricesLoading(),
   coins: makeSelectPricesCoins(),
-  entities: makeSelectPricesEntities()
+  entities: makeSelectPricesEntities(),
+  balance: makeSelectBalanceEntities()
 });
 
 const withConnect = connect(

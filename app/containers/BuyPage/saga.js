@@ -1,8 +1,18 @@
+import { remote } from 'electron';
 import { takeLatest, put, select, call, all } from 'redux-saga/effects';
-import { LOAD_PRICES, COIN_BASE } from './constants';
 import { makeSelectCurrentUser } from '../App/selectors';
 import api from '../../utils/barter-dex-api';
-import { loadPricesSuccess, loadPricesError } from './actions';
+import { LOAD_PRICES, COIN_BASE } from './constants';
+import { loadCoinSymbol, loadPricesSuccess, loadPricesError } from './actions';
+import { makeSelectInitCoinsData } from './selectors';
+
+const symbol = remote.require('./config/symbol');
+
+const covertSymbolToName = syl => {
+  const s = symbol.symbolToName[syl];
+  if (s) return s;
+  return '';
+};
 
 const numcoin = 100000000;
 // const txfee = 10000;
@@ -43,6 +53,23 @@ export function* loadPriceProcess(coin, userpass) {
   }
 }
 
+export function* loadInitCoinData(coins) {
+  try {
+    const data = coins.map(e => {
+      const sym = e.get('coin');
+      const coin = covertSymbolToName(sym);
+      return {
+        coin,
+        symbol: sym
+      };
+    });
+    return yield put(loadCoinSymbol(data));
+  } catch (err) {
+    debug(`load init coin data: ${err.message}`);
+    return false;
+  }
+}
+
 export function* loadPricesProcess() {
   try {
     // load user data
@@ -52,6 +79,11 @@ export function* loadPricesProcess() {
     }
     const userpass = user.get('userpass');
     const coins = user.get('coins');
+    const initCoinsData = yield select(makeSelectInitCoinsData());
+
+    if (!initCoinsData) {
+      yield call(loadInitCoinData, coins);
+    }
 
     const requests = [];
     for (let i = 0; i < coins.size; i += 1) {

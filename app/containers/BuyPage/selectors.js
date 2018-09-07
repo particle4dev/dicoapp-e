@@ -3,6 +3,9 @@ import { APP_STATE_NAME } from './constants';
 
 const selectBuy = state => state.get(APP_STATE_NAME);
 
+const makeSelectInitCoinsData = () =>
+  createSelector(selectBuy, buyState => buyState.get('initCoinsData'));
+
 const makeSelectPrices = () =>
   createSelector(selectBuy, buyState => buyState.get('prices'));
 
@@ -22,6 +25,7 @@ const makeSelectPricesEntities = () =>
 
 export {
   selectBuy,
+  makeSelectInitCoinsData,
   makeSelectPrices,
   makeSelectPricesLoading,
   makeSelectPricesError,

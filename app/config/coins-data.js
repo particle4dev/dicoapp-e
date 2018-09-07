@@ -1,6 +1,7 @@
 module.exports = [
   {
     coin: 'KMD',
+    name: 'Komodo',
     electrumServers: [
       {
         host: 'electrum1.cipig.net',
@@ -15,6 +16,7 @@ module.exports = [
   },
   {
     coin: 'BTC',
+    name: 'Bitcoin',
     electrumServers: [
       {
         host: 'electrum1.cipig.net',
@@ -46,6 +48,7 @@ module.exports = [
   },
   {
     coin: 'LTC',
+    name: 'Litecoin',
     rpcport: 9332,
     pubtype: 48,
     p2shtype: 5,
