@@ -7,17 +7,24 @@ const makeSelectPrices = () =>
   createSelector(selectBuy, buyState => buyState.get('prices'));
 
 const makeSelectPricesLoading = () =>
-  createSelector(makeSelectPrices(), pricesState => {
-    console.log('pricesState', pricesState.toJS(), pricesState.get('loading'));
-    return pricesState.get('loading');
-  });
+  createSelector(makeSelectPrices(), pricesState => pricesState.get('loading'));
 
 const makeSelectPricesError = () =>
   createSelector(makeSelectPrices(), pricesState => pricesState.get('error'));
+
+const makeSelectPricesCoins = () =>
+  createSelector(makeSelectPrices(), pricesState => pricesState.get('coins'));
+
+const makeSelectPricesEntities = () =>
+  createSelector(makeSelectPrices(), pricesState =>
+    pricesState.get('entities')
+  );
 
 export {
   selectBuy,
   makeSelectPrices,
   makeSelectPricesLoading,
-  makeSelectPricesError
+  makeSelectPricesError,
+  makeSelectPricesCoins,
+  makeSelectPricesEntities
 };

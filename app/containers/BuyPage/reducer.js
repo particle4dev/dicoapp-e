@@ -13,7 +13,9 @@ import { LOGOUT } from '../App/constants';
 const initialState = fromJS({
   prices: {
     loading: false,
-    error: false
+    error: false,
+    coins: [],
+    entities: {}
   }
 });
 

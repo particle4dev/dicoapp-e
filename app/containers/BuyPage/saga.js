@@ -11,7 +11,7 @@ const debug = require('debug')('dicoapp:containers:BuyPage:saga');
 export function* loadPriceProcess(coin, userpass) {
   const getprices = {
     userpass,
-    base: COIN_BASE,
+    base: COIN_BASE.get('coin'),
     rel: coin
   };
   const buf = 1.08 * numcoin;

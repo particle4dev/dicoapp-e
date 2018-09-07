@@ -24,12 +24,16 @@ import { getCoinIcon } from '../../components/CryptoIcons';
 import { Circle, Line, LineWrapper } from '../../components/placeholder';
 
 import { NavigationLayout } from '../Layout';
-import { APP_STATE_NAME, COIN_BASE1 } from './constants';
+import { APP_STATE_NAME, COIN_BASE } from './constants';
 import reducer from './reducer';
 import saga from './saga';
 import CoinSelectable from './components/CoinSelectable';
 import { loadPrices } from './actions';
-import { makeSelectPricesLoading } from './selectors';
+import {
+  makeSelectPricesLoading,
+  makeSelectPricesCoins,
+  makeSelectPricesEntities
+} from './selectors';
 
 const debug = require('debug')('dicoapp:containers:BuyPage');
 
@@ -63,14 +67,14 @@ class BuyPage extends Component<Props, State> {
   props: Props;
 
   state = {
-    baseCoin: COIN_BASE1[0].symbol
+    baseCoin: COIN_BASE.get('coin')
   };
 
-  // componentDidMount = () => {
-  //   const { dispatchLoadPrices } = this.props;
+  componentDidMount = () => {
+    const { dispatchLoadPrices } = this.props;
 
-  //   dispatchLoadPrices();
-  // };
+    dispatchLoadPrices();
+  };
 
   onReloadPrices = (evt: SyntheticInputEvent<>) => {
     evt.stopPropagation();
@@ -87,16 +91,17 @@ class BuyPage extends Component<Props, State> {
     });
   };
 
-  renderBaseCoin = coin => {
+  renderBaseCoin = () => {
     const { baseCoin } = this.state;
-    const icon = getCoinIcon(coin.symbol);
+    const symbol = COIN_BASE.get('coin');
+    const icon = getCoinIcon(symbol);
     return (
       <CoinSelectable
-        key={`baseCoin${coin.symbol}`}
-        selected={baseCoin === coin.symbol}
-        data={coin.symbol}
+        key={`baseCoin${symbol}`}
+        selected={baseCoin === symbol}
+        data={symbol}
         icon={icon}
-        title={coin.name}
+        title={COIN_BASE.get('name')}
         onClick={this.onClickCoin}
       />
     );
@@ -125,8 +130,7 @@ class BuyPage extends Component<Props, State> {
                   Currency
                 </Typography>
                 <Divider className={classes.hr} />
-
-                {COIN_BASE1.map(this.renderBaseCoin)}
+                {this.renderBaseCoin()}
               </CardContent>
               <CardContent>
                 <Typography variant="title" gutterBottom>
@@ -220,7 +224,9 @@ export function mapDispatchToProps(dispatch) {
 }
 
 const mapStateToProps = createStructuredSelector({
-  loadling: makeSelectPricesLoading()
+  loading: makeSelectPricesLoading(),
+  coins: makeSelectPricesCoins(),
+  entities: makeSelectPricesEntities()
 });
 
 const withConnect = connect(
