@@ -24,7 +24,10 @@ import {
   LOAD_BALANCE,
   LOAD_BALANCE_SUCCESS,
   LOAD_BALANCE_ERROR,
-  LOAD_COIN_BALANCE_SUCCESS
+  LOAD_COIN_BALANCE_SUCCESS,
+  LOAD_WITHDRAW,
+  LOAD_WITHDRAW_SUCCESS,
+  LOAD_WITHDRAW_ERROR
 } from './constants';
 
 /**
@@ -113,6 +116,37 @@ export function loadCoinBalanceSuccess(payload: {
 export function loadBalanceError(message: string) {
   return {
     type: LOAD_BALANCE_ERROR,
+    error: {
+      message
+    }
+  };
+}
+
+export function loadWithdraw(payload: {
+  amount: number,
+  address: string,
+  coin: string
+}) {
+  return {
+    type: LOAD_WITHDRAW,
+    payload
+  };
+}
+
+export function loadWithdrawSuccess(payload: {
+  amount: number,
+  address: string,
+  coin: string
+}) {
+  return {
+    type: LOAD_WITHDRAW_SUCCESS,
+    payload
+  };
+}
+
+export function loadWithdrawError(message: string) {
+  return {
+    type: LOAD_WITHDRAW_ERROR,
     error: {
       message
     }
