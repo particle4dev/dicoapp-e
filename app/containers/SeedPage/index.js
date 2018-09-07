@@ -1,7 +1,6 @@
 // @flow
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -15,6 +14,7 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
+import ErrorBoundary from '../../components/ErrorBoundary';
 import reducer from './reducer';
 import saga from './saga';
 import { EmptyLayout } from '../Layout';
@@ -131,19 +131,12 @@ class SeedPage extends Component<Props, State> {
     });
   };
 
-  // generateWtf = (evt: SyntheticInputEvent<>) => {
-  //   onChange
-  //   const { passphrase } = this.props;
-  //   const wif = generateWif(passphrase);
-
-  // }
-
   render() {
     debug('render');
     const { classes } = this.props;
     const { openSnackbar, messsageSnackbar } = this.state;
     return (
-      <EmptyLayout>
+      <React.Fragment>
         <div className={classes.loginContainer}>
           <div className={classes.center}>
             <Card className={classes.card}>
@@ -217,21 +210,34 @@ class SeedPage extends Component<Props, State> {
             </IconButton>
           ]}
         />
-      </EmptyLayout>
+      </React.Fragment>
     );
   }
 }
 const withReducer = injectReducer({ key: APP_STATE_NAME, reducer });
 const withSaga = injectSaga({ key: APP_STATE_NAME, saga });
 
-const withConnect = connect(
-  null,
-  null
-);
-
-export default compose(
+const SeedPageWapper = compose(
   withReducer,
   withSaga,
-  withConnect,
   withStyles(styles)
 )(SeedPage);
+
+type RouterType = {
+  // eslint-disable-next-line flowtype/no-weak-types
+  history: Object
+};
+
+const Index = ({ history }: RouterType) => (
+  <EmptyLayout>
+    <ErrorBoundary>
+      <SeedPageWapper history={history} />
+    </ErrorBoundary>
+  </EmptyLayout>
+);
+
+Index.propTypes = {};
+
+Index.defaultProps = {};
+
+export default Index;

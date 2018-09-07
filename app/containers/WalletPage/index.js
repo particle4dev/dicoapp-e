@@ -12,6 +12,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
+import ErrorBoundary from '../../components/ErrorBoundary';
 import { NavigationLayout } from '../Layout';
 
 import Overview from './components/Overview';
@@ -43,7 +44,7 @@ class WalletPage extends Component<Props> {
     const { classes } = this.props;
 
     return (
-      <NavigationLayout>
+      <React.Fragment>
         <AppBar position="static" color="default">
           <Toolbar>
             <Typography variant="title" color="inherit">
@@ -65,7 +66,7 @@ class WalletPage extends Component<Props> {
 
         <Overview className={classes.container} />
         <Transactions className={classes.container} />
-      </NavigationLayout>
+      </React.Fragment>
     );
   }
 }
@@ -73,8 +74,22 @@ class WalletPage extends Component<Props> {
 const withReducer = injectReducer({ key: APP_STATE_NAME, reducer });
 const withSaga = injectSaga({ key: APP_STATE_NAME, saga });
 
-export default compose(
+const WalletPageWapper = compose(
   withReducer,
   withSaga,
   withStyles(styles)
 )(WalletPage);
+
+const Index = () => (
+  <NavigationLayout>
+    <ErrorBoundary>
+      <WalletPageWapper />
+    </ErrorBoundary>
+  </NavigationLayout>
+);
+
+Index.propTypes = {};
+
+Index.defaultProps = {};
+
+export default Index;

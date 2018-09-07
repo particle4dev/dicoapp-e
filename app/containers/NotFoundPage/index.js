@@ -1,22 +1,36 @@
 // @flow
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import routes from '../../constants/routes.json';
+import ErrorBoundary from '../../components/ErrorBoundary';
 import { NavigationLayout } from '../Layout';
+import routes from '../../constants/routes.json';
 
 type Props = {};
 
-export default class NotFoundPage extends Component<Props> {
+class NotFoundPage extends Component<Props> {
   props: Props;
 
   render() {
-    // const {} = this.props;
     return (
-      <NavigationLayout>
+      <React.Fragment>
         NotFoundPage
         <br />
         <Link to={routes.HOME}>to HomePage</Link>
-      </NavigationLayout>
+      </React.Fragment>
     );
   }
 }
+
+const Index = () => (
+  <NavigationLayout>
+    <ErrorBoundary>
+      <NotFoundPage />
+    </ErrorBoundary>
+  </NavigationLayout>
+);
+
+Index.propTypes = {};
+
+Index.defaultProps = {};
+
+export default Index;

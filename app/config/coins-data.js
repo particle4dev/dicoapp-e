@@ -1,6 +1,7 @@
 module.exports = [
   {
     coin: 'KMD',
+    name: 'Komodo',
     electrumServers: [
       {
         host: 'electrum1.cipig.net',
@@ -10,10 +11,12 @@ module.exports = [
         host: 'electrum2.cipig.net',
         port: 10001
       }
-    ]
+    ],
+    active: 1
   },
   {
     coin: 'BTC',
+    name: 'Bitcoin',
     electrumServers: [
       {
         host: 'electrum1.cipig.net',
@@ -23,7 +26,8 @@ module.exports = [
         host: 'electrum2.cipig.net',
         port: 10000
       }
-    ]
+    ],
+    active: 1
   },
   {
     coin: 'EQL',
@@ -39,10 +43,12 @@ module.exports = [
         host: '167.99.204.42',
         port: 10801
       }
-    ]
+    ],
+    active: 1
   },
   {
     coin: 'LTC',
+    name: 'Litecoin',
     rpcport: 9332,
     pubtype: 48,
     p2shtype: 5,
@@ -57,23 +63,8 @@ module.exports = [
         host: 'electrum2.cipig.net',
         port: 10065
       }
-    ]
-  },
-  {
-    coin: 'BEER',
-    name: 'Beer',
-    asset: 'BEER',
-    rpcport: 8923,
-    electrumServers: [
-      {
-        host: 'electrum1.cipig.net',
-        port: 10022
-      },
-      {
-        host: 'electrum2.cipig.net',
-        port: 10022
-      }
-    ]
+    ],
+    active: 1
   },
   {
     coin: 'PIZZA',
@@ -89,23 +80,8 @@ module.exports = [
         host: 'electrum2.cipig.net',
         port: 10024
       }
-    ]
-  },
-  {
-    coin: 'GLXT',
-    name: 'GLX Token',
-    asset: 'GLXT',
-    rpcport: 13109,
-    electrumServers: [
-      {
-        host: 'electrum1.glx.co',
-        port: 60012
-      },
-      {
-        host: 'electrum2.glx.co',
-        port: 60012
-      }
-    ]
+    ],
+    active: 1
   },
   {
     coin: 'COQUI',
@@ -121,6 +97,7 @@ module.exports = [
         host: 'electrum2.cipig.net',
         port: 10011
       }
-    ]
+    ],
+    active: 1
   }
 ];

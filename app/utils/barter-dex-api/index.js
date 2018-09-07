@@ -68,7 +68,7 @@ class BarterDexAPI {
   /**
    *
    */
-  getBalance(params) {
+  getBalance(params: Object) {
     // FIXME: verify params
     const balanceparams = Object.assign({}, params, {
       method: 'balance'
@@ -77,7 +77,7 @@ class BarterDexAPI {
   }
 
   // https://docs.komodoplatform.com/barterDEX/barterDEX-API.html#electrum
-  addServer(params) {
+  addServer(params: Object) {
     // FIXME: verify params
     const serverparams = Object.assign({}, params, {
       method: 'electrum'
@@ -85,7 +85,7 @@ class BarterDexAPI {
     return this.create(serverparams);
   }
 
-  listTransactions(params) {
+  listTransactions(params: Object) {
     // FIXME: verify params
     const serverparams = Object.assign({}, params, {
       method: 'listtransactions',
@@ -94,7 +94,7 @@ class BarterDexAPI {
     return this.create(serverparams);
   }
 
-  withdraw(params) {
+  withdraw(params: Object) {
     // FIXME: verify params
     const serverparams = Object.assign({}, params, {
       method: 'withdraw'
@@ -110,6 +110,15 @@ class BarterDexAPI {
     return this.create(serverparams, {
       toJSON: false
     });
+  }
+
+  // https://docs.komodoplatform.com/barterDEX/barterDEX-API.html#orderbook
+  orderbook(params: Object) {
+    // FIXME: verify params
+    const serverparams = Object.assign({}, params, {
+      method: 'orderbook'
+    });
+    return this.create(serverparams);
   }
 }
 
