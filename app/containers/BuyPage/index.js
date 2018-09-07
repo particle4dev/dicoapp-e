@@ -22,7 +22,7 @@ import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import { getCoinIcon } from '../../components/CryptoIcons';
-import { Circle, Line, LineWrapper } from '../../components/placeholder';
+// import { Circle, Line, LineWrapper } from '../../components/placeholder';
 
 import { NavigationLayout } from '../Layout';
 import { makeSelectBalanceEntities } from '../WalletPage/selectors';
@@ -30,6 +30,7 @@ import { APP_STATE_NAME, COIN_BASE } from './constants';
 import reducer from './reducer';
 import saga from './saga';
 import CoinSelectable from './components/CoinSelectable';
+import BuyButton from './components/BuyButton';
 import { loadPrices } from './actions';
 import {
   makeSelectPricesLoading,
@@ -45,7 +46,7 @@ function floor(number, after = 1) {
 
 const debug = require('debug')('dicoapp:containers:BuyPage');
 
-const styles = () => ({
+const styles = theme => ({
   container: {
     padding: 24
   },
@@ -56,6 +57,41 @@ const styles = () => ({
 
   hr: {
     marginBottom: 20
+  },
+
+  bootstrapRoot: {
+    padding: 0,
+    'label + &': {
+      marginTop: theme.spacing.unit * 3
+    }
+  },
+  bootstrapInput: {
+    borderRadius: 4,
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid #ced4da',
+    fontSize: 16,
+    padding: '10px 12px',
+    width: 'calc(100% - 24px)',
+    transition: theme.transitions.create(['border-color', 'box-shadow']),
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"'
+    ].join(','),
+    '&:focus': {
+      borderColor: '#80bdff',
+      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)'
+    }
+  },
+  bootstrapFormLabel: {
+    fontSize: 18
   }
 });
 
@@ -173,43 +209,60 @@ class BuyPage extends Component<Props, State> {
                 <Divider className={classes.hr} />
 
                 {coins.map(this.renderPaymentCoin)}
-
-                <CoinSelectable
-                  icon={getCoinIcon('LTC')}
-                  title="Litecoin"
-                  subTitle={<Line width={90} />}
-                >
-                  <Line
-                    width={60}
-                    style={{
-                      margin: 0
-                    }}
-                  />
-                </CoinSelectable>
               </CardContent>
               <CardContent>
                 <Typography variant="title" gutterBottom>
                   Amount
                 </Typography>
                 <Divider className={classes.hr} />
-                <TextField id="BTC" label="BTC" value="1" margin="normal" />
+                <TextField
+                  style={{
+                    width: '50%'
+                  }}
+                  defaultValue="1"
+                  label="BTC"
+                  id="BTC"
+                  InputProps={{
+                    disableUnderline: true,
+                    classes: {
+                      root: classes.bootstrapRoot,
+                      input: classes.bootstrapInput
+                    }
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                    className: classes.bootstrapFormLabel
+                  }}
+                />
+                <br />
                 <br />
                 <SwapHorizIcon />
                 <br />
-                <TextField id="KMD" label="KMD" value="2000" margin="normal" />
                 <br />
-                <Button color="primary" variant="contained">
-                  Buy BTC
-                </Button>
-
+                <TextField
+                  style={{
+                    width: '50%'
+                  }}
+                  defaultValue="2000"
+                  label="KMD"
+                  id="KMD"
+                  InputProps={{
+                    disableUnderline: true,
+                    classes: {
+                      root: classes.bootstrapRoot,
+                      input: classes.bootstrapInput
+                    }
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                    className: classes.bootstrapFormLabel
+                  }}
+                />
                 <br />
-                <Circle />
-
                 <br />
-                <LineWrapper>
-                  <Line width={160} />
-                  <Line />
-                </LineWrapper>
+                <BuyButton color="secondary" variant="contained">
+                  Buy BEER - 1 BTC
+                </BuyButton>
               </CardContent>
               <CardContent>
                 <Button

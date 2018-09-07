@@ -67,23 +67,6 @@ module.exports = [
     active: 1
   },
   {
-    coin: 'BEER',
-    name: 'Beer',
-    asset: 'BEER',
-    rpcport: 8923,
-    electrumServers: [
-      {
-        host: 'electrum1.cipig.net',
-        port: 10022
-      },
-      {
-        host: 'electrum2.cipig.net',
-        port: 10022
-      }
-    ],
-    active: 1
-  },
-  {
     coin: 'PIZZA',
     name: 'Pizza',
     asset: 'PIZZA',
@@ -100,22 +83,6 @@ module.exports = [
     ],
     active: 1
   },
-  // {
-  //   coin: 'GLXT',
-  //   name: 'GLX Token',
-  //   asset: 'GLXT',
-  //   rpcport: 13109,
-  //   electrumServers: [
-  //     {
-  //       host: 'electrum1.glx.co',
-  //       port: 60012
-  //     },
-  //     {
-  //       host: 'electrum2.glx.co',
-  //       port: 60012
-  //     }
-  //   ]
-  // },
   {
     coin: 'COQUI',
     name: 'Coqui Cash',
