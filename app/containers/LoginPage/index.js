@@ -115,7 +115,7 @@ class LoginPage extends Component<Props, State> {
     const { authenticated, error, history } = this.props;
     if (authenticated && !prevProps.authenticated) {
       swal('Success', 'Welcome to the GLX dICO Wallet!', 'success');
-      history.push('/');
+      history.push('/buy');
     }
     if (!authenticated && error) {
       swal('Something went wrong:', error.message, 'error');

@@ -1,6 +1,6 @@
 import { remote } from 'electron';
 import { takeLatest, put, select, call, all } from 'redux-saga/effects';
-import { makeSelectCurrentUser } from '../App/selectors';
+import { makeSelectBalanceList, makeSelectCurrentUser } from '../App/selectors';
 import api from '../../utils/barter-dex-api';
 import { LOAD_PRICES, COIN_BASE } from './constants';
 import {
@@ -50,8 +50,7 @@ export function* loadPriceProcess(coin, userpass) {
 
 export function* loadInitCoinData(coins) {
   try {
-    const data = coins.map(e => {
-      const sym = e.get('coin');
+    const data = coins.map(sym => {
       const coin = covertSymbolToName(sym);
       return {
         coin,
@@ -73,17 +72,16 @@ export function* loadPricesProcess() {
       throw new Error('not found user');
     }
     const userpass = user.get('userpass');
-    const coins = user.get('coins');
+    const balance = yield select(makeSelectBalanceList());
     const initCoinsData = yield select(makeSelectInitCoinsData());
 
     if (!initCoinsData) {
-      yield call(loadInitCoinData, coins);
+      yield call(loadInitCoinData, balance);
     }
 
     const requests = [];
-    for (let i = 0; i < coins.size; i += 1) {
-      const e = coins.get(i);
-      const coin = e.get('coin');
+    for (let i = 0; i < balance.size; i += 1) {
+      const coin = balance.get(i);
       requests.push(call(loadPriceProcess, coin, userpass));
     }
 
