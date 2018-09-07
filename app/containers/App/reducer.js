@@ -21,7 +21,10 @@ import {
   LOAD_BALANCE,
   LOAD_BALANCE_SUCCESS,
   LOAD_BALANCE_ERROR,
-  LOAD_COIN_BALANCE_SUCCESS
+  LOAD_COIN_BALANCE_SUCCESS,
+  LOAD_WITHDRAW,
+  LOAD_WITHDRAW_SUCCESS,
+  LOAD_WITHDRAW_ERROR
 } from './constants';
 
 // The initial state of the App
@@ -79,6 +82,43 @@ const appReducer = handleActions(
       state
         .setIn(['balance', 'error'], error)
         .setIn(['balance', 'loading'], false),
+
+    [LOAD_WITHDRAW]: (state, { payload }) => {
+      // step one: get coin
+      let entities = state.getIn(['balance', 'entities']);
+      const coin = entities.get(payload.coin);
+      // step two: update loading
+      entities = entities.set(
+        payload.coin,
+        coin.set('loading', true).set('error', false)
+      );
+      return state.setIn(['balance', 'entities'], entities);
+    },
+
+    [LOAD_WITHDRAW_SUCCESS]: (state, { payload }) => {
+      // step one: get coin
+      let entities = state.getIn(['balance', 'entities']);
+      const coin = entities.get(payload.coin);
+      // step two: update balance
+      const balance = coin.get('balance');
+      entities = entities.set(
+        payload.coin,
+        coin.set('loading', false).set('balance', balance - payload.amount)
+      );
+      return state.setIn(['balance', 'entities'], entities);
+    },
+
+    [LOAD_WITHDRAW_ERROR]: (state, { payload, error }) => {
+      // step one: get coin
+      let entities = state.getIn(['balance', 'entities']);
+      const coin = entities.get(payload.coin);
+      // step two: update loading
+      entities = entities.set(
+        payload.coin,
+        coin.set('loading', false).set('error', error)
+      );
+      return state.setIn(['balance', 'entities'], entities);
+    },
 
     [LOGOUT]: () => initialState
   },
