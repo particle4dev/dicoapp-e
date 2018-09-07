@@ -15,3 +15,9 @@ export const LOGIN_SUCCESS = 'dicoapp/App/LOGIN_SUCCESS';
 export const LOGIN_ERROR = 'dicoapp/App/LOGIN_ERROR';
 
 export const LOGOUT = 'dicoapp/App/LOGOUT';
+
+export const LOAD_BALANCE = 'dicoapp/App/LOAD_BALANCE';
+export const LOAD_BALANCE_SUCCESS = 'dicoapp/App/LOAD_BALANCE_SUCCESS';
+export const LOAD_COIN_BALANCE_SUCCESS =
+  'dicoapp/App/LOAD_COIN_BALANCE_SUCCESS';
+export const LOAD_BALANCE_ERROR = 'dicoapp/App/LOAD_BALANCE_ERROR';
