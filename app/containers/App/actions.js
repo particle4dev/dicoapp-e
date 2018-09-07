@@ -16,7 +16,16 @@
  * https://github.com/redux-utilities/flux-standard-action
  */
 
-import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR, LOGOUT } from './constants';
+import {
+  LOGIN,
+  LOGIN_SUCCESS,
+  LOGIN_ERROR,
+  LOGOUT,
+  LOAD_BALANCE,
+  LOAD_BALANCE_SUCCESS,
+  LOAD_BALANCE_ERROR,
+  LOAD_COIN_BALANCE_SUCCESS
+} from './constants';
 
 /**
  * Load the repositories, this action starts the request saga
@@ -71,5 +80,41 @@ export function loginError(error) {
 export function logout() {
   return {
     type: LOGOUT
+  };
+}
+
+/**
+ *
+ */
+
+export function loadBalance() {
+  return {
+    type: LOAD_BALANCE
+  };
+}
+
+export function loadBalanceSuccess() {
+  return {
+    type: LOAD_BALANCE_SUCCESS
+  };
+}
+
+export function loadCoinBalanceSuccess(payload: {
+  address: string,
+  balance: number,
+  coin: string
+}) {
+  return {
+    type: LOAD_COIN_BALANCE_SUCCESS,
+    payload
+  };
+}
+
+export function loadBalanceError(message: string) {
+  return {
+    type: LOAD_BALANCE_ERROR,
+    error: {
+      message
+    }
   };
 }
