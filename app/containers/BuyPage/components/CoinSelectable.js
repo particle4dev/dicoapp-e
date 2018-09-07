@@ -165,4 +165,3 @@ class CoinSelectable extends PureComponent<Props> {
 CoinSelectable.displayName = 'CoinSelectable';
 
 export default withStyles(styles)(CoinSelectable);
-// export default CoinSelectable;
