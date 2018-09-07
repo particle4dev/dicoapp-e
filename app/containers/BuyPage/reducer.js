@@ -4,6 +4,7 @@ import { handleActions } from 'redux-actions';
 import {
   LOAD_PRICES,
   LOAD_COIN_SYMBOL,
+  LOAD_BEST_PRICE,
   LOAD_PRICES_SUCCESS
   // LOAD_PRICES_ERROR
 } from './constants';
@@ -47,6 +48,16 @@ const buyReducer = handleActions(
         .set('initCoinsData', true)
         .setIn(['prices', 'coins'], fromJS(c.toJS()))
         .setIn(['prices', 'entities'], entities);
+    },
+    [LOAD_BEST_PRICE]: (state, { payload }) => {
+      const { bestPrice, coin } = payload;
+      // step one: load entities
+      const entities = state.getIn(['prices', 'entities']);
+      // step two: update best price
+      let c = entities.get(coin);
+      console.log(bestPrice, coin);
+      c = c.set('bestPrice', bestPrice);
+      return state.setIn(['prices', 'entities'], entities.set(coin, c));
     },
     [LOAD_PRICES_SUCCESS]: state => state.setIn(['prices', 'loading'], false),
     [LOGOUT]: () => initialState

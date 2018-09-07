@@ -4,6 +4,7 @@ import type { List } from 'immutable';
 import {
   LOAD_PRICES,
   LOAD_COIN_SYMBOL,
+  LOAD_BEST_PRICE,
   LOAD_PRICES_SUCCESS,
   LOAD_PRICES_ERROR
 } from './constants';
@@ -19,6 +20,16 @@ export function loadCoinSymbol(coins: List<*>) {
     type: LOAD_COIN_SYMBOL,
     payload: {
       coins
+    }
+  };
+}
+
+export function loadBestPrice(coin: string, bestPrice: number) {
+  return {
+    type: LOAD_BEST_PRICE,
+    payload: {
+      coin,
+      bestPrice
     }
   };
 }

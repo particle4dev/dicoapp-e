@@ -128,7 +128,7 @@ class BuyPage extends Component<Props, State> {
 
     return (
       <CoinSelectable
-        disabled={c.get('bestPrice') === 0}
+        disabled={c.get('bestPrice') === 0 || b.get('balance') === 0}
         key={`paymentCoin${symbol}`}
         data={symbol}
         icon={icon}
@@ -144,8 +144,6 @@ class BuyPage extends Component<Props, State> {
     debug('render');
 
     const { classes, loading, coins } = this.props;
-
-    console.log(coins.toJS(), 'coins, entities');
 
     return (
       <React.Fragment>
