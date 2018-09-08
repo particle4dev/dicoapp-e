@@ -13,7 +13,6 @@ import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Divider from '@material-ui/core/Divider';
-import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import injectReducer from '../../utils/inject-reducer';
@@ -26,8 +25,7 @@ import { loadBalance } from '../App/actions';
 import { APP_STATE_NAME } from './constants';
 import reducer from './reducer';
 import saga from './saga';
-import AmountInput from './components/AmountInput';
-import BuyButton from './components/BuyButton';
+import AmountSection from './components/AmountSection';
 import CurrencySection from './components/CurrencySection';
 import PaymentSection from './components/PaymentSection';
 import { loadPrices, loadPrice } from './actions';
@@ -39,7 +37,7 @@ import {
 
 const debug = require('debug')('dicoapp:containers:BuyPage');
 
-const styles = theme => ({
+const styles = () => ({
   container: {
     padding: 24
   },
@@ -50,21 +48,6 @@ const styles = theme => ({
 
   hr: {
     marginBottom: 20
-  },
-
-  bootstrapRoot: {
-    padding: 0,
-    'label + &': {
-      marginTop: theme.spacing.unit * 3
-    }
-  },
-
-  amountform: {
-    width: '50%'
-  },
-
-  amountform__item: {
-    width: '100%'
   },
 
   cardContent: {
@@ -186,35 +169,7 @@ class BuyPage extends Component<Props, State> {
                   Amount
                 </Typography>
                 <Divider className={classes.hr} />
-                <form className={classes.amountform}>
-                  <AmountInput
-                    defaultValue="1"
-                    label="BTC"
-                    id="BTC"
-                    className={classes.amountform__item}
-                  />
-                  <br />
-                  <br />
-                  <SwapHorizIcon />
-                  <br />
-                  <br />
-                  <AmountInput
-                    defaultValue="2000"
-                    label="KMD"
-                    id="KMD"
-                    className={classes.amountform__item}
-                  />
-                  <br />
-                  <br />
-                  <BuyButton
-                    disabled
-                    color="secondary"
-                    variant="contained"
-                    className={classes.amountform__item}
-                  >
-                    Buy BEER - 1 BTC
-                  </BuyButton>
-                </form>
+                <AmountSection />
               </CardContent>
             </Card>
           </Grid>
