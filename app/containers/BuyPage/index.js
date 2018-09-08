@@ -12,7 +12,6 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import injectReducer from '../../utils/inject-reducer';
@@ -34,6 +33,7 @@ import saga from './saga';
 import CoinSelectable from './components/CoinSelectable';
 import AmountInput from './components/AmountInput';
 import BuyButton from './components/BuyButton';
+import CurrencySection from './components/CurrencySection';
 import { loadPrices, loadPrice } from './actions';
 import { makeSelectPricesLoading, makeSelectPricesEntities } from './selectors';
 import { covertSymbolToName, floor } from './utils';
@@ -95,16 +95,14 @@ type Props = {
 };
 
 type State = {
-  baseCoin: string
-  // paymentCoin: string
+  paymentCoin: string
 };
 
 class BuyPage extends Component<Props, State> {
   props: Props;
 
   state = {
-    baseCoin: COIN_BASE.get('coin')
-    // paymentCoin: ''
+    paymentCoin: ''
   };
 
   componentDidMount = () => {
@@ -120,31 +118,16 @@ class BuyPage extends Component<Props, State> {
     dispatchLoadPrices();
   };
 
-  onClickCoin = (evt: SyntheticInputEvent<>) => {
+  onClickPaymentCoin = (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
     const { value } = evt.target;
     this.setState({
-      baseCoin: value
+      paymentCoin: value
     });
   };
 
-  renderBaseCoin = () => {
-    const { baseCoin } = this.state;
-    const symbol = COIN_BASE.get('coin');
-    const icon = getCoinIcon(symbol);
-    return (
-      <CoinSelectable
-        key={`baseCoin${symbol}`}
-        selected={baseCoin === symbol}
-        data={symbol}
-        icon={icon}
-        title={COIN_BASE.get('name')}
-        onClick={this.onClickCoin}
-      />
-    );
-  };
-
   renderPaymentCoin = symbol => {
+    const { paymentCoin } = this.state;
     const { entities, balance, dispatchLoadPrice } = this.props;
     const c = entities.get(symbol);
     const b = balance.get(symbol);
@@ -170,11 +153,13 @@ class BuyPage extends Component<Props, State> {
       <CoinSelectable
         dispatchLoadPrice={dispatchLoadPrice}
         disabled={c.get('bestPrice') === 0 || b.get('balance') === 0}
+        selected={paymentCoin === symbol}
         key={`paymentCoin${symbol}`}
         data={symbol}
         icon={icon}
         title={name}
         subTitle={`${floor(b.get('balance'), 3)} ${b.get('coin')}`}
+        onClick={this.onClickPaymentCoin}
       >
         <span>
           1 {COIN_BASE.get('coin')} = {c.get('bestPrice')} {symbol}
@@ -207,11 +192,11 @@ class BuyPage extends Component<Props, State> {
                 </Typography>
                 <Divider className={classes.hr} />
 
-                {this.renderBaseCoin()}
+                <CurrencySection onClick={this.onReloadPrices} />
               </CardContent>
               <CardContent>
                 <Typography variant="title" gutterBottom>
-                  Payment
+                  Payment Method
                 </Typography>
                 <Divider className={classes.hr} />
 
@@ -251,15 +236,6 @@ class BuyPage extends Component<Props, State> {
                     Buy BEER - 1 BTC
                   </BuyButton>
                 </form>
-              </CardContent>
-              <CardContent>
-                <Button
-                  size="small"
-                  color="primary"
-                  onClick={this.onReloadPrices}
-                >
-                  Reload Prices
-                </Button>
               </CardContent>
             </Card>
           </Grid>

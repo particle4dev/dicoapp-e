@@ -96,7 +96,6 @@ class CoinSelectable extends PureComponent<Props> {
   };
 
   componentDidMount = () => {
-    console.log(this.props, 'zzzz');
     const { dispatchLoadPrice, data } = this.props;
     if (dispatchLoadPrice) {
       dispatchLoadPrice(data);

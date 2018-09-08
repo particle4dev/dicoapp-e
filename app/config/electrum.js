@@ -50,6 +50,18 @@ module.exports = [
   },
   {
     method: 'electrum',
+    coin: 'BEER',
+    ipaddr: 'electrum1.cipig.net',
+    port: 10022
+  },
+  {
+    method: 'electrum',
+    coin: 'BEER',
+    ipaddr: 'electrum2.cipig.net',
+    port: 10022
+  },
+  {
+    method: 'electrum',
     coin: 'PIZZA',
     ipaddr: 'electrum1.cipig.net',
     port: 10024

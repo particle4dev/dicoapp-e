@@ -51,7 +51,7 @@ export function* loadCoinBalanceProcess(coin, address, userpass) {
         balance: Number(data.balance)
       })
     );
-    debug(`load balance done ${coin}`, data);
+    debug(`load balance done ${coin}`);
 
     return {
       address: data.address,

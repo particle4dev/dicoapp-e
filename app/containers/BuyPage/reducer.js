@@ -47,7 +47,6 @@ const buyReducer = handleActions(
     },
     [LOAD_BEST_PRICE]: (state, { payload }) => {
       const { bestPrice, coin, name } = payload;
-      console.log(bestPrice, coin);
       // step one: load entities
       const entities = state.getIn(['prices', 'entities']);
       // step two: update best price
