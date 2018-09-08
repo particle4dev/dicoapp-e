@@ -15,9 +15,6 @@ const makeSelectPricesLoading = () =>
 const makeSelectPricesError = () =>
   createSelector(makeSelectPrices(), pricesState => pricesState.get('error'));
 
-const makeSelectPricesCoins = () =>
-  createSelector(makeSelectPrices(), pricesState => pricesState.get('coins'));
-
 const makeSelectPricesEntities = () =>
   createSelector(makeSelectPrices(), pricesState =>
     pricesState.get('entities')
@@ -29,6 +26,5 @@ export {
   makeSelectPrices,
   makeSelectPricesLoading,
   makeSelectPricesError,
-  makeSelectPricesCoins,
   makeSelectPricesEntities
 };

@@ -27,7 +27,8 @@ import {
   makeSelectBalanceList
 } from '../App/selectors';
 import { loadBalance } from '../App/actions';
-import { APP_STATE_NAME, COIN_BASE } from './constants';
+import { APP_STATE_NAME } from './constants';
+import { COIN_BASE } from './tokenconfig';
 import reducer from './reducer';
 import saga from './saga';
 import CoinSelectable from './components/CoinSelectable';
@@ -39,7 +40,14 @@ import { covertSymbolToName, floor } from './utils';
 
 const debug = require('debug')('dicoapp:containers:BuyPage');
 
-const line = <Line width={60} />;
+const line = (
+  <Line
+    width={60}
+    style={{
+      margin: 0
+    }}
+  />
+);
 
 const styles = theme => ({
   container: {
@@ -88,6 +96,7 @@ type Props = {
 
 type State = {
   baseCoin: string
+  // paymentCoin: string
 };
 
 class BuyPage extends Component<Props, State> {
@@ -95,6 +104,7 @@ class BuyPage extends Component<Props, State> {
 
   state = {
     baseCoin: COIN_BASE.get('coin')
+    // paymentCoin: ''
   };
 
   componentDidMount = () => {

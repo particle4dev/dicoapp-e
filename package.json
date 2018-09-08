@@ -152,7 +152,9 @@
     },
     "setupFiles": [
       "./internals/scripts/CheckBuiltsExist.js"
-    ]
+    ],
+    "collectCoverage": true,
+    "coverageReporters": ["json", "html"]
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

@@ -8,7 +8,8 @@ import {
 } from 'redux-saga/effects';
 import { makeSelectBalanceList, makeSelectCurrentUser } from '../App/selectors';
 import api from '../../utils/barter-dex-api';
-import { LOAD_PRICES, COIN_BASE, LOAD_PRICE } from './constants';
+import { LOAD_PRICES, LOAD_PRICE } from './constants';
+import { COIN_BASE } from './tokenconfig';
 import {
   loadCoinSymbol,
   loadPricesSuccess,

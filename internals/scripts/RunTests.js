@@ -1,6 +1,8 @@
 import spawn from 'cross-spawn';
 import path from 'path';
 
+// https://www.regextester.com/
+
 // const pattern =
 //   process.argv[2] === 'e2e'
 //     ? 'test/e2e/.+\\.spec\\.js'
@@ -9,7 +11,7 @@ import path from 'path';
 const pattern =
   process.argv[2] === 'e2e'
     ? 'test/e2e/.+\\.spec\\.js'
-    : 'app(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$';
+    : '(/__tests__/.*)\\.jsx?$';
 
 const result = spawn.sync(
   path.normalize('./node_modules/.bin/jest'),

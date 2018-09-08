@@ -17,7 +17,6 @@ const initialState = fromJS({
   prices: {
     loading: false,
     error: false,
-    coins: [],
     entities: {}
   }
 });
@@ -30,9 +29,7 @@ const buyReducer = handleActions(
         .setIn(['prices', 'error'], false),
     [LOAD_COIN_SYMBOL]: (state, { payload }) => {
       const { coins } = payload;
-      // set one: setup coins
-      const c = coins.sort((a, b) => a.symbol > b.symbol);
-      // step two: setup entities
+      // step one: setup entities
       let entities = Map({});
       coins.forEach(e => {
         entities = entities.set(
@@ -46,7 +43,6 @@ const buyReducer = handleActions(
       });
       return state
         .set('initCoinsData', true)
-        .setIn(['prices', 'coins'], fromJS(c.toJS()))
         .setIn(['prices', 'entities'], entities);
     },
     [LOAD_BEST_PRICE]: (state, { payload }) => {
