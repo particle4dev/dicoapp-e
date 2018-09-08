@@ -21,10 +21,7 @@ import { getCoinIcon } from '../../components/CryptoIcons';
 // import { Circle, Line, LineWrapper } from '../../components/placeholder';
 import { Line } from '../../components/placeholder';
 import { NavigationLayout } from '../Layout';
-import {
-  makeSelectBalanceEntities,
-  makeSelectBalanceList
-} from '../App/selectors';
+import { makeSelectBalanceEntities } from '../App/selectors';
 import { loadBalance } from '../App/actions';
 import { APP_STATE_NAME } from './constants';
 import { COIN_BASE } from './tokenconfig';
@@ -35,7 +32,11 @@ import AmountInput from './components/AmountInput';
 import BuyButton from './components/BuyButton';
 import CurrencySection from './components/CurrencySection';
 import { loadPrices, loadPrice } from './actions';
-import { makeSelectPricesLoading, makeSelectPricesEntities } from './selectors';
+import {
+  makeSelectBalanceList,
+  makeSelectPricesLoading,
+  makeSelectPricesEntities
+} from './selectors';
 import { covertSymbolToName, floor } from './utils';
 
 const debug = require('debug')('dicoapp:containers:BuyPage');

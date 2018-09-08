@@ -1,5 +1,7 @@
 import { createSelector } from 'reselect';
+import { makeSelectBalanceList as makeSelectBalanceListApp } from '../App/selectors';
 import { APP_STATE_NAME } from './constants';
+import { COIN_BASE } from './tokenconfig';
 
 const selectBuy = state => state.get(APP_STATE_NAME);
 
@@ -20,11 +22,19 @@ const makeSelectPricesEntities = () =>
     pricesState.get('entities')
   );
 
+const makeSelectBalanceList = () =>
+  createSelector(makeSelectBalanceListApp(), balanceList => {
+    const symbol = COIN_BASE.get('coin');
+
+    return balanceList.filter(e => e !== symbol);
+  });
+
 export {
   selectBuy,
   makeSelectInitCoinsData,
   makeSelectPrices,
   makeSelectPricesLoading,
   makeSelectPricesError,
-  makeSelectPricesEntities
+  makeSelectPricesEntities,
+  makeSelectBalanceList
 };

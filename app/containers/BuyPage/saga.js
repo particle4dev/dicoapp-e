@@ -6,7 +6,7 @@ import {
   call,
   all
 } from 'redux-saga/effects';
-import { makeSelectBalanceList, makeSelectCurrentUser } from '../App/selectors';
+import { makeSelectCurrentUser } from '../App/selectors';
 import api from '../../utils/barter-dex-api';
 import { LOAD_PRICES, LOAD_PRICE } from './constants';
 import { COIN_BASE } from './tokenconfig';
@@ -16,7 +16,7 @@ import {
   loadPricesError,
   loadBestPrice
 } from './actions';
-import { makeSelectInitCoinsData } from './selectors';
+import { makeSelectInitCoinsData, makeSelectBalanceList } from './selectors';
 import { covertSymbolToName } from './utils';
 
 const numcoin = 100000000;
