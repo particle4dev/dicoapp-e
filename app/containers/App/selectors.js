@@ -27,6 +27,32 @@ const makeSelectLocation = () =>
 const makeSelectUserpass = () =>
   createSelector(makeSelectCurrentUser(), user => user.get('userpass'));
 
+const makeSelectBalance = () =>
+  createSelector(selectGlobal, globalState => globalState.get('balance'));
+
+const makeSelectBalanceLoading = () =>
+  createSelector(makeSelectBalance(), balanceState =>
+    balanceState.get('loading')
+  );
+
+const makeSelectBalanceInit = () =>
+  createSelector(makeSelectBalance(), balanceState => balanceState.get('init'));
+
+const makeSelectBalanceError = () =>
+  createSelector(makeSelectBalance(), balanceState =>
+    balanceState.get('error')
+  );
+
+const makeSelectBalanceList = () =>
+  createSelector(makeSelectBalance(), balanceState =>
+    balanceState.get('coins')
+  );
+
+const makeSelectBalanceEntities = () =>
+  createSelector(makeSelectBalance(), balanceState =>
+    balanceState.get('entities')
+  );
+
 export {
   selectGlobal,
   makeSelectCurrentUser,
@@ -34,5 +60,11 @@ export {
   makeSelectLoading,
   makeSelectError,
   makeSelectLocation,
-  makeSelectUserpass
+  makeSelectUserpass,
+  makeSelectBalance,
+  makeSelectBalanceLoading,
+  makeSelectBalanceInit,
+  makeSelectBalanceError,
+  makeSelectBalanceList,
+  makeSelectBalanceEntities
 };

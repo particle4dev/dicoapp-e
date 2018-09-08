@@ -5,14 +5,7 @@ import { handleActions } from 'redux-actions';
 import {
   LOAD_TRANSACTIONS,
   LOAD_TRANSACTIONS_SUCCESS,
-  LOAD_TRANSACTIONS_ERROR,
-  LOAD_BALANCE,
-  LOAD_BALANCE_SUCCESS,
-  LOAD_COIN_BALANCE_SUCCESS,
-  LOAD_BALANCE_ERROR,
-  LOAD_WITHDRAW,
-  LOAD_WITHDRAW_SUCCESS,
-  LOAD_WITHDRAW_ERROR
+  LOAD_TRANSACTIONS_ERROR
 } from './constants';
 
 import { LOGOUT } from '../App/constants';
@@ -23,20 +16,8 @@ const initialState = fromJS({
     loading: false,
     error: false,
     list: []
-  },
-  balance: {
-    loading: false,
-    error: false,
-    coins: [],
-    entities: {}
   }
 });
-
-function initialWalletState(coin) {
-  coin.loading = false;
-  coin.error = false;
-  return coin;
-}
 
 const walletReducer = handleActions(
   {
@@ -54,70 +35,6 @@ const walletReducer = handleActions(
       state
         .setIn(['transactions', 'error'], error)
         .setIn(['transactions', 'loading'], false),
-
-    [LOAD_BALANCE]: state =>
-      state
-        .setIn(['balance', 'loading'], true)
-        .setIn(['balance', 'error'], false),
-
-    [LOAD_COIN_BALANCE_SUCCESS]: (state, { payload }) => {
-      // step one: update entities
-      const entities = state.getIn(['balance', 'entities']);
-      state = state.setIn(
-        ['balance', 'entities'],
-        entities.set(payload.coin, fromJS(initialWalletState(payload)))
-      );
-      // step two: add key in coins list
-      const coins = state.getIn(['balance', 'coins']);
-      if (!coins.find(obj => obj === payload.coin)) {
-        state = state.setIn(['balance', 'coins'], coins.push(payload.coin));
-      }
-      return state;
-    },
-
-    [LOAD_BALANCE_SUCCESS]: state => state.setIn(['balance', 'loading'], false),
-
-    [LOAD_BALANCE_ERROR]: (state, { error }) =>
-      state
-        .setIn(['balance', 'error'], error)
-        .setIn(['balance', 'loading'], false),
-
-    [LOAD_WITHDRAW]: (state, { payload }) => {
-      // step one: get coin
-      let entities = state.getIn(['balance', 'entities']);
-      const coin = entities.get(payload.coin);
-      // step two: update loading
-      entities = entities.set(
-        payload.coin,
-        coin.set('loading', true).set('error', false)
-      );
-      return state.setIn(['balance', 'entities'], entities);
-    },
-
-    [LOAD_WITHDRAW_SUCCESS]: (state, { payload }) => {
-      // step one: get coin
-      let entities = state.getIn(['balance', 'entities']);
-      const coin = entities.get(payload.coin);
-      // step two: update balance
-      const balance = coin.get('balance');
-      entities = entities.set(
-        payload.coin,
-        coin.set('loading', false).set('balance', balance - payload.amount)
-      );
-      return state.setIn(['balance', 'entities'], entities);
-    },
-
-    [LOAD_WITHDRAW_ERROR]: (state, { payload, error }) => {
-      // step one: get coin
-      let entities = state.getIn(['balance', 'entities']);
-      const coin = entities.get(payload.coin);
-      // step two: update loading
-      entities = entities.set(
-        payload.coin,
-        coin.set('loading', false).set('error', error)
-      );
-      return state.setIn(['balance', 'entities'], entities);
-    },
 
     [LOGOUT]: () => initialState
   },

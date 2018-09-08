@@ -78,6 +78,8 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   onClick?: Function | null,
   // eslint-disable-next-line flowtype/no-weak-types
+  dispatchLoadPrice?: Function,
+  // eslint-disable-next-line flowtype/no-weak-types
   data?: string
 };
 
@@ -89,7 +91,14 @@ class CoinSelectable extends PureComponent<Props> {
     disabled: false,
     children: null,
     onClick: null,
-    data: ''
+    data: '',
+    dispatchLoadPrice: () => {}
+  };
+
+  componentDidMount = () => {
+    const { dispatchLoadPrice, data } = this.props;
+
+    dispatchLoadPrice(data);
   };
 
   onClick = (evt: SyntheticInputEvent<>) => {
