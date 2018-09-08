@@ -50,12 +50,21 @@ const buyReducer = handleActions(
         .setIn(['prices', 'entities'], entities);
     },
     [LOAD_BEST_PRICE]: (state, { payload }) => {
-      const { bestPrice, coin } = payload;
+      const { bestPrice, coin, name } = payload;
+      console.log(bestPrice, coin);
       // step one: load entities
       const entities = state.getIn(['prices', 'entities']);
       // step two: update best price
       let c = entities.get(coin);
-      console.log(bestPrice, coin);
+      // if not found
+      if (!c) {
+        // step three: put it in coin
+        c = fromJS({
+          symbol: coin,
+          coin: name,
+          bestPrice: 0
+        });
+      }
       c = c.set('bestPrice', bestPrice);
       return state.setIn(['prices', 'entities'], entities.set(coin, c));
     },

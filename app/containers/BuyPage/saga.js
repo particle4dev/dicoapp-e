@@ -1,4 +1,11 @@
-import { takeLatest, put, select, call, all } from 'redux-saga/effects';
+import {
+  takeEvery,
+  takeLatest,
+  put,
+  select,
+  call,
+  all
+} from 'redux-saga/effects';
 import { makeSelectBalanceList, makeSelectCurrentUser } from '../App/selectors';
 import api from '../../utils/barter-dex-api';
 import { LOAD_PRICES, COIN_BASE, LOAD_PRICE } from './constants';
@@ -22,6 +29,7 @@ export function* loadPrice(coin, userpass) {
     rel: coin
   };
   const buf = 1.08 * numcoin;
+  const name = covertSymbolToName(coin);
   let bestprice = 0;
   try {
     const result = yield api.orderbook(getprices);
@@ -31,9 +39,9 @@ export function* loadPrice(coin, userpass) {
       bestprice = Number(
         (((buf / numcoin) * bestprice) / numcoin).toFixed(8) * numcoin
       ).toFixed(0);
-      yield put(loadBestPrice(coin, Number(bestprice / numcoin)));
     }
-    return bestprice !== 0;
+
+    return yield put(loadBestPrice(coin, name, Number(bestprice / numcoin)));
   } catch (err) {
     debug(`load price process: ${err.message}`);
     return false;
@@ -112,5 +120,5 @@ export function* loadPriceProcess({ payload }) {
  */
 export default function* buyData() {
   yield takeLatest(LOAD_PRICES, loadPricesProcess);
-  yield takeLatest(LOAD_PRICE, loadPriceProcess);
+  yield takeEvery(LOAD_PRICE, loadPriceProcess);
 }

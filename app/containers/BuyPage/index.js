@@ -12,17 +12,15 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
-
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import { getCoinIcon } from '../../components/CryptoIcons';
 // import { Circle, Line, LineWrapper } from '../../components/placeholder';
-
+import { Line } from '../../components/placeholder';
 import { NavigationLayout } from '../Layout';
 import {
   makeSelectBalanceEntities,
@@ -37,15 +35,11 @@ import AmountInput from './components/AmountInput';
 import BuyButton from './components/BuyButton';
 import { loadPrices, loadPrice } from './actions';
 import { makeSelectPricesLoading, makeSelectPricesEntities } from './selectors';
-import { covertSymbolToName } from './utils';
-
-function floor(number, after = 1) {
-  // eslint-disable-next-line no-restricted-properties
-  const p = Math.pow(10, after);
-  return Math.floor(number * p) / p;
-}
+import { covertSymbolToName, floor } from './utils';
 
 const debug = require('debug')('dicoapp:containers:BuyPage');
+
+const line = <Line width={60} />;
 
 const styles = theme => ({
   container: {
@@ -104,9 +98,8 @@ class BuyPage extends Component<Props, State> {
   };
 
   componentDidMount = () => {
-    const { dispatchLoadPrices, dispatchLoadBalance } = this.props;
+    const { dispatchLoadBalance } = this.props;
 
-    dispatchLoadPrices();
     dispatchLoadBalance();
   };
 
@@ -159,7 +152,7 @@ class BuyPage extends Component<Props, State> {
           title={name}
           subTitle={`${floor(b.get('balance'), 3)} ${b.get('coin')}`}
         >
-          loading
+          {line}
         </CoinSelectable>
       );
     }
@@ -173,7 +166,9 @@ class BuyPage extends Component<Props, State> {
         title={name}
         subTitle={`${floor(b.get('balance'), 3)} ${b.get('coin')}`}
       >
-        1 {COIN_BASE.get('coin')} = {c.get('bestPrice')} {symbol}
+        <span>
+          1 {COIN_BASE.get('coin')} = {c.get('bestPrice')} {symbol}
+        </span>
       </CoinSelectable>
     );
   };
@@ -238,6 +233,7 @@ class BuyPage extends Component<Props, State> {
                   <br />
                   <br />
                   <BuyButton
+                    disabled
                     color="secondary"
                     variant="contained"
                     className={classes.amountform__item}

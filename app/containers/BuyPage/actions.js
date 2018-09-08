@@ -34,11 +34,12 @@ export function loadCoinSymbol(coins: List<*>) {
   };
 }
 
-export function loadBestPrice(coin: string, bestPrice: number) {
+export function loadBestPrice(coin: string, name: string, bestPrice: number) {
   return {
     type: LOAD_BEST_PRICE,
     payload: {
       coin,
+      name,
       bestPrice
     }
   };

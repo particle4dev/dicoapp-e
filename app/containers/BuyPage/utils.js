@@ -8,3 +8,9 @@ export function covertSymbolToName(syl) {
   if (s) return s;
   return '';
 }
+
+export function floor(number, after = 1) {
+  // eslint-disable-next-line no-restricted-properties
+  const p = Math.pow(10, after);
+  return Math.floor(number * p) / p;
+}
