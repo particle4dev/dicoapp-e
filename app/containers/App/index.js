@@ -10,6 +10,7 @@ import LoginPage from '../LoginPage';
 import NotFoundPage from '../NotFoundPage';
 import LogoutDialog from '../LogoutDialog';
 import injectSaga from '../../utils/inject-saga';
+import ScrollManager from '../../components/ScrollManager';
 import { makeSelectAuthenticated, makeSelectLoading } from './selectors';
 import connectedRouterRedirect from '../../utils/auth-wrapper/connected-router-redirect';
 import { APP_STATE_NAME } from './constants';
@@ -50,16 +51,18 @@ class App extends Component<Props> {
     return (
       <React.Fragment>
         <CssBaseline />
-        <Route component={LogoutDialog} />
-        <Switch>
-          <Route path={routes.BUY} component={BuyFallback} />
-          <Route path={routes.WALLET} component={WalletFallback} />
-          <Route path={routes.HELP} component={HelpFallback} />
-          <Route path={routes.LOGIN} component={LoginFallback} />
-          <Route path={routes.SEED} component={SeedPage} />
-          <Route exact path={routes.HOME} component={HomeFallback} />
-          <Route component={NotFoundPage} />
-        </Switch>
+        <ScrollManager>
+          <Route component={LogoutDialog} />
+          <Switch>
+            <Route path={routes.BUY} component={BuyFallback} />
+            <Route path={routes.WALLET} component={WalletFallback} />
+            <Route path={routes.HELP} component={HelpFallback} />
+            <Route path={routes.LOGIN} component={LoginFallback} />
+            <Route path={routes.SEED} component={SeedPage} />
+            <Route exact path={routes.HOME} component={HomeFallback} />
+            <Route component={NotFoundPage} />
+          </Switch>
+        </ScrollManager>
       </React.Fragment>
     );
   }
