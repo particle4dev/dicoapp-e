@@ -1,9 +1,8 @@
 /* eslint-disable no-case-declarations, no-param-reassign */
-import { fromJS, Map } from 'immutable';
+import { fromJS } from 'immutable';
 import { handleActions } from 'redux-actions';
 import {
   LOAD_PRICES,
-  LOAD_COIN_SYMBOL,
   LOAD_BEST_PRICE,
   LOAD_PRICES_SUCCESS
   // LOAD_PRICES_ERROR
@@ -13,7 +12,6 @@ import { LOGOUT } from '../App/constants';
 
 // The initial state of the App
 const initialState = fromJS({
-  initCoinsData: false,
   prices: {
     loading: false,
     error: false,
@@ -27,24 +25,6 @@ const buyReducer = handleActions(
       state
         .setIn(['prices', 'loading'], true)
         .setIn(['prices', 'error'], false),
-    [LOAD_COIN_SYMBOL]: (state, { payload }) => {
-      const { coins } = payload;
-      // step one: setup entities
-      let entities = Map({});
-      coins.forEach(e => {
-        entities = entities.set(
-          e.symbol,
-          fromJS({
-            symbol: e.symbol,
-            coin: e.coin,
-            bestPrice: 0
-          })
-        );
-      });
-      return state
-        .set('initCoinsData', true)
-        .setIn(['prices', 'entities'], entities);
-    },
     [LOAD_BEST_PRICE]: (state, { payload }) => {
       const { bestPrice, coin, name } = payload;
       // step one: load entities

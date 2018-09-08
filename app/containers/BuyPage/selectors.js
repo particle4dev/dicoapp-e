@@ -5,9 +5,6 @@ import { COIN_BASE } from './tokenconfig';
 
 const selectBuy = state => state.get(APP_STATE_NAME);
 
-const makeSelectInitCoinsData = () =>
-  createSelector(selectBuy, buyState => buyState.get('initCoinsData'));
-
 const makeSelectPrices = () =>
   createSelector(selectBuy, buyState => buyState.get('prices'));
 
@@ -30,7 +27,6 @@ const makeSelectBalanceList = () =>
 
 export {
   selectBuy,
-  makeSelectInitCoinsData,
   makeSelectPrices,
   makeSelectPricesLoading,
   makeSelectPricesError,

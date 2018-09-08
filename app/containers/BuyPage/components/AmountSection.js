@@ -2,6 +2,7 @@
 import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
+import { COIN_BASE } from '../tokenconfig';
 import AmountInput from './AmountInput';
 import BuyButton from './BuyButton';
 
@@ -32,9 +33,9 @@ class AmountSection extends PureComponent<Props> {
     return (
       <form className={classes.amountform}>
         <AmountInput
-          defaultValue="1"
-          label="BTC"
-          id="BTC"
+          defaultValue="0"
+          label={COIN_BASE.get('coin')}
+          id={COIN_BASE.get('coin')}
           className={classes.amountform__item}
         />
         <br />
@@ -43,7 +44,7 @@ class AmountSection extends PureComponent<Props> {
         <br />
         <br />
         <AmountInput
-          defaultValue="2000"
+          defaultValue="0"
           label="KMD"
           id="KMD"
           className={classes.amountform__item}

@@ -10,13 +10,8 @@ import { makeSelectCurrentUser } from '../App/selectors';
 import api from '../../utils/barter-dex-api';
 import { LOAD_PRICES, LOAD_PRICE } from './constants';
 import { COIN_BASE } from './tokenconfig';
-import {
-  loadCoinSymbol,
-  loadPricesSuccess,
-  loadPricesError,
-  loadBestPrice
-} from './actions';
-import { makeSelectInitCoinsData, makeSelectBalanceList } from './selectors';
+import { loadPricesSuccess, loadPricesError, loadBestPrice } from './actions';
+import { makeSelectBalanceList } from './selectors';
 import { covertSymbolToName } from './utils';
 
 const numcoin = 100000000;
@@ -49,22 +44,6 @@ export function* loadPrice(coin, userpass) {
   }
 }
 
-export function* loadInitCoinData(coins) {
-  try {
-    const data = coins.map(sym => {
-      const coin = covertSymbolToName(sym);
-      return {
-        coin,
-        symbol: sym
-      };
-    });
-    return yield put(loadCoinSymbol(data));
-  } catch (err) {
-    debug(`load init coin data: ${err.message}`);
-    return false;
-  }
-}
-
 export function* loadPricesProcess() {
   try {
     // load user data
@@ -74,11 +53,6 @@ export function* loadPricesProcess() {
     }
     const userpass = user.get('userpass');
     const balance = yield select(makeSelectBalanceList());
-    const initCoinsData = yield select(makeSelectInitCoinsData());
-
-    if (!initCoinsData) {
-      yield call(loadInitCoinData, balance);
-    }
 
     const requests = [];
     for (let i = 0; i < balance.size; i += 1) {
@@ -87,7 +61,8 @@ export function* loadPricesProcess() {
     }
 
     const data = yield all(requests);
-    console.log(data, 'data');
+    debug('load prices process', data);
+
     return yield put(loadPricesSuccess());
   } catch (err) {
     return yield put(loadPricesError(err.message));
@@ -102,13 +77,8 @@ export function* loadPriceProcess({ payload }) {
       throw new Error('not found user');
     }
     const userpass = user.get('userpass');
-    const balance = yield select(makeSelectBalanceList());
-    const initCoinsData = yield select(makeSelectInitCoinsData());
-
-    if (!initCoinsData) {
-      yield call(loadInitCoinData, balance);
-    }
     const { coin } = payload;
+
     return yield call(loadPrice, coin, userpass);
   } catch (err) {
     // FIXME: handling error
