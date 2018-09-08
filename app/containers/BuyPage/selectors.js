@@ -25,7 +25,6 @@ const makeSelectPricesEntities = () =>
 const makeSelectBalanceList = () =>
   createSelector(makeSelectBalanceListApp(), balanceList => {
     const symbol = COIN_BASE.get('coin');
-
     return balanceList.filter(e => e !== symbol);
   });
 

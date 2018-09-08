@@ -14,41 +14,30 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Divider from '@material-ui/core/Divider';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
+import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
 import ErrorBoundary from '../../components/ErrorBoundary';
-import { getCoinIcon } from '../../components/CryptoIcons';
 // import { Circle, Line, LineWrapper } from '../../components/placeholder';
-import { Line } from '../../components/placeholder';
 import { NavigationLayout } from '../Layout';
 import { makeSelectBalanceEntities } from '../App/selectors';
 import { loadBalance } from '../App/actions';
 import { APP_STATE_NAME } from './constants';
-import { COIN_BASE } from './tokenconfig';
 import reducer from './reducer';
 import saga from './saga';
-import CoinSelectable from './components/CoinSelectable';
 import AmountInput from './components/AmountInput';
 import BuyButton from './components/BuyButton';
 import CurrencySection from './components/CurrencySection';
+import PaymentSection from './components/PaymentSection';
 import { loadPrices, loadPrice } from './actions';
 import {
   makeSelectBalanceList,
   makeSelectPricesLoading,
   makeSelectPricesEntities
 } from './selectors';
-import { covertSymbolToName, floor } from './utils';
 
 const debug = require('debug')('dicoapp:containers:BuyPage');
-
-const line = (
-  <Line
-    width={60}
-    style={{
-      margin: 0
-    }}
-  />
-);
 
 const styles = theme => ({
   container: {
@@ -76,6 +65,16 @@ const styles = theme => ({
 
   amountform__item: {
     width: '100%'
+  },
+
+  cardContent: {
+    position: 'relative'
+  },
+
+  cardContent__rightBtn: {
+    position: 'absolute',
+    right: 15,
+    top: 5
   }
 });
 
@@ -127,52 +126,18 @@ class BuyPage extends Component<Props, State> {
     });
   };
 
-  renderPaymentCoin = symbol => {
-    const { paymentCoin } = this.state;
-    const { entities, balance, dispatchLoadPrice } = this.props;
-    const c = entities.get(symbol);
-    const b = balance.get(symbol);
-    const icon = getCoinIcon(symbol);
-    const name = covertSymbolToName(symbol);
-    if (!c) {
-      // not found in entities
-      return (
-        <CoinSelectable
-          dispatchLoadPrice={dispatchLoadPrice}
-          disabled
-          key={`paymentCoin${symbol}`}
-          data={symbol}
-          icon={icon}
-          title={name}
-          subTitle={`${floor(b.get('balance'), 3)} ${b.get('coin')}`}
-        >
-          {line}
-        </CoinSelectable>
-      );
-    }
-    return (
-      <CoinSelectable
-        dispatchLoadPrice={dispatchLoadPrice}
-        disabled={c.get('bestPrice') === 0 || b.get('balance') === 0}
-        selected={paymentCoin === symbol}
-        key={`paymentCoin${symbol}`}
-        data={symbol}
-        icon={icon}
-        title={name}
-        subTitle={`${floor(b.get('balance'), 3)} ${b.get('coin')}`}
-        onClick={this.onClickPaymentCoin}
-      >
-        <span>
-          1 {COIN_BASE.get('coin')} = {c.get('bestPrice')} {symbol}
-        </span>
-      </CoinSelectable>
-    );
-  };
-
   render() {
     debug('render');
 
-    const { classes, loading, list } = this.props;
+    const {
+      classes,
+      loading,
+      list,
+      entities,
+      balance,
+      dispatchLoadPrice
+    } = this.props;
+    const { paymentCoin } = this.state;
 
     return (
       <React.Fragment>
@@ -195,13 +160,26 @@ class BuyPage extends Component<Props, State> {
 
                 <CurrencySection onClick={this.onReloadPrices} />
               </CardContent>
-              <CardContent>
+              <CardContent className={classes.cardContent}>
                 <Typography variant="title" gutterBottom>
                   Payment Method
                 </Typography>
+                <IconButton
+                  aria-label="Reload prices"
+                  className={classes.cardContent__rightBtn}
+                  onClick={this.onReloadPrices}
+                >
+                  <Icon>cached</Icon>
+                </IconButton>
                 <Divider className={classes.hr} />
-
-                {list.map(this.renderPaymentCoin)}
+                <PaymentSection
+                  onClick={this.onClickPaymentCoin}
+                  paymentCoin={paymentCoin}
+                  list={list}
+                  entities={entities}
+                  balance={balance}
+                  dispatchLoadPrice={dispatchLoadPrice}
+                />
               </CardContent>
               <CardContent>
                 <Typography variant="title" gutterBottom>

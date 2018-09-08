@@ -40,8 +40,8 @@ export function* loadPrice(coin, userpass) {
       bestprice = Number(
         (((buf / numcoin) * bestprice) / numcoin).toFixed(8) * numcoin
       ).toFixed(0);
+      debug(`best prices:`, ask);
     }
-
     return yield put(loadBestPrice(coin, name, Number(bestprice / numcoin)));
   } catch (err) {
     debug(`load price process: ${err.message}`);
