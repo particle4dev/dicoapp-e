@@ -33,6 +33,7 @@ export const initialState = fromJS({
   error: false,
   currentUser: null,
   balance: {
+    init: false,
     loading: false,
     error: false,
     coins: [],
@@ -76,7 +77,10 @@ const appReducer = handleActions(
       return state;
     },
 
-    [LOAD_BALANCE_SUCCESS]: state => state.setIn(['balance', 'loading'], false),
+    [LOAD_BALANCE_SUCCESS]: state =>
+      state
+        .setIn(['balance', 'loading'], false)
+        .setIn(['balance', 'init'], true),
 
     [LOAD_BALANCE_ERROR]: (state, { error }) =>
       state

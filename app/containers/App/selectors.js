@@ -35,6 +35,9 @@ const makeSelectBalanceLoading = () =>
     balanceState.get('loading')
   );
 
+const makeSelectBalanceInit = () =>
+  createSelector(makeSelectBalance(), balanceState => balanceState.get('init'));
+
 const makeSelectBalanceError = () =>
   createSelector(makeSelectBalance(), balanceState =>
     balanceState.get('error')
@@ -60,6 +63,7 @@ export {
   makeSelectUserpass,
   makeSelectBalance,
   makeSelectBalanceLoading,
+  makeSelectBalanceInit,
   makeSelectBalanceError,
   makeSelectBalanceList,
   makeSelectBalanceEntities

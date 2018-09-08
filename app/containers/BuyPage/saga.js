@@ -1,8 +1,7 @@
-import { remote } from 'electron';
 import { takeLatest, put, select, call, all } from 'redux-saga/effects';
 import { makeSelectBalanceList, makeSelectCurrentUser } from '../App/selectors';
 import api from '../../utils/barter-dex-api';
-import { LOAD_PRICES, COIN_BASE } from './constants';
+import { LOAD_PRICES, COIN_BASE, LOAD_PRICE } from './constants';
 import {
   loadCoinSymbol,
   loadPricesSuccess,
@@ -10,20 +9,13 @@ import {
   loadBestPrice
 } from './actions';
 import { makeSelectInitCoinsData } from './selectors';
-
-const symbol = remote.require('./config/symbol');
-
-const covertSymbolToName = syl => {
-  const s = symbol.symbolToName[syl];
-  if (s) return s;
-  return '';
-};
+import { covertSymbolToName } from './utils';
 
 const numcoin = 100000000;
 // const txfee = 10000;
 const debug = require('debug')('dicoapp:containers:BuyPage:saga');
 
-export function* loadPriceProcess(coin, userpass) {
+export function* loadPrice(coin, userpass) {
   const getprices = {
     userpass,
     base: COIN_BASE.get('coin'),
@@ -82,7 +74,7 @@ export function* loadPricesProcess() {
     const requests = [];
     for (let i = 0; i < balance.size; i += 1) {
       const coin = balance.get(i);
-      requests.push(call(loadPriceProcess, coin, userpass));
+      requests.push(call(loadPrice, coin, userpass));
     }
 
     const data = yield all(requests);
@@ -93,9 +85,32 @@ export function* loadPricesProcess() {
   }
 }
 
+export function* loadPriceProcess({ payload }) {
+  try {
+    // load user data
+    const user = yield select(makeSelectCurrentUser());
+    if (!user) {
+      throw new Error('not found user');
+    }
+    const userpass = user.get('userpass');
+    const balance = yield select(makeSelectBalanceList());
+    const initCoinsData = yield select(makeSelectInitCoinsData());
+
+    if (!initCoinsData) {
+      yield call(loadInitCoinData, balance);
+    }
+    const { coin } = payload;
+    return yield call(loadPrice, coin, userpass);
+  } catch (err) {
+    // FIXME: handling error
+    return yield put(loadPricesError(err.message));
+  }
+}
+
 /**
  * Root saga manages watcher lifecycle
  */
 export default function* buyData() {
   yield takeLatest(LOAD_PRICES, loadPricesProcess);
+  yield takeLatest(LOAD_PRICE, loadPriceProcess);
 }

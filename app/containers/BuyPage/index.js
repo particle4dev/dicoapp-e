@@ -24,19 +24,20 @@ import { getCoinIcon } from '../../components/CryptoIcons';
 // import { Circle, Line, LineWrapper } from '../../components/placeholder';
 
 import { NavigationLayout } from '../Layout';
-import { makeSelectBalanceEntities } from '../App/selectors';
+import {
+  makeSelectBalanceEntities,
+  makeSelectBalanceList
+} from '../App/selectors';
+import { loadBalance } from '../App/actions';
 import { APP_STATE_NAME, COIN_BASE } from './constants';
 import reducer from './reducer';
 import saga from './saga';
 import CoinSelectable from './components/CoinSelectable';
 import AmountInput from './components/AmountInput';
 import BuyButton from './components/BuyButton';
-import { loadPrices } from './actions';
-import {
-  makeSelectPricesLoading,
-  makeSelectPricesCoins,
-  makeSelectPricesEntities
-} from './selectors';
+import { loadPrices, loadPrice } from './actions';
+import { makeSelectPricesLoading, makeSelectPricesEntities } from './selectors';
+import { covertSymbolToName } from './utils';
 
 function floor(number, after = 1) {
   // eslint-disable-next-line no-restricted-properties
@@ -82,9 +83,13 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   dispatchLoadPrices: Function,
   // eslint-disable-next-line flowtype/no-weak-types
+  dispatchLoadPrice: Function,
+  // eslint-disable-next-line flowtype/no-weak-types
+  dispatchLoadBalance: Function,
+  // eslint-disable-next-line flowtype/no-weak-types
   balance: Object,
-  coins: List<*>,
-  entities: Map<*, *>
+  entities: Map<*, *>,
+  list: List<*>
 };
 
 type State = {
@@ -99,9 +104,10 @@ class BuyPage extends Component<Props, State> {
   };
 
   componentDidMount = () => {
-    const { dispatchLoadPrices } = this.props;
+    const { dispatchLoadPrices, dispatchLoadBalance } = this.props;
 
     dispatchLoadPrices();
+    dispatchLoadBalance();
   };
 
   onReloadPrices = (evt: SyntheticInputEvent<>) => {
@@ -135,23 +141,39 @@ class BuyPage extends Component<Props, State> {
     );
   };
 
-  renderPaymentCoin = coin => {
-    const { entities, balance } = this.props;
-    const symbol = coin.get('symbol');
+  renderPaymentCoin = symbol => {
+    const { entities, balance, dispatchLoadPrice } = this.props;
     const c = entities.get(symbol);
     const b = balance.get(symbol);
     const icon = getCoinIcon(symbol);
-
+    const name = covertSymbolToName(symbol);
+    if (!c) {
+      // not found in entities
+      return (
+        <CoinSelectable
+          dispatchLoadPrice={dispatchLoadPrice}
+          disabled
+          key={`paymentCoin${symbol}`}
+          data={symbol}
+          icon={icon}
+          title={name}
+          subTitle={`${floor(b.get('balance'), 3)} ${b.get('coin')}`}
+        >
+          loading
+        </CoinSelectable>
+      );
+    }
     return (
       <CoinSelectable
+        dispatchLoadPrice={dispatchLoadPrice}
         disabled={c.get('bestPrice') === 0 || b.get('balance') === 0}
         key={`paymentCoin${symbol}`}
         data={symbol}
         icon={icon}
-        title={coin.get('coin')}
+        title={name}
         subTitle={`${floor(b.get('balance'), 3)} ${b.get('coin')}`}
       >
-        1 {COIN_BASE.get('coin')} = {c.get('bestPrice')} {coin.get('symbol')}
+        1 {COIN_BASE.get('coin')} = {c.get('bestPrice')} {symbol}
       </CoinSelectable>
     );
   };
@@ -159,7 +181,7 @@ class BuyPage extends Component<Props, State> {
   render() {
     debug('render');
 
-    const { classes, loading, coins } = this.props;
+    const { classes, loading, list } = this.props;
 
     return (
       <React.Fragment>
@@ -188,7 +210,7 @@ class BuyPage extends Component<Props, State> {
                 </Typography>
                 <Divider className={classes.hr} />
 
-                {coins.map(this.renderPaymentCoin)}
+                {list.map(this.renderPaymentCoin)}
               </CardContent>
               <CardContent>
                 <Typography variant="title" gutterBottom>
@@ -243,15 +265,17 @@ class BuyPage extends Component<Props, State> {
 
 export function mapDispatchToProps(dispatch) {
   return {
-    dispatchLoadPrices: () => dispatch(loadPrices())
+    dispatchLoadPrices: () => dispatch(loadPrices()),
+    dispatchLoadPrice: (coin: string) => dispatch(loadPrice(coin)),
+    dispatchLoadBalance: () => dispatch(loadBalance())
   };
 }
 
 const mapStateToProps = createStructuredSelector({
   loading: makeSelectPricesLoading(),
-  coins: makeSelectPricesCoins(),
   entities: makeSelectPricesEntities(),
-  balance: makeSelectBalanceEntities()
+  balance: makeSelectBalanceEntities(),
+  list: makeSelectBalanceList()
 });
 
 const withConnect = connect(
