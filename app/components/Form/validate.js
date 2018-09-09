@@ -13,7 +13,10 @@ export default function validate(
     onChange: false
   }
 ) {
-  type Props = {};
+  type Props = {
+    // eslint-disable-next-line flowtype/no-weak-types
+    onChange?: Function
+  };
   type State = {
     error: string,
     value: string
@@ -50,8 +53,12 @@ export default function validate(
     };
 
     setErrors = async () => {
+      const { onChange } = this.props;
       const { value } = this.state;
       try {
+        if (onChange) {
+          onChange(value);
+        }
         // eslint-disable-next-line no-restricted-syntax, no-await-in-loop
         for (const validation of validations) {
           await validation(value, this.props);
@@ -63,6 +70,26 @@ export default function validate(
         this.setState({
           error: err.message
         });
+      }
+    };
+
+    setValue = async value => {
+      try {
+        // eslint-disable-next-line no-restricted-syntax,
+        for (const validation of validations) {
+          await validation(value, this.props);
+        }
+        this.setState({
+          error: '',
+          value
+        });
+        return true;
+      } catch (err) {
+        this.setState({
+          error: err.message
+        });
+        // continue throw error
+        throw err;
       }
     };
 

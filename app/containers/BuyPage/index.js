@@ -169,7 +169,11 @@ class BuyPage extends Component<Props, State> {
                   Amount
                 </Typography>
                 <Divider className={classes.hr} />
-                <AmountSection />
+                <AmountSection
+                  paymentCoin={paymentCoin}
+                  entities={entities}
+                  balance={balance}
+                />
               </CardContent>
             </Card>
           </Grid>

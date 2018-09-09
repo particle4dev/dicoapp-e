@@ -64,20 +64,24 @@ class ScrollManager extends React.Component<Props> {
     // eslint-disable-next-line no-underscore-dangle
     const _scrollSync = () => {
       requestAnimationFrame(() => {
-        const { x, y, attemptsRemaining } = this.scrollSyncData;
+        try {
+          const { x, y, attemptsRemaining } = this.scrollSyncData;
 
-        if (attemptsRemaining < 1) {
-          return;
-        }
+          if (attemptsRemaining < 1) {
+            return;
+          }
 
-        const { pageXOffset, pageYOffset } = window;
-        if (
-          y < window.document.body.scrollHeight &&
-          (x !== pageXOffset || y !== pageYOffset)
-        ) {
-          window.scrollTo(x, y);
-          this.scrollSyncData.attemptsRemaining = attemptsRemaining - 1;
-          _scrollSync();
+          const { pageXOffset, pageYOffset } = window;
+          if (
+            y < window.document.body.scrollHeight &&
+            (x !== pageXOffset || y !== pageYOffset)
+          ) {
+            window.scrollTo(x, y);
+            this.scrollSyncData.attemptsRemaining = attemptsRemaining - 1;
+            _scrollSync();
+          }
+        } catch (err) {
+          console.warn(err.message);
         }
       });
     };
