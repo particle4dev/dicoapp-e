@@ -136,6 +136,16 @@ class BarterDexAPI {
     });
     return this.create(serverparams);
   }
+
+  // https://docs.komodoplatform.com/barterDEX/barterDEX-API.html?highlight=listunspent#recentswaps
+  // eslint-disable-next-line flowtype/no-weak-types
+  recentswaps(params: Object) {
+    // FIXME: verify params
+    const serverparams = Object.assign({}, params, {
+      method: 'recentswaps'
+    });
+    return this.create(serverparams);
+  }
 }
 
 let api = null;

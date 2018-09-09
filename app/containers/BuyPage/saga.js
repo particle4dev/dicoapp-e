@@ -141,8 +141,13 @@ export function* loadBuyCoinProcess({ payload }) {
       coin: paymentcoin,
       address: smartaddress.get('smartaddress')
     });
-
     console.log('loadBuyCoinProcess', unspent);
+
+    const swaplist = {
+      userpass
+    };
+    const swaplistResult = yield api.recentswaps(swaplist);
+    console.log('swaplistResult', swaplistResult);
   } catch (err) {
     // FIXME: handling error
     return yield put(loadBuyCoinError(err.message));

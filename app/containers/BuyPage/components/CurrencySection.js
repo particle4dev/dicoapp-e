@@ -2,6 +2,7 @@
 import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { getCoinIcon } from '../../../components/CryptoIcons';
+import { floor } from '../utils';
 import { COIN_BASE } from '../tokenconfig';
 import CoinSelectable from './CoinSelectable';
 
@@ -11,7 +12,9 @@ const styles = () => ({});
 
 type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
-  classes: Object
+  classes: Object,
+  // eslint-disable-next-line flowtype/no-weak-types
+  balance: Object
 };
 
 class CurrencySection extends PureComponent<Props> {
@@ -19,8 +22,10 @@ class CurrencySection extends PureComponent<Props> {
 
   render() {
     debug(`render`);
+    const { balance } = this.props;
     const symbol = COIN_BASE.get('coin');
     const icon = getCoinIcon(symbol);
+    const b = balance.get(symbol);
 
     return (
       <CoinSelectable
@@ -29,6 +34,7 @@ class CurrencySection extends PureComponent<Props> {
         data={symbol}
         icon={icon}
         title={COIN_BASE.get('name')}
+        subTitle={`${floor(b.get('balance'), 3)} ${b.get('coin')}`}
         {...this.props}
       />
     );

@@ -64,8 +64,6 @@ const styles = () => ({
 });
 
 type Props = {
-  buyingLoading: boolean,
-  buyingError: boolean | string,
   loading: boolean,
   // eslint-disable-next-line flowtype/no-weak-types
   classes: Object,
@@ -80,7 +78,10 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   balance: Object,
   entities: Map<*, *>,
-  list: List<*>
+  list: List<*>,
+  buyingLoading: boolean,
+  // eslint-disable-next-line flowtype/no-weak-types
+  buyingError: boolean | Object
 };
 
 type State = {
@@ -150,7 +151,10 @@ class BuyPage extends Component<Props, State> {
                 </Typography>
                 <Divider className={classes.hr} />
 
-                <CurrencySection onClick={this.onReloadPrices} />
+                <CurrencySection
+                  balance={balance}
+                  onClick={this.onReloadPrices}
+                />
               </CardContent>
               <CardContent className={classes.cardContent}>
                 <Typography variant="title" gutterBottom>

@@ -67,7 +67,8 @@ type Props = {
   balance: Object,
   entities: Map<*, *>,
   buyingLoading: boolean
-  // buyingError: boolean | string
+  // eslint-dis,able-next-line flowtype/no-weak-types
+  // buyingError: boolean | Object
 };
 
 type State = {

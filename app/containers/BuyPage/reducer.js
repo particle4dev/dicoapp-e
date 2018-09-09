@@ -32,6 +32,7 @@ const buyReducer = handleActions(
       state
         .setIn(['prices', 'loading'], true)
         .setIn(['prices', 'error'], false),
+
     [LOAD_BEST_PRICE]: (state, { payload }) => {
       const { bestPrice, coin, name } = payload;
       // step one: load entities
@@ -50,15 +51,19 @@ const buyReducer = handleActions(
       c = c.set('bestPrice', bestPrice);
       return state.setIn(['prices', 'entities'], entities.set(coin, c));
     },
+
     [LOAD_PRICES_SUCCESS]: state => state.setIn(['prices', 'loading'], false),
+
     [LOAD_BUY_COIN]: state =>
       state
         .setIn(['buying', 'loading'], true)
         .setIn(['buying', 'error'], false),
+
     [LOAD_BUY_COIN_ERROR]: (state, { error }) =>
       state
-        .setIn(['transactions', 'error'], error)
-        .setIn(['transactions', 'loading'], false),
+        .setIn(['buying', 'error'], error)
+        .setIn(['buying', 'loading'], false),
+
     [LOGOUT]: () => initialState
   },
   initialState
