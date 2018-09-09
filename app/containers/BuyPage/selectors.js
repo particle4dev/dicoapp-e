@@ -19,6 +19,15 @@ const makeSelectPricesEntities = () =>
     pricesState.get('entities')
   );
 
+const makeSelectBuying = () =>
+  createSelector(selectBuy, buyState => buyState.get('buying'));
+
+const makeSelectBuyingLoading = () =>
+  createSelector(makeSelectBuying(), buyingState => buyingState.get('loading'));
+
+const makeSelectBuyingError = () =>
+  createSelector(makeSelectBuying(), buyingState => buyingState.get('error'));
+
 const makeSelectBalanceList = () =>
   createSelector(makeSelectBalanceListApp(), balanceList => {
     const symbol = COIN_BASE.get('coin');
@@ -31,5 +40,8 @@ export {
   makeSelectPricesLoading,
   makeSelectPricesError,
   makeSelectPricesEntities,
+  makeSelectBuying,
+  makeSelectBuyingLoading,
+  makeSelectBuyingError,
   makeSelectBalanceList
 };

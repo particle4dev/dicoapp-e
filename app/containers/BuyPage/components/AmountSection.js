@@ -36,9 +36,16 @@ const ValidationBaseInput = validate(TextInput, [requiredNumber], {
   onChange: true
 });
 
-const ValidationPaymentInput = validate(TextInput, [requiredNumber, lessThan], {
-  onChange: true
-});
+const ValidationPaymentInput = validate(
+  TextInput,
+  [
+    requiredNumber
+    // lessThan
+  ],
+  {
+    onChange: true
+  }
+);
 
 const styles = () => ({
   amountform: {
@@ -55,8 +62,12 @@ type Props = {
   classes: Object,
   paymentCoin: string,
   // eslint-disable-next-line flowtype/no-weak-types
+  dispatchLoadBuyCoin: Function,
+  // eslint-disable-next-line flowtype/no-weak-types
   balance: Object,
-  entities: Map<*, *>
+  entities: Map<*, *>,
+  buyingLoading: boolean
+  // buyingError: boolean | string
 };
 
 type State = {
@@ -126,9 +137,23 @@ class AmountSection extends Component<Props, State> {
     }
   };
 
+  onCLickBtnBuyCoin = async (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    const { dispatchLoadBuyCoin } = this.props;
+    const baseInput = this.baseInput.current;
+    const base = await baseInput.value();
+
+    dispatchLoadBuyCoin({
+      basecoin: COIN_BASE.get('coin'),
+      // eslint-disable-next-line react/destructuring-assignment
+      paymentcoin: this.props.paymentCoin,
+      amount: Number(base)
+    });
+  };
+
   render() {
     debug(`render`);
-    const { classes, paymentCoin } = this.props;
+    const { classes, paymentCoin, buyingLoading } = this.props;
     const { disabledBuyButton } = this.state;
     const disabled = paymentCoin === '';
     let label = 'SELECT YOUR PAYMENT';
@@ -165,10 +190,11 @@ class AmountSection extends Component<Props, State> {
         <br />
         <br />
         <BuyButton
-          disabled={disabledBuyButton}
-          color="secondary"
+          disabled={disabledBuyButton || buyingLoading}
+          color="primary"
           variant="contained"
           className={classes.amountform__item}
+          onClick={this.onCLickBtnBuyCoin}
         >
           Buy {COIN_BASE.get('coin')}
         </BuyButton>

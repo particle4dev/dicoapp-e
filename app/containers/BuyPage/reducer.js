@@ -4,8 +4,11 @@ import { handleActions } from 'redux-actions';
 import {
   LOAD_PRICES,
   LOAD_BEST_PRICE,
-  LOAD_PRICES_SUCCESS
-  // LOAD_PRICES_ERROR
+  LOAD_PRICES_SUCCESS,
+  // LOAD_PRICES_ERROR,
+  LOAD_BUY_COIN,
+  // LOAD_BUY_COIN_SUCCESS,
+  LOAD_BUY_COIN_ERROR
 } from './constants';
 
 import { LOGOUT } from '../App/constants';
@@ -16,6 +19,10 @@ const initialState = fromJS({
     loading: false,
     error: false,
     entities: {}
+  },
+  buying: {
+    loading: false,
+    error: false
   }
 });
 
@@ -44,6 +51,14 @@ const buyReducer = handleActions(
       return state.setIn(['prices', 'entities'], entities.set(coin, c));
     },
     [LOAD_PRICES_SUCCESS]: state => state.setIn(['prices', 'loading'], false),
+    [LOAD_BUY_COIN]: state =>
+      state
+        .setIn(['buying', 'loading'], true)
+        .setIn(['buying', 'error'], false),
+    [LOAD_BUY_COIN_ERROR]: (state, { error }) =>
+      state
+        .setIn(['transactions', 'error'], error)
+        .setIn(['transactions', 'loading'], false),
     [LOGOUT]: () => initialState
   },
   initialState

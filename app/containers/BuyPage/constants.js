@@ -6,3 +6,6 @@ export const LOAD_PRICES_SUCCESS = 'dicoapp/BuyPage/LOAD_PRICES_SUCCESS';
 export const LOAD_PRICES_ERROR = 'dicoapp/BuyPage/LOAD_PRICES_ERROR';
 export const LOAD_PRICE = 'dicoapp/BuyPage/LOAD_PRICE';
 export const LOAD_BEST_PRICE = 'dicoapp/BuyPage/LOAD_BEST_PRICE';
+export const LOAD_BUY_COIN = 'dicoapp/BuyPage/LOAD_BUY_COIN';
+export const LOAD_BUY_COIN_SUCCESS = 'dicoapp/BuyPage/LOAD_BUY_COIN_SUCCESS';
+export const LOAD_BUY_COIN_ERROR = 'dicoapp/BuyPage/LOAD_BUY_COIN_ERROR';
