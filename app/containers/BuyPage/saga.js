@@ -11,20 +11,49 @@ import {
   makeSelectBalanceEntities
 } from '../App/selectors';
 import api from '../../utils/barter-dex-api';
-import { LOAD_PRICES, LOAD_PRICE, LOAD_BUY_COIN } from './constants';
+import {
+  LOAD_PRICES,
+  LOAD_PRICE,
+  LOAD_BUY_COIN,
+  LOAD_RECENT_SWAPS
+} from './constants';
 import { COIN_BASE } from './tokenconfig';
 import {
   loadPricesSuccess,
   loadPricesError,
   loadBestPrice,
-  loadBuyCoinError
+  loadBuyCoinSuccess,
+  loadBuyCoinError,
+  loadRecentSwapsCoin,
+  loadRecentSwapsError
 } from './actions';
 import { makeSelectBalanceList, makeSelectPricesEntities } from './selectors';
-import { covertSymbolToName } from './utils';
+// import { covertSymbolToName, Loops } from './utils';
 
 const numcoin = 100000000;
 const txfee = 10000;
 const debug = require('debug')('dicoapp:containers:BuyPage:saga');
+
+// ==========================TESTS============================
+
+// async function checkSwapStatus(userpass) {
+//   const swaplist = {
+//     userpass
+//   };
+//   const recentswapsResult = await api.recentswaps(swaplist);
+//   console.log('recentswapsResult', recentswapsResult);
+//   console.log('recentswapsResult', JSON.stringify(recentswapsResult));
+
+//   for (let i = 0; i < recentswapsResult.swaps.length; i += 1) {
+//     const swapobj = recentswapsResult.swaps[i];
+//     // eslint-disable-next-line no-await-in-loop
+//     await checkSwap(userpass, swapobj[0], swapobj[1]);
+//   }
+// }
+
+// const checkSwapStatusLoops = new Loops(10000, checkSwapStatus);
+
+// ======================================================
 
 export function* loadPrice(coin, userpass) {
   const getprices = {
@@ -33,7 +62,7 @@ export function* loadPrice(coin, userpass) {
     rel: coin
   };
   const buf = 1.08 * numcoin;
-  const name = covertSymbolToName(coin);
+  // const name = covertSymbolToName(coin);
   let bestprice = 0;
   try {
     const result = yield api.orderbook(getprices);
@@ -44,8 +73,31 @@ export function* loadPrice(coin, userpass) {
         (((buf / numcoin) * bestprice) / numcoin).toFixed(8) * numcoin
       ).toFixed(0);
       debug(`best prices:`, ask);
+      return yield put(
+        loadBestPrice({
+          bestPrice: Number(bestprice / numcoin),
+          price: ask.price,
+          avevolume: ask.avevolume,
+          maxvolume: ask.maxvolume,
+          numutxos: ask.numutxos,
+          base: COIN_BASE.get('coin'),
+          rel: coin,
+          age: ask.age
+        })
+      );
     }
-    return yield put(loadBestPrice(coin, name, Number(bestprice / numcoin)));
+    return yield put(
+      loadBestPrice({
+        bestPrice: 0,
+        price: 0,
+        avevolume: 0,
+        maxvolume: 0,
+        numutxos: 0,
+        base: COIN_BASE.get('coin'),
+        rel: coin,
+        age: 0
+      })
+    );
   } catch (err) {
     debug(`load price process: ${err.message}`);
     return false;
@@ -101,12 +153,11 @@ export function* loadBuyCoinProcess({ payload }) {
     if (!user) {
       throw new Error('not found user');
     }
-    // const { basecoin, paymentcoin, amount } = payload;
-    const { paymentcoin, amount } = payload;
+    const { basecoin, paymentcoin, amount } = payload;
 
     const userpass = user.get('userpass');
-    const coins = user.get('coins');
-    const smartaddress = coins.find(c => c.get('coin') === paymentcoin);
+    // const coins = user.get('coins');
+    // const smartaddress = coins.find(c => c.get('coin') === paymentcoin);
 
     // step two: load balance
     const balances = yield select(makeSelectBalanceEntities());
@@ -114,20 +165,10 @@ export function* loadBuyCoinProcess({ payload }) {
 
     // step three: load best price
     const prices = yield select(makeSelectPricesEntities());
-    const price = prices.find(c => c.get('symbol') === paymentcoin);
+    const price = prices.find(c => c.get('rel') === paymentcoin);
 
     // step four: check balance
-    // const buf = 1.08 * numcoin;
-    const originBestprice = Number(
-      Number((price.get('bestPrice') * numcoin) / 1.08).toFixed(0) / numcoin
-    ).toFixed(8);
-    const relvolume = Number(amount * originBestprice);
-    console.log(originBestprice, 'originBestprice');
-    console.log(amount, relvolume, 'relvolume');
-    console.log(
-      relvolume * numcoin + txfee,
-      Number(balance.get('balance') * numcoin).toFixed(0)
-    );
+    const relvolume = Number(amount * price.get('price'));
     if (
       relvolume * numcoin + txfee >=
       Number(balance.get('balance') * numcoin).toFixed(0)
@@ -136,21 +177,71 @@ export function* loadBuyCoinProcess({ payload }) {
     }
 
     // step one: get listUnspent data
-    const unspent = yield api.listUnspent({
-      userpass,
-      coin: paymentcoin,
-      address: smartaddress.get('smartaddress')
-    });
-    console.log('loadBuyCoinProcess', unspent);
+    // const unspent = yield api.listUnspent({
+    //   userpass,
+    //   coin: paymentcoin,
+    //   address: smartaddress.get('smartaddress')
+    // });
+    // console.log('loadBuyCoinProcess', unspent);
 
-    const swaplist = {
-      userpass
+    // step xxx: buy
+    const buyparams = {
+      userpass,
+      base: basecoin,
+      rel: paymentcoin,
+      relvolume: relvolume.toFixed(8),
+      price: price.get('bestPrice').toFixed(8)
     };
-    const swaplistResult = yield api.recentswaps(swaplist);
-    console.log('swaplistResult', swaplistResult);
+
+    const result = yield api.buy(buyparams);
+    if (result.pending) {
+      return yield put(loadBuyCoinSuccess(result.pending));
+    }
   } catch (err) {
     // FIXME: handling error
     return yield put(loadBuyCoinError(err.message));
+  }
+}
+
+export function* checkSwap(userpass, requestid, quoteid) {
+  const swapelem = {
+    userpass,
+    requestid,
+    quoteid
+  };
+  const swapstatusResult = yield api.swapstatus(swapelem);
+  if (swapstatusResult.status === 'pending') {
+    yield put(loadRecentSwapsCoin(swapstatusResult));
+    console.log('swapstatusResult', swapstatusResult);
+    console.log('swapstatusResult', JSON.stringify(swapstatusResult));
+  }
+  return true;
+}
+
+export function* loadRecentSwapsProcess() {
+  try {
+    // step one: load user data
+    const user = yield select(makeSelectCurrentUser());
+    if (!user) {
+      throw new Error('not found user');
+    }
+    const userpass = user.get('userpass');
+    const swaplist = {
+      userpass
+    };
+    const recentswapsResult = yield api.recentswaps(swaplist);
+    const { swaps } = recentswapsResult;
+    const requests = [];
+    for (let i = 0; i < swaps.length; i += 1) {
+      const swapobj = swaps[i];
+      // eslint-disable-next-line no-await-in-loop
+      requests.push(call(checkSwap, userpass, swapobj[0], swapobj[1]));
+    }
+    const data = yield all(requests);
+    debug('load recent swaps process', data);
+  } catch (err) {
+    // FIXME: handling error
+    return yield put(loadRecentSwapsError(err.message));
   }
 }
 
@@ -160,5 +251,6 @@ export function* loadBuyCoinProcess({ payload }) {
 export default function* buyData() {
   yield takeLatest(LOAD_PRICES, loadPricesProcess);
   yield takeLatest(LOAD_BUY_COIN, loadBuyCoinProcess);
+  yield takeLatest(LOAD_RECENT_SWAPS, loadRecentSwapsProcess);
   yield takeEvery(LOAD_PRICE, loadPriceProcess);
 }

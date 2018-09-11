@@ -1,14 +1,44 @@
 // @flow
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
+import { createStructuredSelector } from 'reselect';
+import type { List, Map } from 'immutable';
 import { withStyles } from '@material-ui/core/styles';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
+
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import { getCoinIcon } from '../../../components/CryptoIcons';
+import { Loops } from '../utils';
+
 import { requiredNumber } from '../../../components/Form/helper';
 import validate from '../../../components/Form/validate';
+import { makeSelectBalanceEntities } from '../../App/selectors';
 import { COIN_BASE } from '../tokenconfig';
+import { loadBuyCoin, loadRecentSwaps } from '../actions';
+import {
+  makeSelectPricesLoading,
+  makeSelectPricesEntities,
+  makeSelectBuyingLoading,
+  makeSelectBuyingError,
+  makeSelectSwapsList,
+  makeSelectSwapsEntities
+} from '../selectors';
 import AmountInput from './AmountInput';
 import BuyButton from './BuyButton';
 
 const debug = require('debug')('dicoapp:containers:BuyPage:AmountSection');
+
+const STATE_SWAPS = [
+  'Confirmed',
+  'My Fee',
+  'Bob Deposit',
+  'Alice Payment',
+  'Bob Payment',
+  'Alice Spend'
+];
 
 // eslint-disable-next-line react/prop-types
 const TextInput = ({ onChange, value, error, isError, ...props }) => (
@@ -36,16 +66,9 @@ const ValidationBaseInput = validate(TextInput, [requiredNumber], {
   onChange: true
 });
 
-const ValidationPaymentInput = validate(
-  TextInput,
-  [
-    requiredNumber
-    // lessThan
-  ],
-  {
-    onChange: true
-  }
-);
+const ValidationPaymentInput = validate(TextInput, [requiredNumber, lessThan], {
+  onChange: true
+});
 
 const styles = () => ({
   amountform: {
@@ -54,6 +77,10 @@ const styles = () => ({
 
   amountform__item: {
     width: '100%'
+  },
+
+  amountform__itemCenter: {
+    textAlign: 'center'
   }
 });
 
@@ -64,11 +91,15 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   dispatchLoadBuyCoin: Function,
   // eslint-disable-next-line flowtype/no-weak-types
+  dispatchLoadRecentSwaps: Function,
+  // eslint-disable-next-line flowtype/no-weak-types
   balance: Object,
   entities: Map<*, *>,
-  buyingLoading: boolean
+  buyingLoading: boolean,
   // eslint-dis,able-next-line flowtype/no-weak-types
-  // buyingError: boolean | Object
+  // buyingError: boolean | Object,
+  swapsList: List<*>,
+  swapsEntities: Map<*, *>
 };
 
 type State = {
@@ -87,6 +118,31 @@ class AmountSection extends Component<Props, State> {
     this.baseInput = React.createRef();
     this.paymentInput = React.createRef();
   }
+
+  componentDidMount = () => {
+    const { dispatchLoadRecentSwaps } = this.props;
+
+    dispatchLoadRecentSwaps();
+  };
+
+  componentDidUpdate(prevProps) {
+    if (
+      // eslint-disable-next-line react/destructuring-assignment
+      ((this.props.swapsList.size === 1) !== prevProps.swapsList.size) ===
+      0
+    ) {
+      const { dispatchLoadRecentSwaps } = this.props;
+      this.checkSwapStatusLoops = new Loops(10000, dispatchLoadRecentSwaps);
+      this.checkSwapStatusLoops.setup();
+    }
+  }
+
+  componentWillUnmount = () => {
+    if (this.checkSwapStatusLoops) {
+      this.checkSwapStatusLoops.stop();
+      this.checkSwapStatusLoops = undefined;
+    }
+  };
 
   getBestPrice = () => {
     const { entities, paymentCoin } = this.props;
@@ -152,8 +208,7 @@ class AmountSection extends Component<Props, State> {
     });
   };
 
-  render() {
-    debug(`render`);
+  renderForm = () => {
     const { classes, paymentCoin, buyingLoading } = this.props;
     const { disabledBuyButton } = this.state;
     const disabled = paymentCoin === '';
@@ -201,9 +256,93 @@ class AmountSection extends Component<Props, State> {
         </BuyButton>
       </form>
     );
+  };
+
+  renderProcess = () => {
+    const { classes, swapsList, swapsEntities } = this.props;
+    const entity = swapsEntities.get(swapsList.get(0));
+
+    return (
+      <div className={classes.amountform}>
+        <Grid container spacing={24}>
+          <Grid item xs={6} className={classes.amountform__itemCenter}>
+            <Typography variant="title" gutterBottom>
+              Deposit
+            </Typography>
+            {getCoinIcon(entity.get('bob'))}
+            <Typography variant="subheading" gutterBottom>
+              {entity.get('aliceamount')} {entity.get('alice')}
+            </Typography>
+          </Grid>
+          <Grid item xs={6} className={classes.amountform__itemCenter}>
+            <Typography variant="title" gutterBottom>
+              Receive
+            </Typography>
+            {getCoinIcon(entity.get('alice'))}
+            <Typography variant="subheading" gutterBottom>
+              {entity.get('bobamount')} {entity.get('bob')}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} className={classes.amountform__itemCenter}>
+            <Typography variant="body2" gutterBottom>
+              Step {entity.get('sentflags').size}
+              /5: {STATE_SWAPS[entity.get('sentflags').size]}
+            </Typography>
+            <LinearProgress
+              color="primary"
+              variant="determinate"
+              value={entity.get('sentflags').size * 20}
+            />
+          </Grid>
+          <Grid item xs={12} className={classes.amountform__itemCenter}>
+            <BuyButton
+              disabled
+              color="primary"
+              variant="contained"
+              className={classes.amountform__item}
+            >
+              Loading ...
+            </BuyButton>
+          </Grid>
+        </Grid>
+      </div>
+    );
+  };
+
+  render() {
+    debug(`render`);
+    const { swapsList } = this.props;
+    if (swapsList.size === 0) return this.renderForm();
+    return this.renderProcess();
   }
 }
 
 AmountSection.displayName = 'AmountSection';
 
-export default withStyles(styles)(AmountSection);
+export function mapDispatchToProps(dispatch) {
+  return {
+    // eslint-disable-next-line flowtype/no-weak-types
+    dispatchLoadBuyCoin: (payload: Object) => dispatch(loadBuyCoin(payload)),
+    dispatchLoadRecentSwaps: () => dispatch(loadRecentSwaps())
+  };
+}
+
+const mapStateToProps = createStructuredSelector({
+  loading: makeSelectPricesLoading(),
+  entities: makeSelectPricesEntities(),
+  balance: makeSelectBalanceEntities(),
+  buyingLoading: makeSelectBuyingLoading(),
+  buyingError: makeSelectBuyingError(),
+  swapsList: makeSelectSwapsList(),
+  swapsEntities: makeSelectSwapsEntities()
+});
+
+const withConnect = connect(
+  mapStateToProps,
+  mapDispatchToProps
+);
+
+export default compose(
+  withConnect,
+  withStyles(styles)
+)(AmountSection);

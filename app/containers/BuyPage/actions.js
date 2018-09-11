@@ -7,9 +7,15 @@ import {
   LOAD_PRICES_SUCCESS,
   LOAD_PRICES_ERROR,
   LOAD_BUY_COIN,
-  // LOAD_BUY_COIN_SUCCESS,
-  LOAD_BUY_COIN_ERROR
+  LOAD_BUY_COIN_SUCCESS,
+  LOAD_BUY_COIN_ERROR,
+  LOAD_RECENT_SWAPS,
+  LOAD_RECENT_SWAPS_COIN,
+  // LOAD_RECENT_SWAPS_SUCCESS,
+  LOAD_RECENT_SWAPS_ERROR
 } from './constants';
+
+import type { PriceCoin } from './schema';
 
 export function loadPrice(coin: string) {
   return {
@@ -26,14 +32,10 @@ export function loadPrices() {
   };
 }
 
-export function loadBestPrice(coin: string, name: string, bestPrice: number) {
+export function loadBestPrice(payload: PriceCoin) {
   return {
     type: LOAD_BEST_PRICE,
-    payload: {
-      coin,
-      name,
-      bestPrice
-    }
+    payload
   };
 }
 
@@ -61,9 +63,40 @@ export function loadBuyCoin(payload: Object) {
   };
 }
 
+// eslint-disable-next-line flowtype/no-weak-types
+export function loadBuyCoinSuccess(payload: Object) {
+  return {
+    type: LOAD_BUY_COIN_SUCCESS,
+    payload
+  };
+}
+
 export function loadBuyCoinError(message: string) {
   return {
     type: LOAD_BUY_COIN_ERROR,
+    error: {
+      message
+    }
+  };
+}
+
+export function loadRecentSwaps() {
+  return {
+    type: LOAD_RECENT_SWAPS
+  };
+}
+
+// eslint-disable-next-line flowtype/no-weak-types
+export function loadRecentSwapsCoin(payload: Object) {
+  return {
+    type: LOAD_RECENT_SWAPS_COIN,
+    payload
+  };
+}
+
+export function loadRecentSwapsError(message: string) {
+  return {
+    type: LOAD_RECENT_SWAPS_ERROR,
     error: {
       message
     }

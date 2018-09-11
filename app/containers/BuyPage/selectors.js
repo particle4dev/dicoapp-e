@@ -28,6 +28,21 @@ const makeSelectBuyingLoading = () =>
 const makeSelectBuyingError = () =>
   createSelector(makeSelectBuying(), buyingState => buyingState.get('error'));
 
+const makeSelectSwaps = () =>
+  createSelector(selectBuy, buyState => buyState.get('swaps'));
+
+const makeSelectSwapsLoading = () =>
+  createSelector(makeSelectSwaps(), swapsState => swapsState.get('loading'));
+
+const makeSelectSwapsError = () =>
+  createSelector(makeSelectSwaps(), swapsState => swapsState.get('error'));
+
+const makeSelectSwapsList = () =>
+  createSelector(makeSelectSwaps(), swapsState => swapsState.get('list'));
+
+const makeSelectSwapsEntities = () =>
+  createSelector(makeSelectSwaps(), swapsState => swapsState.get('entities'));
+
 const makeSelectBalanceList = () =>
   createSelector(makeSelectBalanceListApp(), balanceList => {
     const symbol = COIN_BASE.get('coin');
@@ -43,5 +58,10 @@ export {
   makeSelectBuying,
   makeSelectBuyingLoading,
   makeSelectBuyingError,
+  makeSelectSwaps,
+  makeSelectSwapsLoading,
+  makeSelectSwapsError,
+  makeSelectSwapsList,
+  makeSelectSwapsEntities,
   makeSelectBalanceList
 };

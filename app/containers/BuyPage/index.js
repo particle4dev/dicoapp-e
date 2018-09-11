@@ -28,13 +28,11 @@ import saga from './saga';
 import AmountSection from './components/AmountSection';
 import CurrencySection from './components/CurrencySection';
 import PaymentSection from './components/PaymentSection';
-import { loadPrices, loadPrice, loadBuyCoin } from './actions';
+import { loadPrices, loadPrice } from './actions';
 import {
   makeSelectBalanceList,
   makeSelectPricesLoading,
-  makeSelectPricesEntities,
-  makeSelectBuyingLoading,
-  makeSelectBuyingError
+  makeSelectPricesEntities
 } from './selectors';
 
 const debug = require('debug')('dicoapp:containers:BuyPage');
@@ -74,14 +72,9 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   dispatchLoadBalance: Function,
   // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadBuyCoin: Function,
-  // eslint-disable-next-line flowtype/no-weak-types
   balance: Object,
   entities: Map<*, *>,
-  list: List<*>,
-  buyingLoading: boolean,
-  // eslint-disable-next-line flowtype/no-weak-types
-  buyingError: boolean | Object
+  list: List<*>
 };
 
 type State = {
@@ -125,10 +118,7 @@ class BuyPage extends Component<Props, State> {
       list,
       entities,
       balance,
-      dispatchLoadPrice,
-      dispatchLoadBuyCoin,
-      buyingLoading,
-      buyingError
+      dispatchLoadPrice
     } = this.props;
     const { paymentCoin } = this.state;
 
@@ -182,14 +172,7 @@ class BuyPage extends Component<Props, State> {
                   Amount
                 </Typography>
                 <Divider className={classes.hr} />
-                <AmountSection
-                  dispatchLoadBuyCoin={dispatchLoadBuyCoin}
-                  paymentCoin={paymentCoin}
-                  entities={entities}
-                  balance={balance}
-                  buyingLoading={buyingLoading}
-                  buyingError={buyingError}
-                />
+                <AmountSection paymentCoin={paymentCoin} />
               </CardContent>
             </Card>
           </Grid>
@@ -203,9 +186,7 @@ export function mapDispatchToProps(dispatch) {
   return {
     dispatchLoadPrices: () => dispatch(loadPrices()),
     dispatchLoadPrice: (coin: string) => dispatch(loadPrice(coin)),
-    dispatchLoadBalance: () => dispatch(loadBalance()),
-    // eslint-disable-next-line flowtype/no-weak-types
-    dispatchLoadBuyCoin: (payload: Object) => dispatch(loadBuyCoin(payload))
+    dispatchLoadBalance: () => dispatch(loadBalance())
   };
 }
 
@@ -213,9 +194,7 @@ const mapStateToProps = createStructuredSelector({
   loading: makeSelectPricesLoading(),
   entities: makeSelectPricesEntities(),
   balance: makeSelectBalanceEntities(),
-  list: makeSelectBalanceList(),
-  buyingLoading: makeSelectBuyingLoading(),
-  buyingError: makeSelectBuyingError()
+  list: makeSelectBalanceList()
 });
 
 const withConnect = connect(
