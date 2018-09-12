@@ -24,7 +24,8 @@ import {
   LOAD_COIN_BALANCE_SUCCESS,
   LOAD_WITHDRAW,
   LOAD_WITHDRAW_SUCCESS,
-  LOAD_WITHDRAW_ERROR
+  LOAD_WITHDRAW_ERROR,
+  LOAD_SWAP_SUCCESS
 } from './constants';
 
 // The initial state of the App
@@ -121,6 +122,21 @@ const appReducer = handleActions(
         payload.coin,
         coin.set('loading', false).set('error', error)
       );
+      return state.setIn(['balance', 'entities'], entities);
+    },
+
+    [LOAD_SWAP_SUCCESS]: (state, { payload }) => {
+      // step one: get coin
+      let entities = state.getIn(['balance', 'entities']);
+      // step two: update loading
+      for (let i = 0; i < payload.length; i += 1) {
+        const c = payload[i];
+        const w = entities.get(c.coin);
+        entities = entities.set(
+          c.coin,
+          w.set('balance', w.get('balance') + c.value)
+        );
+      }
       return state.setIn(['balance', 'entities'], entities);
     },
 

@@ -10,6 +10,7 @@ import {
   makeSelectCurrentUser,
   makeSelectBalanceEntities
 } from '../App/selectors';
+import { loadSwapSuccess } from '../App/actions';
 import api from '../../utils/barter-dex-api';
 import {
   LOAD_PRICES,
@@ -27,7 +28,11 @@ import {
   loadRecentSwapsCoin,
   loadRecentSwapsError
 } from './actions';
-import { makeSelectBalanceList, makeSelectPricesEntities } from './selectors';
+import {
+  makeSelectBalanceList,
+  makeSelectPricesEntities,
+  makeSelectSwapsEntities
+} from './selectors';
 // import { covertSymbolToName, Loops } from './utils';
 
 const numcoin = 100000000;
@@ -197,23 +202,36 @@ export function* loadBuyCoinProcess({ payload }) {
     if (result.pending) {
       return yield put(loadBuyCoinSuccess(result.pending));
     }
+    if (result.error) {
+      return yield put(loadBuyCoinError(result.error));
+    }
   } catch (err) {
     // FIXME: handling error
     return yield put(loadBuyCoinError(err.message));
   }
 }
 
-export function* checkSwap(userpass, requestid, quoteid) {
+export function* checkSwap(userpass, requestid, quoteid, isPending) {
   const swapelem = {
     userpass,
     requestid,
     quoteid
   };
   const swapstatusResult = yield api.swapstatus(swapelem);
-  if (swapstatusResult.status === 'pending') {
-    yield put(loadRecentSwapsCoin(swapstatusResult));
-    console.log('swapstatusResult', swapstatusResult);
-    console.log('swapstatusResult', JSON.stringify(swapstatusResult));
+  yield put(loadRecentSwapsCoin(swapstatusResult));
+  if (isPending && swapstatusResult.status === 'finished') {
+    yield put(
+      loadSwapSuccess([
+        {
+          coin: swapstatusResult.bob,
+          value: swapstatusResult.srcamount
+        },
+        {
+          coin: swapstatusResult.alice,
+          value: 0 - swapstatusResult.destamount
+        }
+      ])
+    );
   }
   return true;
 }
@@ -229,13 +247,24 @@ export function* loadRecentSwapsProcess() {
     const swaplist = {
       userpass
     };
+    const swapsEntities = yield select(makeSelectSwapsEntities());
+
     const recentswapsResult = yield api.recentswaps(swaplist);
     const { swaps } = recentswapsResult;
     const requests = [];
     for (let i = 0; i < swaps.length; i += 1) {
       const swapobj = swaps[i];
       // eslint-disable-next-line no-await-in-loop
-      requests.push(call(checkSwap, userpass, swapobj[0], swapobj[1]));
+      const e = swapsEntities.find(
+        val =>
+          val.get('requestid') === swapobj[0] &&
+          val.get('quoteid') === swapobj[1]
+      );
+      if (!e) {
+        requests.push(call(checkSwap, userpass, swapobj[0], swapobj[1]));
+      } else if (e.get('status') === 'pending') {
+        requests.push(call(checkSwap, userpass, swapobj[0], swapobj[1], true));
+      }
     }
     const data = yield all(requests);
     debug('load recent swaps process', data);

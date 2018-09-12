@@ -9,7 +9,10 @@ import {
   LOAD_BUY_COIN,
   LOAD_BUY_COIN_SUCCESS,
   LOAD_BUY_COIN_ERROR,
-  LOAD_RECENT_SWAPS_COIN
+  CLEAR_BUY_COIN_ERROR,
+  LOAD_RECENT_SWAPS_COIN,
+  LOAD_RECENT_SWAPS_ERROR,
+  REMOVE_SWAPS_DATA
 } from './constants';
 
 import { LOGOUT } from '../App/constants';
@@ -108,7 +111,9 @@ const buyReducer = handleActions(
         quoteid,
         expiration,
         bob,
-        alice
+        alice,
+        basevalue,
+        relvalue
       } = payload;
       const list = state.getIn(['swaps', 'list']);
       const entities = state.getIn(['swaps', 'entities']);
@@ -125,7 +130,10 @@ const buyReducer = handleActions(
             expiration,
             bob,
             alice,
-            sentflags: []
+            bobamount: basevalue,
+            aliceamount: relvalue,
+            sentflags: [],
+            status: 'pending'
           })
         )
       );
@@ -134,6 +142,11 @@ const buyReducer = handleActions(
     [LOAD_BUY_COIN_ERROR]: (state, { error }) =>
       state
         .setIn(['buying', 'error'], error)
+        .setIn(['buying', 'loading'], false),
+
+    [CLEAR_BUY_COIN_ERROR]: state =>
+      state
+        .setIn(['buying', 'error'], false)
         .setIn(['buying', 'loading'], false),
 
     [LOAD_RECENT_SWAPS_COIN]: (state, { payload }) => {
@@ -145,11 +158,14 @@ const buyReducer = handleActions(
         expiration,
         bob,
         alice,
-        sentflags
+        srcamount,
+        destamount,
+        sentflags,
+        status
       } = payload;
       // step one: update list
       let list = state.getIn(['swaps', 'list']);
-      if (!list.find(e => e === tradeid)) {
+      if (!list.find(e => e === tradeid) && status === 'pending') {
         list = list.push(tradeid);
       }
       // step two: update entities
@@ -165,7 +181,10 @@ const buyReducer = handleActions(
           expiration,
           bob,
           alice,
-          sentflags
+          bobamount: srcamount,
+          aliceamount: destamount,
+          sentflags,
+          status
         });
       } else {
         // update
@@ -178,15 +197,37 @@ const buyReducer = handleActions(
             expiration,
             bob,
             alice,
-            sentflags
+            bobamount: srcamount,
+            aliceamount: destamount,
+            sentflags,
+            status
           })
         );
       }
       entities = entities.set(tradeid, entity);
+      if (status === 'finished') {
+        return state
+          .setIn(['swaps', 'list'], list)
+          .setIn(['swaps', 'entities'], entities)
+          .setIn(['swaps', 'loading'], false);
+      }
       return state
         .setIn(['swaps', 'list'], list)
-        .setIn(['swaps', 'entities'], entities);
+        .setIn(['swaps', 'entities'], entities)
+        .setIn(['swaps', 'loading'], true);
     },
+
+    [LOAD_RECENT_SWAPS_ERROR]: (state, { error }) =>
+      state.setIn(['swaps', 'error'], error).setIn(['swaps', 'loading'], false),
+
+    [REMOVE_SWAPS_DATA]: state =>
+      state
+        .setIn(['swaps', 'list'], fromJS([]))
+        .setIn(['swaps', 'entities'], fromJS({}))
+        .setIn(['swaps', 'error'], false)
+        .setIn(['swaps', 'loading'], false)
+        .setIn(['buying', 'error'], false)
+        .setIn(['buying', 'loading'], false),
 
     [LOGOUT]: () => initialState
   },

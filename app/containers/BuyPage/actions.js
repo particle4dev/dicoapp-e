@@ -9,10 +9,12 @@ import {
   LOAD_BUY_COIN,
   LOAD_BUY_COIN_SUCCESS,
   LOAD_BUY_COIN_ERROR,
+  CLEAR_BUY_COIN_ERROR,
   LOAD_RECENT_SWAPS,
   LOAD_RECENT_SWAPS_COIN,
   // LOAD_RECENT_SWAPS_SUCCESS,
-  LOAD_RECENT_SWAPS_ERROR
+  LOAD_RECENT_SWAPS_ERROR,
+  REMOVE_SWAPS_DATA
 } from './constants';
 
 import type { PriceCoin } from './schema';
@@ -80,6 +82,12 @@ export function loadBuyCoinError(message: string) {
   };
 }
 
+export function clearBuyCoinError() {
+  return {
+    type: CLEAR_BUY_COIN_ERROR
+  };
+}
+
 export function loadRecentSwaps() {
   return {
     type: LOAD_RECENT_SWAPS
@@ -100,5 +108,11 @@ export function loadRecentSwapsError(message: string) {
     error: {
       message
     }
+  };
+}
+
+export function removeSwapsData() {
+  return {
+    type: REMOVE_SWAPS_DATA
   };
 }
