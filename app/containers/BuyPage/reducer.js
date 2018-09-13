@@ -118,25 +118,28 @@ const buyReducer = handleActions(
       const list = state.getIn(['swaps', 'list']);
       const entities = state.getIn(['swaps', 'entities']);
       // step one: update date
-      return state.setIn(['swaps', 'list'], list.push(tradeid)).setIn(
-        ['swaps', 'entities'],
-        entities.set(
-          tradeid,
-          fromJS({
-            id: tradeid,
-            uuid,
-            requestid,
-            quoteid,
-            expiration,
-            bob,
-            alice,
-            bobamount: basevalue,
-            aliceamount: relvalue,
-            sentflags: [],
-            status: 'pending'
-          })
+      return state
+        .setIn(['swaps', 'list'], list.push(tradeid))
+        .setIn(
+          ['swaps', 'entities'],
+          entities.set(
+            tradeid,
+            fromJS({
+              id: tradeid,
+              uuid,
+              requestid,
+              quoteid,
+              expiration,
+              bob,
+              alice,
+              bobamount: basevalue,
+              aliceamount: relvalue,
+              sentflags: [],
+              status: 'pending'
+            })
+          )
         )
-      );
+        .setIn(['swaps', 'loading'], true);
     },
 
     [LOAD_BUY_COIN_ERROR]: (state, { error }) =>
@@ -205,7 +208,7 @@ const buyReducer = handleActions(
         );
       }
       entities = entities.set(tradeid, entity);
-      if (status === 'finished') {
+      if (status === 'finished' && list.get(0) === tradeid) {
         return state
           .setIn(['swaps', 'list'], list)
           .setIn(['swaps', 'entities'], entities)
