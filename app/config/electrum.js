@@ -50,6 +50,18 @@ module.exports = [
   },
   {
     method: 'electrum',
+    coin: 'BEER',
+    ipaddr: 'electrum1.cipig.net',
+    port: 10022
+  },
+  {
+    method: 'electrum',
+    coin: 'BEER',
+    ipaddr: 'electrum2.cipig.net',
+    port: 10022
+  },
+  {
+    method: 'electrum',
     coin: 'PIZZA',
     ipaddr: 'electrum1.cipig.net',
     port: 10024
@@ -59,17 +71,17 @@ module.exports = [
     coin: 'PIZZA',
     ipaddr: 'electrum2.cipig.net',
     port: 10024
-  },
-  {
-    method: 'electrum',
-    coin: 'COQUI',
-    ipaddr: 'electrum1.cipig.net',
-    port: 10011
-  },
-  {
-    method: 'electrum',
-    coin: 'COQUI',
-    ipaddr: 'electrum2.cipig.net',
-    port: 10011
   }
+  // {
+  //   method: 'electrum',
+  //   coin: 'COQUI',
+  //   ipaddr: 'electrum1.cipig.net',
+  //   port: 10011
+  // },
+  // {
+  //   method: 'electrum',
+  //   coin: 'COQUI',
+  //   ipaddr: 'electrum2.cipig.net',
+  //   port: 10011
+  // }
 ];

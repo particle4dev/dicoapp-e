@@ -27,7 +27,8 @@ import {
   LOAD_COIN_BALANCE_SUCCESS,
   LOAD_WITHDRAW,
   LOAD_WITHDRAW_SUCCESS,
-  LOAD_WITHDRAW_ERROR
+  LOAD_WITHDRAW_ERROR,
+  LOAD_SWAP_SUCCESS
 } from './constants';
 
 /**
@@ -150,5 +151,13 @@ export function loadWithdrawError(message: string) {
     error: {
       message
     }
+  };
+}
+
+// eslint-disable-next-line flowtype/no-weak-types
+export function loadSwapSuccess(payload: Object) {
+  return {
+    type: LOAD_SWAP_SUCCESS,
+    payload
   };
 }

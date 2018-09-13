@@ -33,19 +33,53 @@
 //     port: 10053
 //   }
 // ];
+
+// const tokenconfig = {
+//   coin: 'BEER',
+//   name: 'Beer',
+//   asset: 'BEER',
+//   rpcport: 8923,
+//   electrumServers: [
+//     {
+//       host: 'electrum1.cipig.net',
+//       port: 10022
+//     },
+//     {
+//       host: 'electrum2.cipig.net',
+//       port: 10022
+//     }
+//   ],
+//   active: 1
+// };
+
+// const electrum = [
+//   {
+//     method: 'electrum',
+//     coin: 'BEER',
+//     ipaddr: 'electrum1.cipig.net',
+//     port: 10022
+//   },
+//   {
+//     method: 'electrum',
+//     coin: 'BEER',
+//     ipaddr: 'electrum2.cipig.net',
+//     port: 10022
+//   }
+// ];
+
 const tokenconfig = {
-  coin: 'BEER',
-  name: 'Beer',
-  asset: 'BEER',
-  rpcport: 8923,
+  coin: 'COQUI',
+  name: 'Coqui Cash',
+  asset: 'COQUI',
+  rpcport: 14276,
   electrumServers: [
     {
       host: 'electrum1.cipig.net',
-      port: 10022
+      port: 10011
     },
     {
       host: 'electrum2.cipig.net',
-      port: 10022
+      port: 10011
     }
   ],
   active: 1
@@ -54,15 +88,15 @@ const tokenconfig = {
 const electrum = [
   {
     method: 'electrum',
-    coin: 'BEER',
+    coin: 'COQUI',
     ipaddr: 'electrum1.cipig.net',
-    port: 10022
+    port: 10011
   },
   {
     method: 'electrum',
-    coin: 'BEER',
+    coin: 'COQUI',
     ipaddr: 'electrum2.cipig.net',
-    port: 10022
+    port: 10011
   }
 ];
 

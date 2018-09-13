@@ -11,8 +11,8 @@ const debug = require('debug')('dicoapp:containers:BuyPage:CoinSelectable');
 
 const styles = () => ({
   btn: {
-    width: 128,
-    height: 128,
+    width: 184,
+    height: 152,
     paddingTop: 20,
     paddingBottom: 20,
     paddingLeft: 30,
@@ -97,8 +97,9 @@ class CoinSelectable extends PureComponent<Props> {
 
   componentDidMount = () => {
     const { dispatchLoadPrice, data } = this.props;
-
-    dispatchLoadPrice(data);
+    if (dispatchLoadPrice) {
+      dispatchLoadPrice(data);
+    }
   };
 
   onClick = (evt: SyntheticInputEvent<>) => {

@@ -15,6 +15,8 @@ import MenuBuilder from './menu';
 import marketmaker from './plugins/marketmaker';
 import { loginWindowSize } from './config/config-default';
 
+const debug = require('debug')('dicoapp:main');
+
 let mainWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
@@ -79,6 +81,7 @@ app.on('ready', async () => {
     }
 
     // marketmaker
+    debug('start marketmaker app');
     marketmaker.start();
 
     mainWindow.show();
