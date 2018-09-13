@@ -1,5 +1,9 @@
 # Change Log
 
+# 0.7.0 (2018.9.13)
+
+- 6819ef9 implement-buy-page (#56)
+
 # 0.6.0 (2018.9.04)
 
 - 5d632f7 implement-send-section-in-wallet-page (#48)
