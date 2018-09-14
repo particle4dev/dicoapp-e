@@ -2,19 +2,10 @@ const fs = require('fs');
 const { app } = require('electron');
 const { homedir } = require('os');
 const { resolve } = require('path');
-const { APPNAME } = require('./config-default');
 
 // const debug = require('debug')('dicoapp:config:paths');
-const homeDir = homedir();
-const binDir = resolve(__dirname, '../bin');
-const userDataDir = resolve(app.getPath('userData'), APPNAME);
 
-// create user data path
-if (!fs.existsSync(userDataDir)) {
-  fs.mkdirSync(userDataDir);
-}
-
-const marketmakerPlatformPath = () => {
+const marketmakerPlatformPath = binDir => {
   switch (process.platform) {
     case 'darwin':
       return resolve(binDir, 'marketmaker/OSX/marketmaker');
@@ -27,11 +18,18 @@ const marketmakerPlatformPath = () => {
   }
 };
 
-const marketmaker = marketmakerPlatformPath();
+export default function loadPaths(config) {
+  // create user data path
+  const userDataDir = resolve(app.getPath('userData'), config.get('APPNAME'));
+  if (!fs.existsSync(userDataDir)) {
+    fs.mkdirSync(userDataDir);
+  }
+  const binDir = resolve(__dirname, '../../bin');
 
-module.exports = {
-  binDir,
-  homeDir,
-  marketmaker,
-  userDataDir
-};
+  return config.set('paths', {
+    homeDir: homedir(),
+    binDir,
+    userDataDir,
+    marketmaker: marketmakerPlatformPath(binDir)
+  });
+}

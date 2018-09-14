@@ -2,22 +2,14 @@ import childProcess from 'child_process';
 import ipc from 'electron-better-ipc';
 import { app } from 'electron';
 import killProcess from './killprocess';
-import {
-  marketmaker as marketmakerBin,
-  homeDir,
-  // binDir,
-  userDataDir
-} from '../config/paths';
-import coinsdata from '../config/coins-data';
-import { tokenconfig } from '../config/tokenconfig';
+import config from '../config';
 
 // const { marketmakerCrashedDialog } = require('../dialogs');
 const debug = require('debug')('dicoapp:plugins:marketmaker');
 
 const MarketMaker = () => {
   const state = {
-    isRunning: false,
-    marketmakerBin
+    isRunning: false
   };
 
   let marketmakerProcess = null;
@@ -27,20 +19,20 @@ const MarketMaker = () => {
       debug('start');
       killProcess('marketmaker');
 
-      const coins = coinsdata.concat([tokenconfig]);
+      const coins = config.get('marketmaker.data');
       const startparams = Object.assign({}, options, {
         client: 1,
         canbind: 0,
         gui: 'dICOapp-cm',
         passphrase: 'default',
-        userhome: homeDir,
+        userhome: config.get('paths.homeDir'),
         coins
       });
 
       marketmakerProcess = childProcess.spawn(
-        marketmakerBin,
+        config.get('paths.marketmaker'),
         [JSON.stringify(startparams)],
-        { cwd: userDataDir }
+        { cwd: config.get('paths.userDataDir') }
       );
 
       state.isRunning = true;

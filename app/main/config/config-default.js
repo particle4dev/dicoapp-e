@@ -1,7 +1,5 @@
-module.exports = {
-  config: {
-    barterdex: 'http://127.0.0.1:7783'
-  },
+const def = {
+  barterdex: 'http://127.0.0.1:7783',
   APPNAME: 'dicoapp',
   minWindowSize: {
     width: 1060,
@@ -14,3 +12,7 @@ module.exports = {
     // height: process.platform === 'darwin' ? 500 : 550
   }
 };
+
+export default function loadDefault(config) {
+  return config.set(def);
+}

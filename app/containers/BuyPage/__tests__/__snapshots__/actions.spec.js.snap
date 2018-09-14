@@ -1,27 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Buy Page Actions loadPrice should loadPrice should create loadPrice action 1`] = `
-Object {
-  "payload": Object {
-    "coin": undefined,
-  },
-  "type": "dicoapp/BuyPage/LOAD_PRICE",
-}
-`;
-
 exports[`BuyPage Actions loadPrice action should loadPrice should create loadPrice action 1`] = `
 Object {
   "payload": Object {
-    "coin": undefined,
-  },
-  "type": "dicoapp/BuyPage/LOAD_PRICE",
-}
-`;
-
-exports[`BuyPage Actions loadPrice should loadPrice should create loadPrice action 1`] = `
-Object {
-  "payload": Object {
-    "coin": undefined,
+    "coin": "coin",
   },
   "type": "dicoapp/BuyPage/LOAD_PRICE",
 }
