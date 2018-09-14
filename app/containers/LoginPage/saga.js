@@ -1,20 +1,17 @@
 // https://github.com/sotojuan/saga-login-flow/blob/master/app/sagas/index.js
-
-import { remote } from 'electron';
 import { all, fork, take, race, call, put } from 'redux-saga/effects';
 import { LOGIN, LOGOUT } from '../App/constants';
 import { loginSuccess, loginError } from '../App/actions';
 import api from '../../utils/barter-dex-api';
+import config from '../../utils/config';
 
-const electrum = remote.require('./config/electrum');
-const tokenconfig = remote.require('./config/tokenconfig');
 const debug = require('debug')('dicoapp:containers:LoginPage:saga');
 
 export function* authorize(passphrase) {
   try {
     debug(`authorize is running`);
     const data = yield api.login(passphrase);
-    const servers = electrum.concat(tokenconfig.electrum).map(e => {
+    const servers = config.get('marketmaker.electrums').map(e => {
       e.userpass = data.userpass;
       return e;
     });

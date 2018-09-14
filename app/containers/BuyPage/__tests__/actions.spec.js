@@ -4,7 +4,8 @@ import { LOAD_PRICE, LOAD_PRICES } from '../constants';
 describe('BuyPage Actions', () => {
   describe('loadPrice action', () => {
     it('should loadPrice should create loadPrice action', () => {
-      expect(loadPrice()).toMatchSnapshot();
+      const coin = 'coin';
+      expect(loadPrice(coin)).toMatchSnapshot();
     });
 
     it('should return the correct type and the passed name', () => {

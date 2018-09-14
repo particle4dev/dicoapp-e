@@ -1,10 +1,10 @@
-import { remote } from 'electron';
+import config from '../../utils/config';
 
-const symbol = remote.require('./config/symbol');
+const symbolToName = config.get('symbol.symbolToName');
 
 // eslint-disable-next-line import/prefer-default-export
 export function covertSymbolToName(syl) {
-  const s = symbol.symbolToName[syl];
+  const s = symbolToName[syl];
   if (s) return s;
   return '';
 }

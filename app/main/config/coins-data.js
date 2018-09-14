@@ -1,4 +1,7 @@
-module.exports = [
+// https://www.atomicexplorer.com/#/faucet/coqui
+import tokenconfig from './tokenconfig';
+
+const data = [
   {
     coin: 'KMD',
     name: 'Komodo',
@@ -118,3 +121,30 @@ module.exports = [
     active: 1
   }
 ];
+
+export function generateElectrums(d) {
+  const result = [];
+  for (let i = 0; i < d.length; i += 1) {
+    const record = d[i];
+    for (let j = 0; j < record.electrumServers.length; j += 1) {
+      const electrum = record.electrumServers[j];
+      result.push({
+        method: 'electrum',
+        coin: record.coin,
+        ipaddr: electrum.host,
+        port: electrum.port
+      });
+    }
+  }
+  return result;
+}
+
+export default function loadCoinsData(config) {
+  const coinsdata = data.concat([tokenconfig]);
+
+  return config.set('marketmaker', {
+    data: coinsdata,
+    electrums: generateElectrums(coinsdata),
+    tokenconfig
+  });
+}

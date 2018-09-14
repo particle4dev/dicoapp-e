@@ -11,9 +11,9 @@
  * @flow
  */
 import { app, BrowserWindow } from 'electron';
-import MenuBuilder from './menu';
-import marketmaker from './plugins/marketmaker';
-import { loginWindowSize } from './config/config-default';
+import MenuBuilder from './main/menu';
+import marketmaker from './main/plugins/marketmaker';
+import config from './main/config';
 
 const debug = require('debug')('dicoapp:main');
 
@@ -63,6 +63,8 @@ app.on('ready', async () => {
   ) {
     await installExtensions();
   }
+
+  const loginWindowSize = config.get('loginWindowSize');
 
   mainWindow = new BrowserWindow({
     show: false,

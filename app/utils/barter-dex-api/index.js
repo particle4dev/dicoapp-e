@@ -1,14 +1,13 @@
 // @flow
-import { remote } from 'electron';
 import FetchService from '../fetch-service';
-import { config } from '../../config/config-default';
+import config from '../config';
 
 const debug = require('debug')('dicoapp:utils:barter-dex-api');
 
 class BarterDexAPI {
   constructor(
     settings = {
-      url: config.barterdex,
+      url: config.get('barterdex'),
       name: ''
     }
   ) {
@@ -19,7 +18,7 @@ class BarterDexAPI {
       base: settings.url
     });
     this.config = {
-      paths: remote.require('./config/paths')
+      paths: config.get('paths')
     };
   }
 
