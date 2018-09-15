@@ -19,7 +19,7 @@ import { LOGOUT } from '../App/constants';
 
 // The initial state of the App
 // const id = 'bc5e1509b2aea898b8dff71ecc3fa7d5bc7c361fb14187fe9bc06916fae63811';
-const initialState = fromJS({
+export const initialState = fromJS({
   prices: {
     loading: false,
     error: false,
