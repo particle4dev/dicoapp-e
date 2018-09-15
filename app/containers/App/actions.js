@@ -145,10 +145,18 @@ export function loadWithdrawSuccess(payload: {
   };
 }
 
-export function loadWithdrawError(message: string) {
+export function loadWithdrawError(
+  payload: {
+    amount: number,
+    address: string,
+    coin: string
+  },
+  message: string
+) {
   return {
     type: LOAD_WITHDRAW_ERROR,
     error: {
+      payload,
       message
     }
   };

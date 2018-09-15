@@ -126,7 +126,7 @@ export function* loadWithdrawProcess({ payload }) {
 
     return yield put(loadWithdrawSuccess(payload));
   } catch (err) {
-    return yield put(loadWithdrawError(err.message));
+    return yield put(loadWithdrawError(payload, err.message));
   }
 }
 
