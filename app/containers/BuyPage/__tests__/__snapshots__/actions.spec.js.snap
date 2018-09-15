@@ -14,3 +14,9 @@ Object {
   "type": "dicoapp/BuyPage/LOAD_PRICES",
 }
 `;
+
+exports[`BuyPage Actions loadPricesSuccess action should loadPricesSuccess should create loadPricesSuccess action 1`] = `
+Object {
+  "type": "dicoapp/BuyPage/LOAD_PRICES_SUCCESS",
+}
+`;

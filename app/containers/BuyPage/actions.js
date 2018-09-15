@@ -43,8 +43,7 @@ export function loadBestPrice(payload: PriceCoin) {
 
 export function loadPricesSuccess() {
   return {
-    type: LOAD_PRICES_SUCCESS,
-    payload: {}
+    type: LOAD_PRICES_SUCCESS
   };
 }
 

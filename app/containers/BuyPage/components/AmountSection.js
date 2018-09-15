@@ -478,7 +478,7 @@ class AmountSection extends Component<Props, State> {
           <Typography variant="title" gutterBottom>
             Deposit
           </Typography>
-          {getCoinIcon(entity.get('bob'))}
+          {getCoinIcon(entity.get('alice'))}
           <Typography variant="subheading" gutterBottom>
             {entity.get('aliceamount')} {entity.get('alice')}
           </Typography>
@@ -487,7 +487,7 @@ class AmountSection extends Component<Props, State> {
           <Typography variant="title" gutterBottom>
             Receive
           </Typography>
-          {getCoinIcon(entity.get('alice'))}
+          {getCoinIcon(entity.get('bob'))}
           <Typography variant="subheading" gutterBottom>
             {entity.get('bobamount')} {entity.get('bob')}
           </Typography>
