@@ -13,12 +13,12 @@ const webSocketReducer = handleActions(
   {
     [LOGIN_SUCCESS]: state => {
       debug(LOGIN_SUCCESS);
-      return state;
+      return state.set('isStartWebsocket', true);
     },
 
     [LOGOUT]: state => {
       debug(LOGOUT);
-      return state;
+      return state.set('isStartWebsocket', false);
     }
   },
   initialState
