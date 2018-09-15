@@ -156,56 +156,54 @@ class LoginPage extends Component<Props, State> {
     const { passphrase } = this.state;
 
     return (
-      <React.Fragment>
-        <div className={classes.loginContainer}>
-          <div className={classes.center}>
-            <Card className={classes.card}>
-              {loading && <LinearProgress />}
-              <Avatar className={classes.logo} alt="logo" src={image} />
-              <CardContent className={classes.content}>
-                <Typography
-                  variant="headline"
-                  className={classes.item}
-                  gutterBottom
-                >
-                  Welcome to dICO App
-                </Typography>
+      <div className={classes.loginContainer}>
+        <div className={classes.center}>
+          <Card className={classes.card}>
+            {loading && <LinearProgress />}
+            <Avatar className={classes.logo} alt="logo" src={image} />
+            <CardContent className={classes.content}>
+              <Typography
+                variant="headline"
+                className={classes.item}
+                gutterBottom
+              >
+                Welcome to dICO App
+              </Typography>
 
-                <Typography variant="subheading" gutterBottom>
-                  Please type in your Seed to Login to your existing Account
-                </Typography>
+              <Typography variant="subheading" gutterBottom>
+                Please type in your Seed to Login to your existing Account
+              </Typography>
 
-                <Passphrase
-                  loading={loading}
-                  passphrase={passphrase}
-                  className={classes.item}
-                  onChange={this.onChange}
-                />
-
-                <Button
-                  fullWidth
-                  variant="contained"
-                  disabled={loading}
-                  color="primary"
-                  type="submit"
-                  onClick={this.onLoginButtonClick}
-                  className={classNames(classes.item, classes.loginButton)}
-                >
-                  Log In
-                </Button>
-              </CardContent>
+              <Passphrase
+                loading={loading}
+                passphrase={passphrase}
+                className={classes.item}
+                onChange={this.onChange}
+              />
 
               <Button
                 fullWidth
-                className={classes.bottomButton}
-                onClick={this.gotoSeedPage}
+                variant="contained"
+                disabled={loading}
+                color="primary"
+                type="submit"
+                onClick={this.onLoginButtonClick}
+                className={classNames(classes.item, classes.loginButton)}
               >
-                Click Here to Create a New Account
+                Log In
               </Button>
-            </Card>
-          </div>
+            </CardContent>
+
+            <Button
+              fullWidth
+              className={classes.bottomButton}
+              onClick={this.gotoSeedPage}
+            >
+              Click Here to Create a New Account
+            </Button>
+          </Card>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }
