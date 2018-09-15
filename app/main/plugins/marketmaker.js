@@ -17,7 +17,8 @@ const MarketMaker = () => {
   return Object.assign({
     start: function start(options) {
       debug('start');
-      killProcess('marketmaker');
+      // killProcess('marketmaker');
+      this.stop();
 
       const coins = config.get('marketmaker.data');
       const startparams = Object.assign({}, options, {
@@ -86,17 +87,11 @@ function setup() {
 
   marketmaker = MarketMaker();
 
-  ipc.answerRenderer('marketmaker:start', async arg => {
-    console.log(arg); // prints "ping"
-    marketmaker.start();
-    return 'pong';
-  });
+  ipc.answerRenderer('marketmaker:start', () => marketmaker.start());
 
-  ipc.answerRenderer('marketmaker:stop', async arg => {
-    console.log(arg); // prints "ping"
-    marketmaker.stop();
-    return 'pong';
-  });
+  ipc.answerRenderer('marketmaker:stop', () => marketmaker.stop());
+
+  ipc.answerRenderer('marketmaker:restart', async () => marketmaker.start());
 
   return marketmaker;
 }
