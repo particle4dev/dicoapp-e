@@ -41,7 +41,7 @@ const styles = () => ({
     overflow: 'auto'
   },
 
-  center: {
+  loginContainer__center: {
     paddingBottom: 67,
     paddingTop: 48,
     minHeight: 350,
@@ -50,35 +50,35 @@ const styles = () => ({
     transform: 'translateX(-50%)'
   },
 
-  card: {
+  loginContainer__card: {
     width: 400
   },
 
-  logo: {
+  loginContainer__logo: {
     margin: '14px auto 0px',
     position: 'relative',
     height: 85,
     width: 85
   },
 
-  content: {
+  loginContainer__content: {
     width: 308,
     margin: '0px auto',
     textAlign: 'center'
   },
 
-  item: {
+  loginContainer__item: {
     marginBottom: 30
   },
 
-  loginButton: {
+  loginContainer__loginButton: {
     boxShadow: 'none',
     border: 0,
     height: 36,
     backgroundColor: '#005194'
   },
 
-  bottomButton: {
+  loginContainer__bottomButton: {
     height: 62,
     backgroundColor: '#efefef',
     color: '#333'
@@ -157,14 +157,18 @@ class LoginPage extends Component<Props, State> {
 
     return (
       <div className={classes.loginContainer}>
-        <div className={classes.center}>
-          <Card className={classes.card}>
+        <div className={classes.loginContainer__center}>
+          <Card className={classes.loginContainer__card}>
             {loading && <LinearProgress />}
-            <Avatar className={classes.logo} alt="logo" src={image} />
-            <CardContent className={classes.content}>
+            <Avatar
+              className={classes.loginContainer__logo}
+              alt="logo"
+              src={image}
+            />
+            <CardContent className={classes.loginContainer__content}>
               <Typography
                 variant="headline"
-                className={classes.item}
+                className={classes.loginContainer__item}
                 gutterBottom
               >
                 Welcome to dICO App
@@ -177,7 +181,7 @@ class LoginPage extends Component<Props, State> {
               <Passphrase
                 loading={loading}
                 passphrase={passphrase}
-                className={classes.item}
+                className={classes.loginContainer__item}
                 onChange={this.onChange}
               />
 
@@ -188,7 +192,10 @@ class LoginPage extends Component<Props, State> {
                 color="primary"
                 type="submit"
                 onClick={this.onLoginButtonClick}
-                className={classNames(classes.item, classes.loginButton)}
+                className={classNames(
+                  classes.loginContainer__item,
+                  classes.loginContainer__loginButton
+                )}
               >
                 Log In
               </Button>
@@ -196,7 +203,7 @@ class LoginPage extends Component<Props, State> {
 
             <Button
               fullWidth
-              className={classes.bottomButton}
+              className={classes.loginContainer__bottomButton}
               onClick={this.gotoSeedPage}
             >
               Click Here to Create a New Account
