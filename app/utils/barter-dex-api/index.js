@@ -1,6 +1,7 @@
 // @flow
 import FetchService from '../fetch-service';
 import config from '../config';
+import type { EndpointType } from './schema';
 
 const debug = require('debug')('dicoapp:utils:barter-dex-api');
 
@@ -49,6 +50,20 @@ class BarterDexAPI {
     return this.fetch.create('', data, ...rest);
   }
 
+  /**
+   * Status/Info
+   */
+  getEndpoint(params: EndpointType) {
+    // FIXME: verify params
+    const endpointParams = Object.assign({}, params, {
+      method: 'getendpoint'
+    });
+    return this.create(endpointParams);
+  }
+
+  /**
+   * BarterDEX Operation
+   */
   login(passphrase: string) {
     const { paths } = this.config;
     const setparams = {

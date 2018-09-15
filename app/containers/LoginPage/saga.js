@@ -1,4 +1,6 @@
 // https://github.com/sotojuan/saga-login-flow/blob/master/app/sagas/index.js
+// import WebSocket from 'faye-websocket';
+
 import { all, fork, take, race, call, put } from 'redux-saga/effects';
 import { LOGIN, LOGOUT } from '../App/constants';
 import { loginSuccess, loginError } from '../App/actions';
@@ -15,6 +17,26 @@ export function* authorize(passphrase) {
       e.userpass = data.userpass;
       return e;
     });
+
+    // const info = yield call([api, 'getEndpoint'], {
+    //   userpass: data.userpass
+    // });
+    // console.log(info, 'zzzz');
+    // // Create WebSocket connection.
+    // const ws        = new WebSocket.Client(info.endpoint);
+    // ws.on('open', function(event) {
+    //   console.log('open');
+    // });
+    // ws.on('message', async (event) => {
+    //   const data = JSON.parse(event.data.toString('utf8'));
+    //   if(data && data.result && data.result.method !== 'postprice') {
+    //     console.log(data);
+    //   }
+    // });
+    // ws.on('close', function(event) {
+    //   console.log('close', event.code, event.reason);
+    //   ws = null;
+    // });
 
     const requests = [];
     for (let i = 0; i < servers.length; i += 1) {
