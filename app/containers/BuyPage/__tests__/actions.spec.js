@@ -1,5 +1,5 @@
-import { loadPrice, loadPrices } from '../actions';
-import { LOAD_PRICE, LOAD_PRICES } from '../constants';
+import { loadPrice, loadPrices, loadPricesSuccess } from '../actions';
+import { LOAD_PRICE, LOAD_PRICES, LOAD_PRICES_SUCCESS } from '../constants';
 
 describe('BuyPage Actions', () => {
   describe('loadPrice action', () => {
@@ -32,6 +32,20 @@ describe('BuyPage Actions', () => {
       };
 
       expect(loadPrices()).toEqual(expectedResult);
+    });
+  });
+
+  describe('loadPricesSuccess action', () => {
+    it('should loadPricesSuccess should create loadPricesSuccess action', () => {
+      expect(loadPricesSuccess()).toMatchSnapshot();
+    });
+
+    it('should return the correct type and the passed name', () => {
+      const expectedResult = {
+        type: LOAD_PRICES_SUCCESS
+      };
+
+      expect(loadPricesSuccess()).toEqual(expectedResult);
     });
   });
 });
