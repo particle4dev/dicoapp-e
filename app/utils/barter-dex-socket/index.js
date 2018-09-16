@@ -9,6 +9,12 @@ function BarterDexWebsocket() {
   let currentListeners = [];
   let nextListeners = currentListeners;
 
+  const currentStatus = {
+    status: 'connecting',
+    connected: false,
+    retryCount: 0
+  };
+
   function ensureCanMutateNextListeners() {
     if (nextListeners === currentListeners) {
       nextListeners = currentListeners.slice();
@@ -37,17 +43,36 @@ function BarterDexWebsocket() {
   function start(endpoint: string) {
     // Create WebSocket connection.
     stream = new WebSocket.Client(endpoint);
-    stream.on('open', event => {
-      debug('open', event);
-    });
+    stream.on('open', onOpen);
     stream.on('message', onMessage);
-    stream.on('close', event => {
-      debug('close', event.code, event.reason);
-      stream = null;
-    });
+    stream.on('close', onDisconnect);
   }
 
-  function stop() {}
+  function onOpen(event) {
+    debug('open', event);
+    currentStatus.status = 'connected';
+    currentStatus.connected = true;
+    currentStatus.retryCount = 0;
+  }
+
+  function onDisconnect(event) {
+    if (stream) {
+      debug('close', event.code, event.reason);
+      currentStatus.status = 'offline';
+      currentStatus.connected = false;
+      currentStatus.retryCount = 0;
+      stream = null;
+    }
+  }
+
+  function stop() {
+    if (stream) {
+      stream.removeListener('open', onOpen);
+      stream.removeListener('message', onMessage);
+      // https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
+      stream.close();
+    }
+  }
 
   async function onMessage(event) {
     const data = JSON.parse(event.data.toString('utf8'));
