@@ -20,12 +20,12 @@ const checkKey = key =>
 
 const checkDescriptor = descriptor => {
   const shape = {
-    saga: isFunction,
+    subscribe: isFunction,
     mode: mode => isString(mode) && allowedModes.includes(mode)
   };
   invariant(
     conformsTo(descriptor, shape),
-    '(app/utils...) injectWebsocket: Expected a valid saga descriptor'
+    '(app/utils...) injectWebsocket: Expected a valid subscribe descriptor'
   );
 };
 
