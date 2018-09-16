@@ -18,6 +18,7 @@ import IconButton from '@material-ui/core/IconButton';
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
 import injectWebsocket from '../../utils/inject-websocket';
+import { WEBSOCKET_DAEMON } from '../../utils/constants';
 import ErrorBoundary from '../../components/ErrorBoundary';
 // import { Circle, Line, LineWrapper } from '../../components/placeholder';
 import { NavigationLayout } from '../Layout';
@@ -208,6 +209,7 @@ const withReducer = injectReducer({ key: APP_STATE_NAME, reducer });
 const withSaga = injectSaga({ key: APP_STATE_NAME, saga });
 const withWebsocket = injectWebsocket({
   key: APP_STATE_NAME,
+  mode: WEBSOCKET_DAEMON,
   subscribe
 });
 
