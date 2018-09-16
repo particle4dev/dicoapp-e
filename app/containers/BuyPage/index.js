@@ -17,6 +17,7 @@ import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
+import injectWebsocket from '../../utils/inject-websocket';
 import ErrorBoundary from '../../components/ErrorBoundary';
 // import { Circle, Line, LineWrapper } from '../../components/placeholder';
 import { NavigationLayout } from '../Layout';
@@ -25,6 +26,7 @@ import { loadBalance } from '../App/actions';
 import { APP_STATE_NAME } from './constants';
 import reducer from './reducer';
 import saga from './saga';
+import subscribe from './subscribe';
 import AmountSection from './components/AmountSection';
 import CurrencySection from './components/CurrencySection';
 import PaymentSection from './components/PaymentSection';
@@ -204,10 +206,15 @@ const withConnect = connect(
 
 const withReducer = injectReducer({ key: APP_STATE_NAME, reducer });
 const withSaga = injectSaga({ key: APP_STATE_NAME, saga });
+const withWebsocket = injectWebsocket({
+  key: APP_STATE_NAME,
+  subscribe
+});
 
 const BuyPageWapper = compose(
   withReducer,
   withSaga,
+  withWebsocket,
   withConnect,
   withStyles(styles)
 )(BuyPage);

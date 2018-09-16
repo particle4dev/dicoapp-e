@@ -42,6 +42,14 @@ class BarterDexAPI {
     });
   }
 
+  // publicCall() {
+  //   throw new Error('not implement yet. Return promise');
+  // }
+
+  // privateCall() {
+  //   throw new Error('not implement yet. Return promise');
+  // }
+
   post(data) {
     return this.fetch.create('', data);
   }

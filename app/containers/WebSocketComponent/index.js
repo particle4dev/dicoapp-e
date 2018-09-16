@@ -19,7 +19,11 @@ class WebSocket extends React.Component<Props> {
     // Typical usage (don't forget to compare props):
     const { isStartWebsocket } = this.props;
     if (isStartWebsocket !== prevProps.isStartWebsocket) {
-      debug(`isStartWebsocket = ${isStartWebsocket.toString()} do something`);
+      if (isStartWebsocket) {
+        debug(`isStartWebsocket = ${isStartWebsocket.toString()} start`);
+      } else {
+        debug(`isStartWebsocket = ${isStartWebsocket.toString()} stop`);
+      }
     }
   }
 
