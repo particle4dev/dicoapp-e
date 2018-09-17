@@ -1,5 +1,6 @@
 ### EXAMPLE 02
 
+```js
 {
 "queueid": 0,
 "result": {
@@ -28,7 +29,9 @@
 "method": "request"
 }
 }
+```
 
+```js
 {
 "queueid": 0,
 "result": {
@@ -58,7 +61,9 @@
 "method": "request"
 }
 }
+```
 
+```js
 {
 "queueid": 0,
 "result": {
@@ -97,7 +102,9 @@
 "method": "reserved"
 }
 }
+```
 
+```js
 {
 "queueid": 0,
 "result": {
@@ -136,7 +143,9 @@
 "proof": []
 }
 }
+```
 
+```js
 {
 "queueid": 0,
 "result": {
@@ -176,7 +185,9 @@
 "method": "connect"
 }
 }
+```
 
+```js
 {
 "queueid": 0,
 "result": {
@@ -216,7 +227,9 @@
 "method": "connected"
 }
 }
+```
 
+```js
 {
 "queueid": 0,
 "result": {
@@ -253,7 +266,9 @@
 "result": "success"
 }
 }
+```
 
+```js
 {
 "queueid": 0,
 "result": {
@@ -275,7 +290,9 @@
 "quoteid": 1873669175
 }
 }
+```
 
+```js
 {
 "queueid": 0,
 "result": {
@@ -297,7 +314,9 @@
 "quoteid": 1873669175
 }
 }
+```
 
+```js
 {
 "queueid": 0,
 "result": {
@@ -321,7 +340,9 @@
 "quoteid": 1873669175
 }
 }
+```
 
+```js
 {
 "queueid": 0,
 "result": {
@@ -346,7 +367,9 @@
 "quoteid": 1873669175
 }
 }
+```
 
+```js
 {
 "queueid": 0,
 "result": {
@@ -371,7 +394,9 @@
 "quoteid": 1873669175
 }
 }
+```
 
+```js
 {
 "queueid": 0,
 "result": {
@@ -396,7 +421,9 @@
 "quoteid": 1873669175
 }
 }
+```
 
+```js
 {
 "queueid": 0,
 "result": {
@@ -431,3 +458,4 @@
 "method": "tradestatus"
 }
 }
+```
