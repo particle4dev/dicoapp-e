@@ -31,6 +31,7 @@ import subscribe from './subscribe';
 import AmountSection from './components/AmountSection';
 import CurrencySection from './components/CurrencySection';
 import PaymentSection from './components/PaymentSection';
+import TestSwap from './components/TestSwap';
 import { loadPrices, loadPrice } from './actions';
 import {
   makeSelectBalanceList,
@@ -180,6 +181,7 @@ class BuyPage extends Component<Props, State> {
             </Card>
           </Grid>
         </Grid>
+        <TestSwap />
       </React.Fragment>
     );
   }
