@@ -84,7 +84,7 @@ const buyReducer = handleActions(
       const entities = state.getIn(['swaps', 'entities']);
       // step one: update date
       return state
-        .setIn(['swaps', 'list'], list.push(tradeid))
+        .setIn(['swaps', 'list'], list.unshift(tradeid))
         .setIn(
           ['swaps', 'entities'],
           entities.set(
@@ -134,7 +134,7 @@ const buyReducer = handleActions(
       // step one: update list
       let list = state.getIn(['swaps', 'list']);
       if (!list.find(e => e === tradeid) && status === 'pending') {
-        list = list.push(tradeid);
+        list = list.unshift(tradeid);
       }
       // step two: update entities
       let entities = state.getIn(['swaps', 'entities']);

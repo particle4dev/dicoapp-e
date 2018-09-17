@@ -7,7 +7,6 @@ import { createStructuredSelector } from 'reselect';
 import type { List, Map } from 'immutable';
 import { withStyles } from '@material-ui/core/styles';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
-
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -42,6 +41,7 @@ import {
 } from '../selectors';
 import AmountInput from './AmountInput';
 import BuyButton from './BuyButton';
+import CoinSelectable from './CoinSelectable';
 
 const debug = require('debug')('dicoapp:containers:BuyPage:AmountSection');
 
@@ -424,22 +424,28 @@ class AmountSection extends Component<Props, State> {
     return (
       <Grid container spacing={24}>
         <Grid item xs={6} className={classes.amountform__itemCenter}>
-          <Typography variant="title" gutterBottom>
-            Deposit
-          </Typography>
-          {getCoinIcon(entity.get('alice'))}
-          <Typography variant="subheading" gutterBottom>
-            {entity.get('aliceamount')} {entity.get('alice')}
-          </Typography>
+          <CoinSelectable
+            data="data"
+            icon={getCoinIcon(entity.get('alice'))}
+            title="Deposit"
+            subTitle={
+              <span>
+                {entity.get('aliceamount')} {entity.get('alice')}
+              </span>
+            }
+          />
         </Grid>
         <Grid item xs={6} className={classes.amountform__itemCenter}>
-          <Typography variant="title" gutterBottom>
-            Receive
-          </Typography>
-          {getCoinIcon(entity.get('bob'))}
-          <Typography variant="subheading" gutterBottom>
-            {entity.get('bobamount')} {entity.get('bob')}
-          </Typography>
+          <CoinSelectable
+            data="data"
+            icon={getCoinIcon(entity.get('bob'))}
+            title="Receive"
+            subTitle={
+              <span>
+                {entity.get('bobamount')} {entity.get('bob')}
+              </span>
+            }
+          />
         </Grid>
         <Grid item xs={12} className={classes.amountform__itemCenter}>
           <Typography variant="body2" gutterBottom>
@@ -451,6 +457,11 @@ class AmountSection extends Component<Props, State> {
             variant="determinate"
             value={entity.get('sentflags').size * 20}
           />
+        </Grid>
+        <Grid item xs={12} className={classes.amountform__itemCenter}>
+          <Typography variant="caption" gutterBottom>
+            UUID: {entity.get('uuid')}
+          </Typography>
         </Grid>
         <Grid item xs={12} className={classes.amountform__itemCenter}>
           <BuyButton
