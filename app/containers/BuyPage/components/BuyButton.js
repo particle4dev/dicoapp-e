@@ -22,13 +22,14 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   children: Node,
   // eslint-disable-next-line flowtype/no-weak-types
-  onClick: Function,
+  onClick?: Function,
   className?: string
 };
 
 class BuyButton extends PureComponent<Props> {
   static defaultProps = {
-    className: ''
+    className: '',
+    onClick: () => {}
   };
 
   render() {
