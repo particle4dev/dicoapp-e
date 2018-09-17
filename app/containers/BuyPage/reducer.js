@@ -18,7 +18,6 @@ import {
 import { LOGOUT } from '../App/constants';
 
 // The initial state of the App
-// const id = 'bc5e1509b2aea898b8dff71ecc3fa7d5bc7c361fb14187fe9bc06916fae63811';
 export const initialState = fromJS({
   prices: {
     loading: false,
@@ -32,43 +31,8 @@ export const initialState = fromJS({
   swaps: {
     loading: false,
     error: false,
-    list: [
-      // id
-    ],
-    entities: {
-      // [id]: {
-      //   id,
-      //   uuid: id,
-      //   requestid: 1914742321,
-      //   quoteid: 2455665257,
-      //   status: 'pending',
-      //   application: 'dICOapp',
-      //   bob: 'COQUI',
-      //   alice: 'BEER',
-      //   bobtxfee: 0.00001,
-      //   alicetxfee: 0.00001,
-      //   bobamount: 91.64950708,
-      //   aliceamount: 0.92601593,
-      //   sentflags: ['myfee'],
-      //   info: {
-      //     sentflags: ['myfee'],
-      //     bobdeposit:
-      //       '0000000000000000000000000000000000000000000000000000000000000000',
-      //     alicepayment:
-      //       '0000000000000000000000000000000000000000000000000000000000000000',
-      //     bobpayment:
-      //       '0000000000000000000000000000000000000000000000000000000000000000',
-      //     paymentspent:
-      //       '0000000000000000000000000000000000000000000000000000000000000000',
-      //     Apaymentspent:
-      //       '0000000000000000000000000000000000000000000000000000000000000000',
-      //     depositspent:
-      //       '0000000000000000000000000000000000000000000000000000000000000000',
-      //     alicedexfee:
-      //       'e5342f9a8834d86978d1ee609a6c2a998e0eaaeb7d0ea389b2306230a6463d51'
-      //   }
-      // }
-    }
+    list: [],
+    entities: {}
   }
 });
 
@@ -103,6 +67,7 @@ const buyReducer = handleActions(
       state
         .setIn(['buying', 'loading'], true)
         .setIn(['buying', 'error'], false),
+
     [LOAD_BUY_COIN_SUCCESS]: (state, { payload }) => {
       const {
         tradeid,

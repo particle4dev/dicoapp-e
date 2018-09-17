@@ -73,6 +73,20 @@ export function* loadPrice(coin, userpass) {
     const result = yield api.orderbook(getprices);
     if (result.asks.length > 0) {
       const ask = result.asks.find(e => e.maxvolume > 0);
+      if (!ask) {
+        return yield put(
+          loadBestPrice({
+            bestPrice: 0,
+            price: 0,
+            avevolume: 0,
+            maxvolume: 0,
+            numutxos: 0,
+            base: COIN_BASE.get('coin'),
+            rel: coin,
+            age: 0
+          })
+        );
+      }
       bestprice = Number((ask.price * numcoin).toFixed(0));
       bestprice = Number(
         (((buf / numcoin) * bestprice) / numcoin).toFixed(8) * numcoin
@@ -180,6 +194,8 @@ export function* loadBuyCoinProcess({ payload }) {
     ) {
       throw new Error('Not enough balance!');
     }
+
+    // throw new Error('Not enough balance!');
 
     // step one: get listUnspent data
     // const unspent = yield api.listUnspent({

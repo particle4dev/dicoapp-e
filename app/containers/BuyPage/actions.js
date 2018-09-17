@@ -17,7 +17,7 @@ import {
   REMOVE_SWAPS_DATA
 } from './constants';
 
-import type { PriceCoin } from './schema';
+import type { BuyCoinPayload, BestPricePayload } from './schema';
 
 export function loadPrice(coin: string) {
   return {
@@ -34,7 +34,7 @@ export function loadPrices() {
   };
 }
 
-export function loadBestPrice(payload: PriceCoin) {
+export function loadBestPrice(payload: BestPricePayload) {
   return {
     type: LOAD_BEST_PRICE,
     payload
@@ -56,8 +56,7 @@ export function loadPricesError(message: string) {
   };
 }
 
-// eslint-disable-next-line flowtype/no-weak-types
-export function loadBuyCoin(payload: Object) {
+export function loadBuyCoin(payload: BuyCoinPayload) {
   return {
     type: LOAD_BUY_COIN,
     payload

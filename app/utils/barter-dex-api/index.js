@@ -1,7 +1,7 @@
 // @flow
 import FetchService from '../fetch-service';
 import config from '../config';
-import type { EndpointType } from './schema';
+import type { EndpointType, CancelRequest } from './schema';
 
 const debug = require('debug')('dicoapp:utils:barter-dex-api');
 
@@ -62,7 +62,6 @@ class BarterDexAPI {
    * Status/Info
    */
   getEndpoint(params: EndpointType) {
-    // FIXME: verify params
     const endpointParams = Object.assign({}, params, {
       method: 'getendpoint'
     });
@@ -72,6 +71,13 @@ class BarterDexAPI {
   /**
    * BarterDEX Operation
    */
+  cancel(params: CancelRequest) {
+    const endpointParams = Object.assign({}, params, {
+      method: 'cancel'
+    });
+    return this.create(endpointParams);
+  }
+
   login(passphrase: string) {
     const { paths } = this.config;
     const setparams = {

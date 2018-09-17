@@ -31,7 +31,9 @@ import {
   SWAP_STATE_THREE,
   SWAP_STATE_FOUR,
   SWAP_STATE_FIVE,
-  LOAD_SWAP_SUCCESS
+  LOAD_SWAP_SUCCESS,
+  AUTO_HIDE_SNACKBAR_TIME,
+  STATE_SWAPS
 } from '../constants';
 
 import {
@@ -43,6 +45,7 @@ import {
   loadRecentSwapsCoin,
   loadRecentSwapsError
 } from '../actions';
+
 import {
   makeSelectPricesLoading,
   makeSelectPricesEntities,
@@ -57,15 +60,6 @@ import AmountInput from './AmountInput';
 import BuyButton from './BuyButton';
 
 const debug = require('debug')('dicoapp:containers:BuyPage:AmountSection');
-
-const STATE_SWAPS = [
-  'Confirming',
-  'My Fee',
-  'Bob Deposit',
-  'Alice Payment',
-  'Bob Payment',
-  'Alice Spend'
-];
 
 // eslint-disable-next-line react/prop-types
 const TextInput = ({ onChange, value, error, isError, ...props }) => (
@@ -129,6 +123,7 @@ type Props = {
   // buyingError: boolean | Object,
   swapsList: List<*>,
   swapsEntities: Map<*, *>,
+  paymentcoin: string,
 
   // eslint-disable-next-line flowtype/no-weak-types
   buyingError: boolean | Object,
@@ -157,7 +152,8 @@ type Props = {
 
 type State = {
   disabledBuyButton: boolean,
-  openSnackbar: boolean
+  openSnackbar: boolean,
+  snackbarMessage: string
 };
 
 class AmountSection extends Component<Props, State> {
@@ -278,12 +274,11 @@ class AmountSection extends Component<Props, State> {
     dispatchLoadRecentSwapsError('Timeout');
   };
 
-  closeSnackbar = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
+  closeSnackbar = (evt, reason) => {
+    if (reason !== 'clickaway') {
+      const { dispatchClearBuyCoinError } = this.props;
+      dispatchClearBuyCoinError();
     }
-    const { dispatchClearBuyCoinError } = this.props;
-    dispatchClearBuyCoinError();
   };
 
   getBestPrice = () => {
@@ -336,7 +331,7 @@ class AmountSection extends Component<Props, State> {
     }
   };
 
-  onCLickBtnBuyCoin = async (evt: SyntheticInputEvent<>) => {
+  onClickBuyCoinButton = async (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
     const { dispatchLoadBuyCoin } = this.props;
     const baseInput = this.baseInput.current;
@@ -345,9 +340,21 @@ class AmountSection extends Component<Props, State> {
     dispatchLoadBuyCoin({
       basecoin: COIN_BASE.get('coin'),
       // eslint-disable-next-line react/destructuring-assignment
-      paymentcoin: this.props.paymentCoin,
+      paymentcoin: this.props.paymentcoin,
       amount: Number(base)
     });
+  };
+
+  clickProcessButton = (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    // const { swapsError, dispatchRemoveSwapsData } = this.props;
+    const { dispatchRemoveSwapsData } = this.props;
+    dispatchRemoveSwapsData();
+    // if(swapsError) {
+
+    // } else {
+
+    // }
   };
 
   renderForm = () => {
@@ -394,7 +401,7 @@ class AmountSection extends Component<Props, State> {
               color="primary"
               variant="contained"
               className={classes.amountform__item}
-              onClick={this.onCLickBtnBuyCoin}
+              onClick={this.onClickBuyCoinButton}
             >
               Buy {COIN_BASE.get('coin')}
             </BuyButton>
@@ -448,18 +455,6 @@ class AmountSection extends Component<Props, State> {
         )}
       </React.Fragment>
     );
-  };
-
-  clickProcessButton = (evt: SyntheticInputEvent<>) => {
-    evt.preventDefault();
-    // const { swapsError, dispatchRemoveSwapsData } = this.props;
-    const { dispatchRemoveSwapsData } = this.props;
-    dispatchRemoveSwapsData();
-    // if(swapsError) {
-
-    // } else {
-
-    // }
   };
 
   renderProcess = () => {
@@ -526,6 +521,7 @@ class AmountSection extends Component<Props, State> {
     debug(`render`);
     const { classes, swapsList } = this.props;
     const { openSnackbar, snackbarMessage } = this.state;
+
     return (
       <div className={classes.amountform}>
         {swapsList.size === 0 && this.renderForm()}
@@ -537,7 +533,7 @@ class AmountSection extends Component<Props, State> {
             horizontal: 'center'
           }}
           open={openSnackbar}
-          autoHideDuration={6000}
+          autoHideDuration={AUTO_HIDE_SNACKBAR_TIME}
           onClose={this.closeSnackbar}
           ContentProps={{
             'aria-describedby': 'message-id'
@@ -548,7 +544,6 @@ class AmountSection extends Component<Props, State> {
               key="close"
               aria-label="Close"
               color="inherit"
-              className={classes.close}
               onClick={this.closeSnackbar}
             >
               <CloseIcon />

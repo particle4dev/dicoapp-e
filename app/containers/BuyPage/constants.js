@@ -19,6 +19,16 @@ export const LOAD_RECENT_SWAPS_ERROR =
   'dicoapp/BuyPage/LOAD_RECENT_SWAPS_ERROR';
 
 export const REMOVE_SWAPS_DATA = 'dicoapp/BuyPage/REMOVE_SWAPS_DATA';
+export const AUTO_HIDE_SNACKBAR_TIME = 6000;
+
+export const STATE_SWAPS = [
+  'Confirming',
+  'My Fee',
+  'Bob Deposit',
+  'Alice Payment',
+  'Bob Payment',
+  'Alice Spend'
+];
 
 // ==========================
 export const SWAP_STATE_ZERO = {
