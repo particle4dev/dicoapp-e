@@ -15,17 +15,14 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { Circle, Line } from '../../../components/placeholder';
-import { Loops } from '../utils';
 import { getCoinIcon } from '../../../components/CryptoIcons';
-
 import { requiredNumber } from '../../../components/Form/helper';
 import validate from '../../../components/Form/validate';
 import { makeSelectBalanceEntities } from '../../App/selectors';
-
-import { COIN_BASE } from '../tokenconfig';
-
+import config from '../../../utils/config';
+import type { BuyCoinPayload } from '../schema';
+import { Loops } from '../utils';
 import { AUTO_HIDE_SNACKBAR_TIME, STATE_SWAPS } from '../constants';
-
 import {
   loadBuyCoin,
   loadRecentSwaps,
@@ -33,7 +30,6 @@ import {
   clearBuyCoinError,
   loadRecentSwapsError
 } from '../actions';
-
 import {
   makeSelectPricesLoading,
   makeSelectPricesEntities,
@@ -48,6 +44,8 @@ import AmountInput from './AmountInput';
 import BuyButton from './BuyButton';
 
 const debug = require('debug')('dicoapp:containers:BuyPage:AmountSection');
+
+const COIN_BASE = config.get('marketmaker.tokenconfig');
 
 // eslint-disable-next-line react/prop-types
 const TextInput = ({ onChange, value, error, isError, ...props }) => (
@@ -111,7 +109,6 @@ type Props = {
   // buyingError: boolean | Object,
   swapsList: List<*>,
   swapsEntities: Map<*, *>,
-  paymentcoin?: string | null,
 
   // eslint-disable-next-line flowtype/no-weak-types
   buyingError: boolean | Object,
@@ -131,9 +128,7 @@ type State = {
 };
 
 class AmountSection extends Component<Props, State> {
-  static defaultProps = {
-    paymentcoin: null
-  };
+  static defaultProps = {};
 
   constructor(props) {
     super(props);
@@ -216,7 +211,7 @@ class AmountSection extends Component<Props, State> {
 
   componentWillUnmount = () => {
     if (this.checkSwapStatusLoops) {
-      this.checkSwapStatusLoops.stop();
+      this.checkSwapStatusLoops.cancel();
       this.checkSwapStatusLoops = undefined;
     }
     if (this.idClearState) {
@@ -293,14 +288,13 @@ class AmountSection extends Component<Props, State> {
 
   onClickBuyCoinButton = async (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
-    const { dispatchLoadBuyCoin } = this.props;
+    const { dispatchLoadBuyCoin, paymentCoin } = this.props;
     const baseInput = this.baseInput.current;
     const base = await baseInput.value();
 
     dispatchLoadBuyCoin({
-      basecoin: COIN_BASE.get('coin'),
-      // eslint-disable-next-line react/destructuring-assignment
-      paymentcoin: this.props.paymentcoin,
+      basecoin: COIN_BASE.coin,
+      paymentcoin: paymentCoin,
       amount: Number(base)
     });
   };
@@ -331,8 +325,8 @@ class AmountSection extends Component<Props, State> {
         {!buyingLoading && (
           <form>
             <ValidationBaseInput
-              label={COIN_BASE.get('coin')}
-              id={COIN_BASE.get('coin')}
+              label={COIN_BASE.coin}
+              id={COIN_BASE.coin}
               type="number"
               disabled={disabled}
               className={classes.amountform__item}
@@ -363,7 +357,7 @@ class AmountSection extends Component<Props, State> {
               className={classes.amountform__item}
               onClick={this.onClickBuyCoinButton}
             >
-              Buy {COIN_BASE.get('coin')}
+              Buy {COIN_BASE.coin}
             </BuyButton>
           </form>
         )}
@@ -519,8 +513,8 @@ AmountSection.displayName = 'AmountSection';
 
 export function mapDispatchToProps(dispatch: Dispatch<Object>) {
   return {
-    // eslint-disable-next-line flowtype/no-weak-types
-    dispatchLoadBuyCoin: (payload: Object) => dispatch(loadBuyCoin(payload)),
+    dispatchLoadBuyCoin: (payload: BuyCoinPayload) =>
+      dispatch(loadBuyCoin(payload)),
     dispatchLoadRecentSwaps: () => dispatch(loadRecentSwaps()),
     dispatchRemoveSwapsData: () => dispatch(removeSwapsData()),
     dispatchClearBuyCoinError: () => dispatch(clearBuyCoinError()),

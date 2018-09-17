@@ -21,6 +21,8 @@ type Props = {
   classes: Object,
   // eslint-disable-next-line flowtype/no-weak-types
   children: Node,
+  // eslint-disable-next-line flowtype/no-weak-types
+  onClick: Function,
   className?: string
 };
 
@@ -32,7 +34,7 @@ class BuyButton extends PureComponent<Props> {
   render() {
     debug(`render`);
 
-    const { classes, className, children, ...props } = this.props;
+    const { classes, className, children, onClick, ...props } = this.props;
     const classesButton = ClassNames(classes.btnBuy, className);
 
     return (
@@ -40,6 +42,7 @@ class BuyButton extends PureComponent<Props> {
         className={classesButton}
         color="primary"
         variant="contained"
+        onClick={onClick}
         {...props}
       >
         {children}

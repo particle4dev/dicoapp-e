@@ -123,7 +123,7 @@ export default function validate(
       debug(`render`);
 
       const { value, error } = this.state;
-      console.log(value, error);
+
       return (
         <WrappedComponent
           {...this.props}

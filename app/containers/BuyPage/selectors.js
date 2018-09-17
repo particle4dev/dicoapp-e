@@ -1,7 +1,9 @@
 import { createSelector } from 'reselect';
 import { makeSelectBalanceList as makeSelectBalanceListApp } from '../App/selectors';
+import config from '../../utils/config';
 import { APP_STATE_NAME } from './constants';
-import { COIN_BASE } from './tokenconfig';
+
+const COIN_BASE = config.get('marketmaker.tokenconfig');
 
 const selectBuy = state => state.get(APP_STATE_NAME);
 
@@ -45,7 +47,7 @@ const makeSelectSwapsEntities = () =>
 
 const makeSelectBalanceList = () =>
   createSelector(makeSelectBalanceListApp(), balanceList => {
-    const symbol = COIN_BASE.get('coin');
+    const symbol = COIN_BASE.coin;
     return balanceList.filter(e => e !== symbol);
   });
 

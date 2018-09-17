@@ -11,6 +11,7 @@ import {
   makeSelectBalanceEntities
 } from '../App/selectors';
 import { loadSwapSuccess } from '../App/actions';
+import config from '../../utils/config';
 import api from '../../utils/barter-dex-api';
 import {
   LOAD_PRICES,
@@ -18,7 +19,6 @@ import {
   LOAD_BUY_COIN,
   LOAD_RECENT_SWAPS
 } from './constants';
-import { COIN_BASE } from './tokenconfig';
 import {
   loadPricesSuccess,
   loadPricesError,
@@ -35,9 +35,11 @@ import {
 } from './selectors';
 // import { covertSymbolToName, Loops } from './utils';
 
+const debug = require('debug')('dicoapp:containers:BuyPage:saga');
+
+const COIN_BASE = config.get('marketmaker.tokenconfig');
 const numcoin = 100000000;
 const txfee = 10000;
-const debug = require('debug')('dicoapp:containers:BuyPage:saga');
 
 // ==========================TESTS============================
 
@@ -63,7 +65,7 @@ const debug = require('debug')('dicoapp:containers:BuyPage:saga');
 export function* loadPrice(coin, userpass) {
   const getprices = {
     userpass,
-    base: COIN_BASE.get('coin'),
+    base: COIN_BASE.coin,
     rel: coin
   };
   const buf = 1.08 * numcoin;
@@ -79,7 +81,7 @@ export function* loadPrice(coin, userpass) {
           avevolume: 0,
           maxvolume: 0,
           numutxos: 0,
-          base: COIN_BASE.get('coin'),
+          base: COIN_BASE.coin,
           rel: coin,
           age: 0,
           zcredits: 0,
@@ -101,7 +103,7 @@ export function* loadPrice(coin, userpass) {
         avevolume: ask.avevolume,
         maxvolume: ask.maxvolume,
         numutxos: ask.numutxos,
-        base: COIN_BASE.get('coin'),
+        base: COIN_BASE.coin,
         rel: coin,
         age: ask.age,
         zcredits: ask.zcredits,
