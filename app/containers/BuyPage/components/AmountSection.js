@@ -183,8 +183,8 @@ class AmountSection extends Component<Props, State> {
   };
 
   componentDidMount = () => {
-    // const { dispatchLoadRecentSwaps } = this.props;
-    // dispatchLoadRecentSwaps();
+    const { dispatchLoadRecentSwaps } = this.props;
+    dispatchLoadRecentSwaps();
   };
 
   componentDidUpdate(prevProps) {

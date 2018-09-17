@@ -33,34 +33,12 @@ import {
   makeSelectPricesEntities,
   makeSelectSwapsEntities
 } from './selectors';
-// import { covertSymbolToName, Loops } from './utils';
 
 const debug = require('debug')('dicoapp:containers:BuyPage:saga');
 
 const COIN_BASE = config.get('marketmaker.tokenconfig');
 const numcoin = 100000000;
 const txfee = 10000;
-
-// ==========================TESTS============================
-
-// async function checkSwapStatus(userpass) {
-//   const swaplist = {
-//     userpass
-//   };
-//   const recentswapsResult = await api.recentswaps(swaplist);
-//   console.log('recentswapsResult', recentswapsResult);
-//   console.log('recentswapsResult', JSON.stringify(recentswapsResult));
-
-//   for (let i = 0; i < recentswapsResult.swaps.length; i += 1) {
-//     const swapobj = recentswapsResult.swaps[i];
-//     // eslint-disable-next-line no-await-in-loop
-//     await checkSwap(userpass, swapobj[0], swapobj[1]);
-//   }
-// }
-
-// const checkSwapStatusLoops = new Loops(10000, checkSwapStatus);
-
-// ======================================================
 
 export function* loadPrice(coin, userpass) {
   const getprices = {
