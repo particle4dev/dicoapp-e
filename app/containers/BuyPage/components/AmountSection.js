@@ -22,7 +22,7 @@ import { makeSelectBalanceEntities } from '../../App/selectors';
 import config from '../../../utils/config';
 import type { BuyCoinPayload } from '../schema';
 import { Loops } from '../utils';
-import { AUTO_HIDE_SNACKBAR_TIME, STATE_SWAPS } from '../constants';
+import { AUTO_HIDE_SNACKBAR_TIME, STATE_SWAPS, TIME_LOOP } from '../constants';
 import {
   loadBuyCoin,
   loadRecentSwaps,
@@ -194,10 +194,10 @@ class AmountSection extends Component<Props, State> {
         this.checkSwapStatusLoops.cancel();
         this.checkSwapStatusLoops = undefined;
       }
-      this.checkSwapStatusLoops = new Loops(10000, dispatchLoadRecentSwaps);
+      this.checkSwapStatusLoops = new Loops(TIME_LOOP, dispatchLoadRecentSwaps);
       this.checkSwapStatusLoops.setup();
       const delay =
-        (entity.get('expiration') - Date.now() / 1000) * 1000 + 10000;
+        (entity.get('expiration') - Date.now() / 1000) * 1000 + TIME_LOOP;
       if (delay < 0) this.timeout();
       else {
         if (this.idClearState) {
