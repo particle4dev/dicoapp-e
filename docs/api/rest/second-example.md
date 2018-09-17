@@ -14,7 +14,7 @@ userpass: "xxx"
 }
 ```
 
-- **Error Response:**
+- **Success Response:**
 
 ```js
 {
