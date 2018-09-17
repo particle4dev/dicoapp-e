@@ -88,6 +88,16 @@ const styles = () => ({
 
   amountform__itemCenter: {
     textAlign: 'center'
+  },
+
+  amountform__switchBtn: {
+    position: 'absolute',
+    textAlign: 'center',
+    top: '25%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    fontSize: 25,
+    width: 100
   }
 });
 
@@ -109,7 +119,6 @@ type Props = {
   // buyingError: boolean | Object,
   swapsList: List<*>,
   swapsEntities: Map<*, *>,
-
   // eslint-disable-next-line flowtype/no-weak-types
   buyingError: boolean | Object,
   // eslint-disable-next-line flowtype/no-weak-types
@@ -174,9 +183,8 @@ class AmountSection extends Component<Props, State> {
   };
 
   componentDidMount = () => {
-    const { dispatchLoadRecentSwaps } = this.props;
-
-    dispatchLoadRecentSwaps();
+    // const { dispatchLoadRecentSwaps } = this.props;
+    // dispatchLoadRecentSwaps();
   };
 
   componentDidUpdate(prevProps) {
@@ -365,27 +373,31 @@ class AmountSection extends Component<Props, State> {
         {buyingLoading && (
           <Grid container spacing={24}>
             <Grid item xs={6} className={classes.amountform__itemCenter}>
-              <Typography variant="title" gutterBottom>
-                Deposit
-              </Typography>
-              <Circle />
-              <Line
-                width={60}
-                style={{
-                  margin: '10px auto'
-                }}
+              <CoinSelectable
+                icon={<Circle />}
+                title="Deposit"
+                subTitle={
+                  <Line
+                    width={60}
+                    style={{
+                      margin: '10px auto'
+                    }}
+                  />
+                }
               />
             </Grid>
             <Grid item xs={6} className={classes.amountform__itemCenter}>
-              <Typography variant="title" gutterBottom>
-                Receive
-              </Typography>
-              <Circle />
-              <Line
-                width={60}
-                style={{
-                  margin: '10px auto'
-                }}
+              <CoinSelectable
+                icon={<Circle />}
+                title="Receive"
+                subTitle={
+                  <Line
+                    width={60}
+                    style={{
+                      margin: '10px auto'
+                    }}
+                  />
+                }
               />
             </Grid>
             <Grid item xs={12} className={classes.amountform__itemCenter}>
@@ -422,10 +434,15 @@ class AmountSection extends Component<Props, State> {
     const entity = swapsEntities.get(swapsList.get(0));
 
     return (
-      <Grid container spacing={24}>
+      <Grid
+        container
+        spacing={24}
+        style={{
+          position: 'relative'
+        }}
+      >
         <Grid item xs={6} className={classes.amountform__itemCenter}>
           <CoinSelectable
-            data="data"
             icon={getCoinIcon(entity.get('alice'))}
             title="Deposit"
             subTitle={
@@ -435,9 +452,9 @@ class AmountSection extends Component<Props, State> {
             }
           />
         </Grid>
+        <SwapHorizIcon className={classes.amountform__switchBtn} />
         <Grid item xs={6} className={classes.amountform__itemCenter}>
           <CoinSelectable
-            data="data"
             icon={getCoinIcon(entity.get('bob'))}
             title="Receive"
             subTitle={
