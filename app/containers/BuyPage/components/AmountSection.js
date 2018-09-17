@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import type { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import type { List, Map } from 'immutable';
 import { withStyles } from '@material-ui/core/styles';
@@ -20,29 +21,16 @@ import { getCoinIcon } from '../../../components/CryptoIcons';
 import { requiredNumber } from '../../../components/Form/helper';
 import validate from '../../../components/Form/validate';
 import { makeSelectBalanceEntities } from '../../App/selectors';
-import { loadSwapSuccess } from '../../App/actions';
 
 import { COIN_BASE } from '../tokenconfig';
 
-import {
-  SWAP_STATE_ZERO,
-  SWAP_STATE_ONE,
-  SWAP_STATE_TWO,
-  SWAP_STATE_THREE,
-  SWAP_STATE_FOUR,
-  SWAP_STATE_FIVE,
-  LOAD_SWAP_SUCCESS,
-  AUTO_HIDE_SNACKBAR_TIME,
-  STATE_SWAPS
-} from '../constants';
+import { AUTO_HIDE_SNACKBAR_TIME, STATE_SWAPS } from '../constants';
 
 import {
   loadBuyCoin,
   loadRecentSwaps,
   removeSwapsData,
-  loadBuyCoinSuccess,
   clearBuyCoinError,
-  loadRecentSwapsCoin,
   loadRecentSwapsError
 } from '../actions';
 
@@ -130,20 +118,6 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   swapsError: boolean | Object,
   // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadBuyCoinSuccess: Function,
-  // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadRecentSwapsCoinOne: Function,
-  // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadRecentSwapsCoinTwo: Function,
-  // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadRecentSwapsCoinThree: Function,
-  // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadRecentSwapsCoinFour: Function,
-  // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadRecentSwapsCoinFive: Function,
-  // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadSwapSuccess: Function,
-  // eslint-disable-next-line flowtype/no-weak-types
   dispatchLoadRecentSwapsError: Function,
   // eslint-disable-next-line flowtype/no-weak-types
   dispatchClearBuyCoinError: Function,
@@ -203,25 +177,9 @@ class AmountSection extends Component<Props, State> {
   };
 
   componentDidMount = () => {
-    const {
-      dispatchLoadRecentSwaps,
-      dispatchLoadBuyCoinSuccess,
-      dispatchLoadRecentSwapsCoinOne,
-      dispatchLoadRecentSwapsCoinTwo,
-      dispatchLoadRecentSwapsCoinThree,
-      dispatchLoadRecentSwapsCoinFour,
-      dispatchLoadRecentSwapsCoinFive,
-      dispatchLoadSwapSuccess
-    } = this.props;
+    const { dispatchLoadRecentSwaps } = this.props;
 
     dispatchLoadRecentSwaps();
-    window.dispatchLoadBuyCoinSuccess = dispatchLoadBuyCoinSuccess;
-    window.dispatchLoadRecentSwapsCoinOne = dispatchLoadRecentSwapsCoinOne;
-    window.dispatchLoadRecentSwapsCoinTwo = dispatchLoadRecentSwapsCoinTwo;
-    window.dispatchLoadRecentSwapsCoinThree = dispatchLoadRecentSwapsCoinThree;
-    window.dispatchLoadRecentSwapsCoinFour = dispatchLoadRecentSwapsCoinFour;
-    window.dispatchLoadRecentSwapsCoinFive = dispatchLoadRecentSwapsCoinFive;
-    window.dispatchLoadSwapSuccess = dispatchLoadSwapSuccess;
   };
 
   componentDidUpdate(prevProps) {
@@ -557,70 +515,15 @@ class AmountSection extends Component<Props, State> {
 
 AmountSection.displayName = 'AmountSection';
 
-export function mapDispatchToProps(dispatch) {
+export function mapDispatchToProps(dispatch: Dispatch<Object>) {
   return {
     // eslint-disable-next-line flowtype/no-weak-types
     dispatchLoadBuyCoin: (payload: Object) => dispatch(loadBuyCoin(payload)),
     dispatchLoadRecentSwaps: () => dispatch(loadRecentSwaps()),
     dispatchRemoveSwapsData: () => dispatch(removeSwapsData()),
-    dispatchLoadSwapSuccess: () => dispatch(loadSwapSuccess(LOAD_SWAP_SUCCESS)),
     dispatchClearBuyCoinError: () => dispatch(clearBuyCoinError()),
     dispatchLoadRecentSwapsError: (message: string) =>
-      dispatch(loadRecentSwapsError(message)),
-
-    dispatchLoadBuyCoinSuccess: () =>
-      dispatch(
-        loadBuyCoinSuccess(
-          Object.assign({}, SWAP_STATE_ZERO, {
-            expiration: Date.now() / 1000 + 60
-          })
-        )
-      ),
-
-    dispatchLoadRecentSwapsCoinOne: () =>
-      dispatch(
-        loadRecentSwapsCoin(
-          Object.assign({}, SWAP_STATE_ONE, {
-            expiration: Date.now() / 1000 + 60
-          })
-        )
-      ),
-
-    dispatchLoadRecentSwapsCoinTwo: () =>
-      dispatch(
-        loadRecentSwapsCoin(
-          Object.assign({}, SWAP_STATE_TWO, {
-            expiration: Date.now() / 1000 + 60
-          })
-        )
-      ),
-
-    dispatchLoadRecentSwapsCoinThree: () =>
-      dispatch(
-        loadRecentSwapsCoin(
-          Object.assign({}, SWAP_STATE_THREE, {
-            expiration: Date.now() / 1000 + 60
-          })
-        )
-      ),
-
-    dispatchLoadRecentSwapsCoinFour: () =>
-      dispatch(
-        loadRecentSwapsCoin(
-          Object.assign({}, SWAP_STATE_FOUR, {
-            expiration: Date.now() / 1000 + 60
-          })
-        )
-      ),
-
-    dispatchLoadRecentSwapsCoinFive: () =>
-      dispatch(
-        loadRecentSwapsCoin(
-          Object.assign({}, SWAP_STATE_FIVE, {
-            expiration: Date.now() / 1000 + 60
-          })
-        )
-      )
+      dispatch(loadRecentSwapsError(message))
   };
 }
 
