@@ -10,17 +10,14 @@ export const LOAD_BUY_COIN = 'dicoapp/BuyPage/LOAD_BUY_COIN';
 export const LOAD_BUY_COIN_SUCCESS = 'dicoapp/BuyPage/LOAD_BUY_COIN_SUCCESS';
 export const LOAD_BUY_COIN_ERROR = 'dicoapp/BuyPage/LOAD_BUY_COIN_ERROR';
 export const CLEAR_BUY_COIN_ERROR = 'dicoapp/BuyPage/CLEAR_BUY_COIN_ERROR';
-
 export const LOAD_RECENT_SWAPS = 'dicoapp/BuyPage/LOAD_RECENT_SWAPS';
 export const LOAD_RECENT_SWAPS_COIN = 'dicoapp/BuyPage/LOAD_RECENT_SWAPS_COIN';
 export const LOAD_RECENT_SWAPS_SUCCESS =
   'dicoapp/BuyPage/LOAD_RECENT_SWAPS_SUCCESS';
 export const LOAD_RECENT_SWAPS_ERROR =
   'dicoapp/BuyPage/LOAD_RECENT_SWAPS_ERROR';
-
 export const REMOVE_SWAPS_DATA = 'dicoapp/BuyPage/REMOVE_SWAPS_DATA';
 export const AUTO_HIDE_SNACKBAR_TIME = 6000;
-
 export const STATE_SWAPS = [
   'Confirming',
   'My Fee',

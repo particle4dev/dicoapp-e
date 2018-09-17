@@ -3,14 +3,16 @@ import {
   loadPrices,
   loadPricesSuccess,
   loadBuyCoin,
-  loadBuyCoinError
+  loadBuyCoinError,
+  removeSwapsData
 } from '../actions';
 import {
   LOAD_PRICE,
   LOAD_PRICES,
   LOAD_PRICES_SUCCESS,
   LOAD_BUY_COIN,
-  LOAD_BUY_COIN_ERROR
+  LOAD_BUY_COIN_ERROR,
+  REMOVE_SWAPS_DATA
 } from '../constants';
 
 describe('containers/BuyPage/actions/loadPrice', () => {
@@ -97,5 +99,19 @@ describe('containers/BuyPage/actions/loadBuyCoinError', () => {
     };
 
     expect(loadBuyCoinError(message)).toEqual(expectedResult);
+  });
+});
+
+describe('containers/BuyPage/actions/removeSwapsData', () => {
+  it('should removeSwapsData should create removeSwapsData action', () => {
+    expect(removeSwapsData()).toMatchSnapshot();
+  });
+
+  it('should return the correct type and the passed name', () => {
+    const expectedResult = {
+      type: REMOVE_SWAPS_DATA
+    };
+
+    expect(removeSwapsData()).toEqual(expectedResult);
   });
 });

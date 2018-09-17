@@ -40,3 +40,9 @@ Object {
   "type": "dicoapp/BuyPage/LOAD_PRICES_SUCCESS",
 }
 `;
+
+exports[`containers/BuyPage/actions/removeSwapsData should removeSwapsData should create removeSwapsData action 1`] = `
+Object {
+  "type": "dicoapp/BuyPage/REMOVE_SWAPS_DATA",
+}
+`;

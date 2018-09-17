@@ -18,6 +18,10 @@ type BestPricePayload = {
   base: string, // the currency you want to buy
   rel: string, // the currency you are paying with
   age: number,
+  zcredits: number,
+  address: string,
+  pubkey: string,
+  depth: number,
   createdAt?: Date,
   updatedAt?: Date
 };
