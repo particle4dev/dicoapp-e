@@ -43,6 +43,8 @@
 }
 ```
 
+---
+
 - **URL**
 
   /recentswapsResult
