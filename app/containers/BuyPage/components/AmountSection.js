@@ -111,7 +111,7 @@ type Props = {
   // buyingError: boolean | Object,
   swapsList: List<*>,
   swapsEntities: Map<*, *>,
-  paymentcoin: string,
+  paymentcoin?: string | null,
 
   // eslint-disable-next-line flowtype/no-weak-types
   buyingError: boolean | Object,
@@ -131,7 +131,9 @@ type State = {
 };
 
 class AmountSection extends Component<Props, State> {
-  static defaultProps = {};
+  static defaultProps = {
+    paymentcoin: null
+  };
 
   constructor(props) {
     super(props);
