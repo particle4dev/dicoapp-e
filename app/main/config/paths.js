@@ -10,7 +10,7 @@ const marketmakerPlatformPath = binDir => {
     case 'darwin':
       return resolve(binDir, 'marketmaker/OSX/marketmaker');
     case 'win32':
-      return resolve(binDir, 'marketmaker/WIN/marketmaker.exec');
+      return resolve(binDir, 'marketmaker/WIN/marketmaker.exe');
     case 'linux':
       return resolve(binDir, 'marketmaker/LINUX/marketmaker');
     default:
