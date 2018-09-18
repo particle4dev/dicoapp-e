@@ -2,11 +2,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import type { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import type { List, Map } from 'immutable';
 import { withStyles } from '@material-ui/core/styles';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
-
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -14,33 +14,19 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { Circle, Line } from '../../../components/placeholder';
-import { Loops } from '../utils';
 import { getCoinIcon } from '../../../components/CryptoIcons';
-
 import { requiredNumber } from '../../../components/Form/helper';
 import validate from '../../../components/Form/validate';
 import { makeSelectBalanceEntities } from '../../App/selectors';
-import { loadSwapSuccess } from '../../App/actions';
-
-import { COIN_BASE } from '../tokenconfig';
-
-import {
-  SWAP_STATE_ZERO,
-  SWAP_STATE_ONE,
-  SWAP_STATE_TWO,
-  SWAP_STATE_THREE,
-  SWAP_STATE_FOUR,
-  SWAP_STATE_FIVE,
-  LOAD_SWAP_SUCCESS
-} from '../constants';
-
+import config from '../../../utils/config';
+import type { BuyCoinPayload } from '../schema';
+import { Loops } from '../utils';
+import { AUTO_HIDE_SNACKBAR_TIME, STATE_SWAPS, TIME_LOOP } from '../constants';
 import {
   loadBuyCoin,
   loadRecentSwaps,
   removeSwapsData,
-  loadBuyCoinSuccess,
   clearBuyCoinError,
-  loadRecentSwapsCoin,
   loadRecentSwapsError
 } from '../actions';
 import {
@@ -55,17 +41,11 @@ import {
 } from '../selectors';
 import AmountInput from './AmountInput';
 import BuyButton from './BuyButton';
+import CoinSelectable from './CoinSelectable';
 
 const debug = require('debug')('dicoapp:containers:BuyPage:AmountSection');
 
-const STATE_SWAPS = [
-  'Confirming',
-  'My Fee',
-  'Bob Deposit',
-  'Alice Payment',
-  'Bob Payment',
-  'Alice Spend'
-];
+const COIN_BASE = config.get('marketmaker.tokenconfig');
 
 // eslint-disable-next-line react/prop-types
 const TextInput = ({ onChange, value, error, isError, ...props }) => (
@@ -108,6 +88,16 @@ const styles = () => ({
 
   amountform__itemCenter: {
     textAlign: 'center'
+  },
+
+  amountform__switchBtn: {
+    position: 'absolute',
+    textAlign: 'center',
+    top: '25%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    fontSize: 25,
+    width: 100
   }
 });
 
@@ -129,25 +119,10 @@ type Props = {
   // buyingError: boolean | Object,
   swapsList: List<*>,
   swapsEntities: Map<*, *>,
-
   // eslint-disable-next-line flowtype/no-weak-types
   buyingError: boolean | Object,
   // eslint-disable-next-line flowtype/no-weak-types
   swapsError: boolean | Object,
-  // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadBuyCoinSuccess: Function,
-  // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadRecentSwapsCoinOne: Function,
-  // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadRecentSwapsCoinTwo: Function,
-  // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadRecentSwapsCoinThree: Function,
-  // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadRecentSwapsCoinFour: Function,
-  // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadRecentSwapsCoinFive: Function,
-  // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadSwapSuccess: Function,
   // eslint-disable-next-line flowtype/no-weak-types
   dispatchLoadRecentSwapsError: Function,
   // eslint-disable-next-line flowtype/no-weak-types
@@ -157,7 +132,8 @@ type Props = {
 
 type State = {
   disabledBuyButton: boolean,
-  openSnackbar: boolean
+  openSnackbar: boolean,
+  snackbarMessage: string
 };
 
 class AmountSection extends Component<Props, State> {
@@ -207,25 +183,8 @@ class AmountSection extends Component<Props, State> {
   };
 
   componentDidMount = () => {
-    const {
-      dispatchLoadRecentSwaps,
-      dispatchLoadBuyCoinSuccess,
-      dispatchLoadRecentSwapsCoinOne,
-      dispatchLoadRecentSwapsCoinTwo,
-      dispatchLoadRecentSwapsCoinThree,
-      dispatchLoadRecentSwapsCoinFour,
-      dispatchLoadRecentSwapsCoinFive,
-      dispatchLoadSwapSuccess
-    } = this.props;
-
+    const { dispatchLoadRecentSwaps } = this.props;
     dispatchLoadRecentSwaps();
-    window.dispatchLoadBuyCoinSuccess = dispatchLoadBuyCoinSuccess;
-    window.dispatchLoadRecentSwapsCoinOne = dispatchLoadRecentSwapsCoinOne;
-    window.dispatchLoadRecentSwapsCoinTwo = dispatchLoadRecentSwapsCoinTwo;
-    window.dispatchLoadRecentSwapsCoinThree = dispatchLoadRecentSwapsCoinThree;
-    window.dispatchLoadRecentSwapsCoinFour = dispatchLoadRecentSwapsCoinFour;
-    window.dispatchLoadRecentSwapsCoinFive = dispatchLoadRecentSwapsCoinFive;
-    window.dispatchLoadSwapSuccess = dispatchLoadSwapSuccess;
   };
 
   componentDidUpdate(prevProps) {
@@ -243,10 +202,10 @@ class AmountSection extends Component<Props, State> {
         this.checkSwapStatusLoops.cancel();
         this.checkSwapStatusLoops = undefined;
       }
-      this.checkSwapStatusLoops = new Loops(10000, dispatchLoadRecentSwaps);
+      this.checkSwapStatusLoops = new Loops(TIME_LOOP, dispatchLoadRecentSwaps);
       this.checkSwapStatusLoops.setup();
       const delay =
-        (entity.get('expiration') - Date.now() / 1000) * 1000 + 10000;
+        (entity.get('expiration') - Date.now() / 1000) * 1000 + TIME_LOOP;
       if (delay < 0) this.timeout();
       else {
         if (this.idClearState) {
@@ -260,7 +219,7 @@ class AmountSection extends Component<Props, State> {
 
   componentWillUnmount = () => {
     if (this.checkSwapStatusLoops) {
-      this.checkSwapStatusLoops.stop();
+      this.checkSwapStatusLoops.cancel();
       this.checkSwapStatusLoops = undefined;
     }
     if (this.idClearState) {
@@ -278,12 +237,11 @@ class AmountSection extends Component<Props, State> {
     dispatchLoadRecentSwapsError('Timeout');
   };
 
-  closeSnackbar = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
+  closeSnackbar = (evt, reason) => {
+    if (reason !== 'clickaway') {
+      const { dispatchClearBuyCoinError } = this.props;
+      dispatchClearBuyCoinError();
     }
-    const { dispatchClearBuyCoinError } = this.props;
-    dispatchClearBuyCoinError();
   };
 
   getBestPrice = () => {
@@ -336,18 +294,29 @@ class AmountSection extends Component<Props, State> {
     }
   };
 
-  onCLickBtnBuyCoin = async (evt: SyntheticInputEvent<>) => {
+  onClickBuyCoinButton = async (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
-    const { dispatchLoadBuyCoin } = this.props;
+    const { dispatchLoadBuyCoin, paymentCoin } = this.props;
     const baseInput = this.baseInput.current;
     const base = await baseInput.value();
 
     dispatchLoadBuyCoin({
-      basecoin: COIN_BASE.get('coin'),
-      // eslint-disable-next-line react/destructuring-assignment
-      paymentcoin: this.props.paymentCoin,
+      basecoin: COIN_BASE.coin,
+      paymentcoin: paymentCoin,
       amount: Number(base)
     });
+  };
+
+  clickProcessButton = (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    // const { swapsError, dispatchRemoveSwapsData } = this.props;
+    const { dispatchRemoveSwapsData } = this.props;
+    dispatchRemoveSwapsData();
+    // if(swapsError) {
+
+    // } else {
+
+    // }
   };
 
   renderForm = () => {
@@ -364,8 +333,8 @@ class AmountSection extends Component<Props, State> {
         {!buyingLoading && (
           <form>
             <ValidationBaseInput
-              label={COIN_BASE.get('coin')}
-              id={COIN_BASE.get('coin')}
+              label={COIN_BASE.coin}
+              id={COIN_BASE.coin}
               type="number"
               disabled={disabled}
               className={classes.amountform__item}
@@ -394,9 +363,9 @@ class AmountSection extends Component<Props, State> {
               color="primary"
               variant="contained"
               className={classes.amountform__item}
-              onClick={this.onCLickBtnBuyCoin}
+              onClick={this.onClickBuyCoinButton}
             >
-              Buy {COIN_BASE.get('coin')}
+              Buy {COIN_BASE.coin}
             </BuyButton>
           </form>
         )}
@@ -404,27 +373,31 @@ class AmountSection extends Component<Props, State> {
         {buyingLoading && (
           <Grid container spacing={24}>
             <Grid item xs={6} className={classes.amountform__itemCenter}>
-              <Typography variant="title" gutterBottom>
-                Deposit
-              </Typography>
-              <Circle />
-              <Line
-                width={60}
-                style={{
-                  margin: '10px auto'
-                }}
+              <CoinSelectable
+                icon={<Circle />}
+                title="Deposit"
+                subTitle={
+                  <Line
+                    width={60}
+                    style={{
+                      margin: '10px auto'
+                    }}
+                  />
+                }
               />
             </Grid>
             <Grid item xs={6} className={classes.amountform__itemCenter}>
-              <Typography variant="title" gutterBottom>
-                Receive
-              </Typography>
-              <Circle />
-              <Line
-                width={60}
-                style={{
-                  margin: '10px auto'
-                }}
+              <CoinSelectable
+                icon={<Circle />}
+                title="Receive"
+                subTitle={
+                  <Line
+                    width={60}
+                    style={{
+                      margin: '10px auto'
+                    }}
+                  />
+                }
               />
             </Grid>
             <Grid item xs={12} className={classes.amountform__itemCenter}>
@@ -450,18 +423,6 @@ class AmountSection extends Component<Props, State> {
     );
   };
 
-  clickProcessButton = (evt: SyntheticInputEvent<>) => {
-    evt.preventDefault();
-    // const { swapsError, dispatchRemoveSwapsData } = this.props;
-    const { dispatchRemoveSwapsData } = this.props;
-    dispatchRemoveSwapsData();
-    // if(swapsError) {
-
-    // } else {
-
-    // }
-  };
-
   renderProcess = () => {
     const {
       classes,
@@ -473,24 +434,35 @@ class AmountSection extends Component<Props, State> {
     const entity = swapsEntities.get(swapsList.get(0));
 
     return (
-      <Grid container spacing={24}>
+      <Grid
+        container
+        spacing={24}
+        style={{
+          position: 'relative'
+        }}
+      >
         <Grid item xs={6} className={classes.amountform__itemCenter}>
-          <Typography variant="title" gutterBottom>
-            Deposit
-          </Typography>
-          {getCoinIcon(entity.get('alice'))}
-          <Typography variant="subheading" gutterBottom>
-            {entity.get('aliceamount')} {entity.get('alice')}
-          </Typography>
+          <CoinSelectable
+            icon={getCoinIcon(entity.get('alice'))}
+            title="Deposit"
+            subTitle={
+              <span>
+                {entity.get('aliceamount')} {entity.get('alice')}
+              </span>
+            }
+          />
         </Grid>
+        <SwapHorizIcon className={classes.amountform__switchBtn} />
         <Grid item xs={6} className={classes.amountform__itemCenter}>
-          <Typography variant="title" gutterBottom>
-            Receive
-          </Typography>
-          {getCoinIcon(entity.get('bob'))}
-          <Typography variant="subheading" gutterBottom>
-            {entity.get('bobamount')} {entity.get('bob')}
-          </Typography>
+          <CoinSelectable
+            icon={getCoinIcon(entity.get('bob'))}
+            title="Receive"
+            subTitle={
+              <span>
+                {entity.get('bobamount')} {entity.get('bob')}
+              </span>
+            }
+          />
         </Grid>
         <Grid item xs={12} className={classes.amountform__itemCenter}>
           <Typography variant="body2" gutterBottom>
@@ -502,6 +474,11 @@ class AmountSection extends Component<Props, State> {
             variant="determinate"
             value={entity.get('sentflags').size * 20}
           />
+        </Grid>
+        <Grid item xs={12} className={classes.amountform__itemCenter}>
+          <Typography variant="caption" gutterBottom>
+            UUID: {entity.get('uuid')}
+          </Typography>
         </Grid>
         <Grid item xs={12} className={classes.amountform__itemCenter}>
           <BuyButton
@@ -526,6 +503,7 @@ class AmountSection extends Component<Props, State> {
     debug(`render`);
     const { classes, swapsList } = this.props;
     const { openSnackbar, snackbarMessage } = this.state;
+
     return (
       <div className={classes.amountform}>
         {swapsList.size === 0 && this.renderForm()}
@@ -537,7 +515,7 @@ class AmountSection extends Component<Props, State> {
             horizontal: 'center'
           }}
           open={openSnackbar}
-          autoHideDuration={6000}
+          autoHideDuration={AUTO_HIDE_SNACKBAR_TIME}
           onClose={this.closeSnackbar}
           ContentProps={{
             'aria-describedby': 'message-id'
@@ -548,7 +526,6 @@ class AmountSection extends Component<Props, State> {
               key="close"
               aria-label="Close"
               color="inherit"
-              className={classes.close}
               onClick={this.closeSnackbar}
             >
               <CloseIcon />
@@ -562,70 +539,15 @@ class AmountSection extends Component<Props, State> {
 
 AmountSection.displayName = 'AmountSection';
 
-export function mapDispatchToProps(dispatch) {
+export function mapDispatchToProps(dispatch: Dispatch<Object>) {
   return {
-    // eslint-disable-next-line flowtype/no-weak-types
-    dispatchLoadBuyCoin: (payload: Object) => dispatch(loadBuyCoin(payload)),
+    dispatchLoadBuyCoin: (payload: BuyCoinPayload) =>
+      dispatch(loadBuyCoin(payload)),
     dispatchLoadRecentSwaps: () => dispatch(loadRecentSwaps()),
     dispatchRemoveSwapsData: () => dispatch(removeSwapsData()),
-    dispatchLoadSwapSuccess: () => dispatch(loadSwapSuccess(LOAD_SWAP_SUCCESS)),
     dispatchClearBuyCoinError: () => dispatch(clearBuyCoinError()),
     dispatchLoadRecentSwapsError: (message: string) =>
-      dispatch(loadRecentSwapsError(message)),
-
-    dispatchLoadBuyCoinSuccess: () =>
-      dispatch(
-        loadBuyCoinSuccess(
-          Object.assign({}, SWAP_STATE_ZERO, {
-            expiration: Date.now() / 1000 + 60
-          })
-        )
-      ),
-
-    dispatchLoadRecentSwapsCoinOne: () =>
-      dispatch(
-        loadRecentSwapsCoin(
-          Object.assign({}, SWAP_STATE_ONE, {
-            expiration: Date.now() / 1000 + 60
-          })
-        )
-      ),
-
-    dispatchLoadRecentSwapsCoinTwo: () =>
-      dispatch(
-        loadRecentSwapsCoin(
-          Object.assign({}, SWAP_STATE_TWO, {
-            expiration: Date.now() / 1000 + 60
-          })
-        )
-      ),
-
-    dispatchLoadRecentSwapsCoinThree: () =>
-      dispatch(
-        loadRecentSwapsCoin(
-          Object.assign({}, SWAP_STATE_THREE, {
-            expiration: Date.now() / 1000 + 60
-          })
-        )
-      ),
-
-    dispatchLoadRecentSwapsCoinFour: () =>
-      dispatch(
-        loadRecentSwapsCoin(
-          Object.assign({}, SWAP_STATE_FOUR, {
-            expiration: Date.now() / 1000 + 60
-          })
-        )
-      ),
-
-    dispatchLoadRecentSwapsCoinFive: () =>
-      dispatch(
-        loadRecentSwapsCoin(
-          Object.assign({}, SWAP_STATE_FIVE, {
-            expiration: Date.now() / 1000 + 60
-          })
-        )
-      )
+      dispatch(loadRecentSwapsError(message))
   };
 }
 

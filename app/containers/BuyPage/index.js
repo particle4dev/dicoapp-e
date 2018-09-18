@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import type { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import type { List, Map } from 'immutable';
 import { withStyles } from '@material-ui/core/styles';
@@ -17,17 +18,20 @@ import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
+import injectWebsocket from '../../utils/inject-websocket';
+import { WEBSOCKET_DAEMON } from '../../utils/constants';
 import ErrorBoundary from '../../components/ErrorBoundary';
-// import { Circle, Line, LineWrapper } from '../../components/placeholder';
 import { NavigationLayout } from '../Layout';
 import { makeSelectBalanceEntities } from '../App/selectors';
 import { loadBalance } from '../App/actions';
 import { APP_STATE_NAME } from './constants';
 import reducer from './reducer';
 import saga from './saga';
+import subscribe from './subscribe';
 import AmountSection from './components/AmountSection';
 import CurrencySection from './components/CurrencySection';
 import PaymentSection from './components/PaymentSection';
+import TestSwap from './components/TestSwap';
 import { loadPrices, loadPrice } from './actions';
 import {
   makeSelectBalanceList,
@@ -177,12 +181,13 @@ class BuyPage extends Component<Props, State> {
             </Card>
           </Grid>
         </Grid>
+        <TestSwap />
       </React.Fragment>
     );
   }
 }
 
-export function mapDispatchToProps(dispatch) {
+export function mapDispatchToProps(dispatch: Dispatch<Object>) {
   return {
     dispatchLoadPrices: () => dispatch(loadPrices()),
     dispatchLoadPrice: (coin: string) => dispatch(loadPrice(coin)),
@@ -204,10 +209,16 @@ const withConnect = connect(
 
 const withReducer = injectReducer({ key: APP_STATE_NAME, reducer });
 const withSaga = injectSaga({ key: APP_STATE_NAME, saga });
+const withWebsocket = injectWebsocket({
+  key: APP_STATE_NAME,
+  mode: WEBSOCKET_DAEMON,
+  subscribe
+});
 
 const BuyPageWapper = compose(
   withReducer,
   withSaga,
+  withWebsocket,
   withConnect,
   withStyles(styles)
 )(BuyPage);

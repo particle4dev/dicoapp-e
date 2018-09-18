@@ -4,10 +4,12 @@ import { withStyles } from '@material-ui/core/styles';
 import { getCoinIcon } from '../../../components/CryptoIcons';
 import { Line } from '../../../components/placeholder';
 import { floor } from '../utils';
-import { COIN_BASE } from '../tokenconfig';
+import config from '../../../utils/config';
 import CoinSelectable from './CoinSelectable';
 
 const debug = require('debug')('dicoapp:containers:BuyPage:CurrencySection');
+
+const COIN_BASE = config.get('marketmaker.tokenconfig');
 
 const line = (
   <Line
@@ -33,7 +35,7 @@ class CurrencySection extends PureComponent<Props> {
   render() {
     debug(`render`);
     const { balance } = this.props;
-    const symbol = COIN_BASE.get('coin');
+    const symbol = COIN_BASE.coin;
     const icon = getCoinIcon(symbol);
     const b = balance.get(symbol);
     if (!b) {
@@ -44,7 +46,7 @@ class CurrencySection extends PureComponent<Props> {
           selected
           data={symbol}
           icon={icon}
-          title={COIN_BASE.get('name')}
+          title={COIN_BASE.name}
           subTitle={line}
         />
       );
@@ -55,7 +57,7 @@ class CurrencySection extends PureComponent<Props> {
         selected
         data={symbol}
         icon={icon}
-        title={COIN_BASE.get('name')}
+        title={COIN_BASE.name}
         subTitle={`${floor(b.get('balance'), 3)} ${b.get('coin')}`}
         {...this.props}
       />

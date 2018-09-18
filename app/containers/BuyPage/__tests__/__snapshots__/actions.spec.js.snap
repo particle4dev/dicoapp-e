@@ -1,6 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`BuyPage Actions loadPrice action should loadPrice should create loadPrice action 1`] = `
+exports[`containers/BuyPage/actions/loadBuyCoin should loadBuyCoin should create loadBuyCoin action 1`] = `
+Object {
+  "payload": Object {
+    "amount": 1.234,
+    "basecoin": "BTC",
+    "paymentcoin": "KMD",
+  },
+  "type": "dicoapp/BuyPage/LOAD_BUY_COIN",
+}
+`;
+
+exports[`containers/BuyPage/actions/loadBuyCoinError should loadBuyCoin should create loadBuyCoinError action 1`] = `
+Object {
+  "error": Object {
+    "message": "Value is large than balance",
+  },
+  "type": "dicoapp/BuyPage/LOAD_BUY_COIN_ERROR",
+}
+`;
+
+exports[`containers/BuyPage/actions/loadPrice should loadPrice should create loadPrice action 1`] = `
 Object {
   "payload": Object {
     "coin": "coin",
@@ -9,14 +29,20 @@ Object {
 }
 `;
 
-exports[`BuyPage Actions loadPrices action should loadPrices should create loadPrices action 1`] = `
+exports[`containers/BuyPage/actions/loadPrices should loadPrices should create loadPrices action 1`] = `
 Object {
   "type": "dicoapp/BuyPage/LOAD_PRICES",
 }
 `;
 
-exports[`BuyPage Actions loadPricesSuccess action should loadPricesSuccess should create loadPricesSuccess action 1`] = `
+exports[`containers/BuyPage/actions/loadPricesSuccess should loadPricesSuccess should create loadPricesSuccess action 1`] = `
 Object {
   "type": "dicoapp/BuyPage/LOAD_PRICES_SUCCESS",
+}
+`;
+
+exports[`containers/BuyPage/actions/removeSwapsData should removeSwapsData should create removeSwapsData action 1`] = `
+Object {
+  "type": "dicoapp/BuyPage/REMOVE_SWAPS_DATA",
 }
 `;

@@ -23,10 +23,16 @@ export default function validate(
   };
 
   return class extends React.PureComponent<Props, State> {
-    state = {
-      error: '',
-      value: ''
-    };
+    constructor(props) {
+      super(props);
+
+      debug('constructor');
+
+      this.state = {
+        error: '',
+        value: ''
+      };
+    }
 
     handleChange = (evt: SyntheticInputEvent<>) => {
       evt.preventDefault();

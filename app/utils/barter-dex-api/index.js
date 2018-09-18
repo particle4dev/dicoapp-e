@@ -1,6 +1,7 @@
 // @flow
 import FetchService from '../fetch-service';
 import config from '../config';
+import type { EndpointType, CancelRequest } from './schema';
 
 const debug = require('debug')('dicoapp:utils:barter-dex-api');
 
@@ -41,12 +42,40 @@ class BarterDexAPI {
     });
   }
 
+  // publicCall() {
+  //   throw new Error('not implement yet. Return promise');
+  // }
+
+  // privateCall() {
+  //   throw new Error('not implement yet. Return promise');
+  // }
+
   post(data) {
     return this.fetch.create('', data);
   }
 
   create(data, ...rest) {
     return this.fetch.create('', data, ...rest);
+  }
+
+  /**
+   * Status/Info
+   */
+  getEndpoint(params: EndpointType) {
+    const endpointParams = Object.assign({}, params, {
+      method: 'getendpoint'
+    });
+    return this.create(endpointParams);
+  }
+
+  /**
+   * BarterDEX Operation
+   */
+  cancel(params: CancelRequest) {
+    const endpointParams = Object.assign({}, params, {
+      method: 'cancel'
+    });
+    return this.create(endpointParams);
   }
 
   login(passphrase: string) {

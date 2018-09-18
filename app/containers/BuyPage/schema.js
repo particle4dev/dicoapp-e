@@ -3,7 +3,13 @@
 // https://github.com/paularmstrong/normalizr
 // import { normalize, schema } from 'normalizr';
 
-type PriceCoin = {
+type BuyCoinPayload = {
+  basecoin: string,
+  paymentcoin: string,
+  amount: number
+};
+
+type BestPricePayload = {
   bestPrice: number,
   price: number, // the max price you are willing to pay for 1 base
   avevolume: number,
@@ -12,6 +18,10 @@ type PriceCoin = {
   base: string, // the currency you want to buy
   rel: string, // the currency you are paying with
   age: number,
+  zcredits: number,
+  address: string,
+  pubkey: string,
+  depth: number,
   createdAt?: Date,
   updatedAt?: Date
 };
@@ -50,4 +60,4 @@ type SwapCoin = {
   updatedAt?: Date
 };
 
-export type { PriceCoin, SwapCoin };
+export type { BuyCoinPayload, BestPricePayload, SwapCoin };

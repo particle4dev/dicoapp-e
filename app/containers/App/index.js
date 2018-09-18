@@ -9,6 +9,7 @@ import SeedPage from '../SeedPage';
 import LoginPage from '../LoginPage';
 import NotFoundPage from '../NotFoundPage';
 import LogoutDialog from '../LogoutDialog';
+import WebSocketComponent from '../WebSocketComponent';
 import injectSaga from '../../utils/inject-saga';
 // import ScrollManager from '../../components/ScrollManager';
 import { makeSelectAuthenticated, makeSelectLoading } from './selectors';
@@ -53,6 +54,7 @@ class App extends Component<Props> {
         <CssBaseline />
         {/* <ScrollManager> */}
         <Route component={LogoutDialog} />
+        <Route component={WebSocketComponent} />
         <Switch>
           <Route path={routes.BUY} component={BuyFallback} />
           <Route path={routes.WALLET} component={WalletFallback} />

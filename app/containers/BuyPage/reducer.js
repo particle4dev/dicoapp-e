@@ -11,6 +11,7 @@ import {
   LOAD_BUY_COIN_ERROR,
   CLEAR_BUY_COIN_ERROR,
   LOAD_RECENT_SWAPS_COIN,
+  LOAD_RECENT_SWAPS_DATA_FROM_WEBSOCKET,
   LOAD_RECENT_SWAPS_ERROR,
   REMOVE_SWAPS_DATA
 } from './constants';
@@ -18,7 +19,6 @@ import {
 import { LOGOUT } from '../App/constants';
 
 // The initial state of the App
-// const id = 'bc5e1509b2aea898b8dff71ecc3fa7d5bc7c361fb14187fe9bc06916fae63811';
 export const initialState = fromJS({
   prices: {
     loading: false,
@@ -32,43 +32,8 @@ export const initialState = fromJS({
   swaps: {
     loading: false,
     error: false,
-    list: [
-      // id
-    ],
-    entities: {
-      // [id]: {
-      //   id,
-      //   uuid: id,
-      //   requestid: 1914742321,
-      //   quoteid: 2455665257,
-      //   status: 'pending',
-      //   application: 'dICOapp',
-      //   bob: 'COQUI',
-      //   alice: 'BEER',
-      //   bobtxfee: 0.00001,
-      //   alicetxfee: 0.00001,
-      //   bobamount: 91.64950708,
-      //   aliceamount: 0.92601593,
-      //   sentflags: ['myfee'],
-      //   info: {
-      //     sentflags: ['myfee'],
-      //     bobdeposit:
-      //       '0000000000000000000000000000000000000000000000000000000000000000',
-      //     alicepayment:
-      //       '0000000000000000000000000000000000000000000000000000000000000000',
-      //     bobpayment:
-      //       '0000000000000000000000000000000000000000000000000000000000000000',
-      //     paymentspent:
-      //       '0000000000000000000000000000000000000000000000000000000000000000',
-      //     Apaymentspent:
-      //       '0000000000000000000000000000000000000000000000000000000000000000',
-      //     depositspent:
-      //       '0000000000000000000000000000000000000000000000000000000000000000',
-      //     alicedexfee:
-      //       'e5342f9a8834d86978d1ee609a6c2a998e0eaaeb7d0ea389b2306230a6463d51'
-      //   }
-      // }
-    }
+    list: [],
+    entities: {}
   }
 });
 
@@ -103,6 +68,7 @@ const buyReducer = handleActions(
       state
         .setIn(['buying', 'loading'], true)
         .setIn(['buying', 'error'], false),
+
     [LOAD_BUY_COIN_SUCCESS]: (state, { payload }) => {
       const {
         tradeid,
@@ -119,11 +85,11 @@ const buyReducer = handleActions(
       const entities = state.getIn(['swaps', 'entities']);
       // step one: update date
       return state
-        .setIn(['swaps', 'list'], list.push(tradeid))
+        .setIn(['swaps', 'list'], list.unshift(uuid))
         .setIn(
           ['swaps', 'entities'],
           entities.set(
-            tradeid,
+            uuid,
             fromJS({
               id: tradeid,
               uuid,
@@ -167,13 +133,13 @@ const buyReducer = handleActions(
         status
       } = payload;
       // step one: update list
-      let list = state.getIn(['swaps', 'list']);
-      if (!list.find(e => e === tradeid) && status === 'pending') {
-        list = list.push(tradeid);
-      }
+      const list = state.getIn(['swaps', 'list']);
+      // if (!list.find(e => e === uuid) && status === 'pending') {
+      //   list = list.unshift(uuid);
+      // }
       // step two: update entities
       let entities = state.getIn(['swaps', 'entities']);
-      let entity = entities.get(tradeid);
+      let entity = entities.get(uuid);
       if (!entity) {
         // set new
         entity = fromJS({
@@ -207,17 +173,56 @@ const buyReducer = handleActions(
           })
         );
       }
-      entities = entities.set(tradeid, entity);
-      if (status === 'finished' && list.get(0) === tradeid) {
-        return state
-          .setIn(['swaps', 'list'], list)
-          .setIn(['swaps', 'entities'], entities)
-          .setIn(['swaps', 'loading'], false);
+      entities = entities.set(uuid, entity);
+      if (status === 'finished' && list.get(0) === uuid) {
+        return (
+          state
+            // .setIn(['swaps', 'list'], list)
+            .setIn(['swaps', 'entities'], entities)
+            .setIn(['swaps', 'loading'], false)
+        );
       }
-      return state
-        .setIn(['swaps', 'list'], list)
-        .setIn(['swaps', 'entities'], entities)
-        .setIn(['swaps', 'loading'], true);
+      return (
+        state
+          // .setIn(['swaps', 'list'], list)
+          .setIn(['swaps', 'entities'], entities)
+          .setIn(['swaps', 'loading'], true)
+      );
+    },
+
+    [LOAD_RECENT_SWAPS_DATA_FROM_WEBSOCKET]: (state, { payload }) => {
+      const { uuid, expiration, method, update, status, sentflags } = payload;
+
+      // step one: find entity
+      let entities = state.getIn(['swaps', 'entities']);
+      let entity = entities.get(uuid);
+
+      // step two: update expiration
+      if (expiration) {
+        entity = entity.set('expiration', expiration);
+      }
+
+      // step three: update sentflags
+      if (method === 'update') {
+        let sentf = entity.get('sentflags');
+        if (!sentf.includes(update)) {
+          sentf = sentf.unshift(update);
+        }
+        entity = entity.set('sentflags', sentf);
+      }
+
+      if (method === 'tradestatus') {
+        entity = entity.set('sentflags', sentflags);
+      }
+
+      // step four: update status
+      if (method === 'tradestatus') {
+        entity = entity.set('status', status);
+      }
+
+      entities = entities.set(uuid, entity);
+
+      return state.setIn(['swaps', 'entities'], entities);
     },
 
     [LOAD_RECENT_SWAPS_ERROR]: (state, { error }) =>

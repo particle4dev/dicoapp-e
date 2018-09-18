@@ -11,6 +11,7 @@ import {
   makeSelectBalanceEntities
 } from '../App/selectors';
 import { loadSwapSuccess } from '../App/actions';
+import config from '../../utils/config';
 import api from '../../utils/barter-dex-api';
 import {
   LOAD_PRICES,
@@ -18,7 +19,6 @@ import {
   LOAD_BUY_COIN,
   LOAD_RECENT_SWAPS
 } from './constants';
-import { COIN_BASE } from './tokenconfig';
 import {
   loadPricesSuccess,
   loadPricesError,
@@ -33,74 +33,61 @@ import {
   makeSelectPricesEntities,
   makeSelectSwapsEntities
 } from './selectors';
-// import { covertSymbolToName, Loops } from './utils';
 
-const numcoin = 100000000;
-const txfee = 10000;
 const debug = require('debug')('dicoapp:containers:BuyPage:saga');
 
-// ==========================TESTS============================
-
-// async function checkSwapStatus(userpass) {
-//   const swaplist = {
-//     userpass
-//   };
-//   const recentswapsResult = await api.recentswaps(swaplist);
-//   console.log('recentswapsResult', recentswapsResult);
-//   console.log('recentswapsResult', JSON.stringify(recentswapsResult));
-
-//   for (let i = 0; i < recentswapsResult.swaps.length; i += 1) {
-//     const swapobj = recentswapsResult.swaps[i];
-//     // eslint-disable-next-line no-await-in-loop
-//     await checkSwap(userpass, swapobj[0], swapobj[1]);
-//   }
-// }
-
-// const checkSwapStatusLoops = new Loops(10000, checkSwapStatus);
-
-// ======================================================
+const COIN_BASE = config.get('marketmaker.tokenconfig');
+const numcoin = 100000000;
+const txfee = 10000;
 
 export function* loadPrice(coin, userpass) {
   const getprices = {
     userpass,
-    base: COIN_BASE.get('coin'),
+    base: COIN_BASE.coin,
     rel: coin
   };
   const buf = 1.08 * numcoin;
-  // const name = covertSymbolToName(coin);
   let bestprice = 0;
   try {
     const result = yield api.orderbook(getprices);
-    if (result.asks.length > 0) {
-      const ask = result.asks.find(e => e.maxvolume > 0);
-      bestprice = Number((ask.price * numcoin).toFixed(0));
-      bestprice = Number(
-        (((buf / numcoin) * bestprice) / numcoin).toFixed(8) * numcoin
-      ).toFixed(0);
-      debug(`best prices:`, ask);
+    const ask = result.asks.find(e => e.maxvolume > 0);
+    if (!ask) {
       return yield put(
         loadBestPrice({
-          bestPrice: Number(bestprice / numcoin),
-          price: ask.price,
-          avevolume: ask.avevolume,
-          maxvolume: ask.maxvolume,
-          numutxos: ask.numutxos,
-          base: COIN_BASE.get('coin'),
+          bestPrice: 0,
+          price: 0,
+          avevolume: 0,
+          maxvolume: 0,
+          numutxos: 0,
+          base: COIN_BASE.coin,
           rel: coin,
-          age: ask.age
+          age: 0,
+          zcredits: 0,
+          address: '',
+          pubkey: '',
+          depth: 0
         })
       );
     }
+    bestprice = Number((ask.price * numcoin).toFixed(0));
+    bestprice = Number(
+      (((buf / numcoin) * bestprice) / numcoin).toFixed(8) * numcoin
+    ).toFixed(0);
+    debug(`best prices:`, ask);
     return yield put(
       loadBestPrice({
-        bestPrice: 0,
-        price: 0,
-        avevolume: 0,
-        maxvolume: 0,
-        numutxos: 0,
-        base: COIN_BASE.get('coin'),
+        bestPrice: Number(bestprice / numcoin),
+        price: ask.price,
+        avevolume: ask.avevolume,
+        maxvolume: ask.maxvolume,
+        numutxos: ask.numutxos,
+        base: COIN_BASE.coin,
         rel: coin,
-        age: 0
+        age: ask.age,
+        zcredits: ask.zcredits,
+        address: ask.address,
+        pubkey: ask.pubkey,
+        depth: ask.depth
       })
     );
   } catch (err) {
