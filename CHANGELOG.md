@@ -1,5 +1,9 @@
 # Change Log
 
+# 0.8.1 (2018.9.19)
+
+- ed27cd4 build: fixed system path
+
 # 0.8.0 (2018.9.18)
 
 - 0a46895 use-websocket-to-update-swap-status (#71)
