@@ -4,9 +4,11 @@ import { all, fork, take, race, call, put } from 'redux-saga/effects';
 import { LOGIN, LOGOUT } from '../App/constants';
 import { loginSuccess, loginError } from '../App/actions';
 import api from '../../utils/barter-dex-api';
-import config from '../../utils/config';
+import getConfig from '../../utils/config';
 
 const debug = require('debug')('dicoapp:containers:LoginPage:saga');
+
+const config = getConfig();
 
 export function* authorize(passphrase) {
   try {

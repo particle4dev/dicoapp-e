@@ -1,5 +1,5 @@
 // https://www.atomicexplorer.com/#/faucet/coqui
-import tokenconfig from './tokenconfig';
+const tokenconfig = require('./tokenconfig');
 
 const data = [
   {
@@ -122,7 +122,7 @@ const data = [
   }
 ];
 
-export function generateElectrums(d) {
+function generateElectrums(d) {
   const result = [];
   for (let i = 0; i < d.length; i += 1) {
     const record = d[i];
@@ -139,7 +139,9 @@ export function generateElectrums(d) {
   return result;
 }
 
-export default function loadCoinsData(config) {
+exports.generateElectrums = generateElectrums;
+
+exports.default = function loadCoinsData(config) {
   const coinsdata = data.concat([tokenconfig]);
 
   return config.set('marketmaker', {
@@ -147,4 +149,4 @@ export default function loadCoinsData(config) {
     electrums: generateElectrums(coinsdata),
     tokenconfig
   });
-}
+};

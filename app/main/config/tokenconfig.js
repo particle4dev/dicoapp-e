@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   coin: 'COQUI',
   name: 'Coqui Cash',
   asset: 'COQUI',

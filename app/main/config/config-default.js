@@ -13,6 +13,6 @@ const def = {
   }
 };
 
-export default function loadDefault(config) {
+exports.default = function loadDefault(config) {
   return config.set(def);
-}
+};

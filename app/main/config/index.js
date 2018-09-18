@@ -1,8 +1,9 @@
-import Config from '../../lib/config-manager';
-import loadPaths from './paths';
-import loadDefault from './config-default';
-import loadCoinsData from './coins-data';
-import loadSymbol from './symbol';
+const ipc = require('electron-better-ipc');
+const Config = require('../../lib/config-manager');
+const loadPaths = require('./paths').default;
+const loadDefault = require('./config-default').default;
+const loadCoinsData = require('./coins-data').default;
+const loadSymbol = require('./symbol').default;
 
 let config = null;
 
@@ -17,8 +18,9 @@ function setup() {
   loadSymbol(config);
 
   // listen ipc event here
+  ipc.answerRenderer('config:get', () => config.get());
 
   return config;
 }
 
-export default setup();
+module.exports = setup();

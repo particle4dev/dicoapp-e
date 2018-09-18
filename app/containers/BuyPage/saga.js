@@ -11,7 +11,7 @@ import {
   makeSelectBalanceEntities
 } from '../App/selectors';
 import { loadSwapSuccess } from '../App/actions';
-import config from '../../utils/config';
+import getConfig from '../../utils/config';
 import api from '../../utils/barter-dex-api';
 import {
   LOAD_PRICES,
@@ -36,6 +36,7 @@ import {
 
 const debug = require('debug')('dicoapp:containers:BuyPage:saga');
 
+const config = getConfig();
 const COIN_BASE = config.get('marketmaker.tokenconfig');
 const numcoin = 100000000;
 const txfee = 10000;

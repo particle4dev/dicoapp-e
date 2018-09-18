@@ -1,5 +1,6 @@
-import config from '../../utils/config';
+import getConfig from '../../utils/config';
 
+const config = getConfig();
 const symbolToName = config.get('symbol.symbolToName');
 
 // eslint-disable-next-line import/prefer-default-export

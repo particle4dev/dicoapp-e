@@ -1,4 +1,4 @@
-export default function loadSymbol(config) {
+exports.default = function loadSymbol(config) {
   const coins = config.get('marketmaker.data');
   const symbolToName = coins.reduce((acc, cur) => {
     acc[cur.coin] = cur.name;
@@ -8,4 +8,4 @@ export default function loadSymbol(config) {
   return config.set('symbol', {
     symbolToName
   });
-}
+};

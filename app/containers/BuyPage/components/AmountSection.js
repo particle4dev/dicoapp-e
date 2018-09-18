@@ -18,7 +18,7 @@ import { getCoinIcon } from '../../../components/CryptoIcons';
 import { requiredNumber } from '../../../components/Form/helper';
 import validate from '../../../components/Form/validate';
 import { makeSelectBalanceEntities } from '../../App/selectors';
-import config from '../../../utils/config';
+import getConfig from '../../../utils/config';
 import type { BuyCoinPayload } from '../schema';
 import { Loops } from '../utils';
 import { AUTO_HIDE_SNACKBAR_TIME, STATE_SWAPS, TIME_LOOP } from '../constants';
@@ -45,6 +45,7 @@ import CoinSelectable from './CoinSelectable';
 
 const debug = require('debug')('dicoapp:containers:BuyPage:AmountSection');
 
+const config = getConfig();
 const COIN_BASE = config.get('marketmaker.tokenconfig');
 
 // eslint-disable-next-line react/prop-types
@@ -538,7 +539,7 @@ class AmountSection extends Component<Props, State> {
 }
 
 AmountSection.displayName = 'AmountSection';
-
+// eslint-disable-next-line flowtype/no-weak-types
 export function mapDispatchToProps(dispatch: Dispatch<Object>) {
   return {
     dispatchLoadBuyCoin: (payload: BuyCoinPayload) =>

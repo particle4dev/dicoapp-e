@@ -1,7 +1,9 @@
 // @flow
 import FetchService from '../fetch-service';
-import config from '../config';
+import getConfig from '../config';
 import type { EndpointType, CancelRequest } from './schema';
+
+const config = getConfig();
 
 const debug = require('debug')('dicoapp:utils:barter-dex-api');
 

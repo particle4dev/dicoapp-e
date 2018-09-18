@@ -1,4 +1,4 @@
-import isObj from 'lodash/isObject';
+const isObj = obj => typeof obj === 'object' && obj !== null;
 
 function getPathSegments(path) {
   const pathArr = path.split('.');
@@ -19,7 +19,7 @@ function getPathSegments(path) {
   return parts;
 }
 
-export default {
+module.exports = {
   get(obj, path, value) {
     if (!isObj(obj) || typeof path !== 'string') {
       return value === undefined ? obj : value;

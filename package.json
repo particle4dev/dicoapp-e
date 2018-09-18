@@ -51,21 +51,12 @@
     "productName": "dICOApp",
     "compression": "maximum",
     "appId": "com.komodoplatform.dICOApp",
-    "extraResources": [
-      {
-        "from": "./app/bin/marketmaker/LINUX",
-        "to": "./bin/marketmaker/LINUX"
-      },
-      {
-        "from": "./app/bin/marketmaker/OSX",
-        "to": "./bin/marketmaker/OSX"
-      },
-      {
-        "from": "./app/bin/marketmaker/WIN",
-        "to": "./bin/marketmaker/WIN"
-      }
+    "asarUnpack": [
+      "bin/marketmaker"
     ],
     "files": [
+      "!bin/marketmaker/*",
+      "bin/marketmaker/${os}",
       "config/",
       "dist/",
       "node_modules/",
@@ -244,7 +235,7 @@
     "debug": "^3.1.0",
     "devtron": "^1.4.0",
     "electron-debug": "^2.0.0",
-    "electron-util": "^0.9.0",
+    "electron-util": "^0.9.1",
     "faye-websocket": "^0.11.1",
     "history": "^4.7.2",
     "hoist-non-react-statics": "^3.0.1",

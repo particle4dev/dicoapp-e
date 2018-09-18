@@ -1,7 +1,9 @@
 import { createSelector } from 'reselect';
 import { makeSelectBalanceList as makeSelectBalanceListApp } from '../App/selectors';
-import config from '../../utils/config';
+import getConfig from '../../utils/config';
 import { APP_STATE_NAME } from './constants';
+
+const config = getConfig();
 
 const COIN_BASE = config.get('marketmaker.tokenconfig');
 

@@ -4,12 +4,13 @@ import type { List } from 'immutable';
 import { withStyles } from '@material-ui/core/styles';
 import { getCoinIcon } from '../../../components/CryptoIcons';
 import { Line } from '../../../components/placeholder';
-import config from '../../../utils/config';
+import getConfig from '../../../utils/config';
 import { covertSymbolToName, floor } from '../utils';
 import CoinSelectable from './CoinSelectable';
 
 const debug = require('debug')('dicoapp:containers:BuyPage:PaymentSection');
 
+const config = getConfig();
 const COIN_BASE = config.get('marketmaker.tokenconfig');
 
 const line = (
