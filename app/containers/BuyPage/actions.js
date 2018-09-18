@@ -13,6 +13,7 @@ import {
   LOAD_RECENT_SWAPS,
   LOAD_RECENT_SWAPS_COIN,
   // LOAD_RECENT_SWAPS_SUCCESS,
+  LOAD_RECENT_SWAPS_DATA_FROM_WEBSOCKET,
   LOAD_RECENT_SWAPS_ERROR,
   REMOVE_SWAPS_DATA
 } from './constants';
@@ -96,6 +97,14 @@ export function loadRecentSwaps() {
 export function loadRecentSwapsCoin(payload: Object) {
   return {
     type: LOAD_RECENT_SWAPS_COIN,
+    payload
+  };
+}
+
+// eslint-disable-next-line flowtype/no-weak-types
+export function loadRecentSwapsDataFromWebsocket(payload: Object) {
+  return {
+    type: LOAD_RECENT_SWAPS_DATA_FROM_WEBSOCKET,
     payload
   };
 }

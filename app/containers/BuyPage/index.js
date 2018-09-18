@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import type { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import type { List, Map } from 'immutable';
 import { withStyles } from '@material-ui/core/styles';
@@ -20,7 +21,6 @@ import injectSaga from '../../utils/inject-saga';
 import injectWebsocket from '../../utils/inject-websocket';
 import { WEBSOCKET_DAEMON } from '../../utils/constants';
 import ErrorBoundary from '../../components/ErrorBoundary';
-// import { Circle, Line, LineWrapper } from '../../components/placeholder';
 import { NavigationLayout } from '../Layout';
 import { makeSelectBalanceEntities } from '../App/selectors';
 import { loadBalance } from '../App/actions';
@@ -187,7 +187,7 @@ class BuyPage extends Component<Props, State> {
   }
 }
 
-export function mapDispatchToProps(dispatch) {
+export function mapDispatchToProps(dispatch: Dispatch<Object>) {
   return {
     dispatchLoadPrices: () => dispatch(loadPrices()),
     dispatchLoadPrice: (coin: string) => dispatch(loadPrice(coin)),

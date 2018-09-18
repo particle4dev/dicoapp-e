@@ -14,6 +14,8 @@ export const LOAD_RECENT_SWAPS = 'dicoapp/BuyPage/LOAD_RECENT_SWAPS';
 export const LOAD_RECENT_SWAPS_COIN = 'dicoapp/BuyPage/LOAD_RECENT_SWAPS_COIN';
 export const LOAD_RECENT_SWAPS_SUCCESS =
   'dicoapp/BuyPage/LOAD_RECENT_SWAPS_SUCCESS';
+export const LOAD_RECENT_SWAPS_DATA_FROM_WEBSOCKET =
+  'dicoapp/BuyPage/LOAD_SWAP_DATA_FROM_WEBSOCKET';
 export const LOAD_RECENT_SWAPS_ERROR =
   'dicoapp/BuyPage/LOAD_RECENT_SWAPS_ERROR';
 export const REMOVE_SWAPS_DATA = 'dicoapp/BuyPage/REMOVE_SWAPS_DATA';

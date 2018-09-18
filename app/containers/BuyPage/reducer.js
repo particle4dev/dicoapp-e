@@ -11,6 +11,7 @@ import {
   LOAD_BUY_COIN_ERROR,
   CLEAR_BUY_COIN_ERROR,
   LOAD_RECENT_SWAPS_COIN,
+  LOAD_RECENT_SWAPS_DATA_FROM_WEBSOCKET,
   LOAD_RECENT_SWAPS_ERROR,
   REMOVE_SWAPS_DATA
 } from './constants';
@@ -84,11 +85,11 @@ const buyReducer = handleActions(
       const entities = state.getIn(['swaps', 'entities']);
       // step one: update date
       return state
-        .setIn(['swaps', 'list'], list.unshift(tradeid))
+        .setIn(['swaps', 'list'], list.unshift(uuid))
         .setIn(
           ['swaps', 'entities'],
           entities.set(
-            tradeid,
+            uuid,
             fromJS({
               id: tradeid,
               uuid,
@@ -132,13 +133,13 @@ const buyReducer = handleActions(
         status
       } = payload;
       // step one: update list
-      let list = state.getIn(['swaps', 'list']);
-      if (!list.find(e => e === tradeid) && status === 'pending') {
-        list = list.unshift(tradeid);
-      }
+      const list = state.getIn(['swaps', 'list']);
+      // if (!list.find(e => e === uuid) && status === 'pending') {
+      //   list = list.unshift(uuid);
+      // }
       // step two: update entities
       let entities = state.getIn(['swaps', 'entities']);
-      let entity = entities.get(tradeid);
+      let entity = entities.get(uuid);
       if (!entity) {
         // set new
         entity = fromJS({
@@ -172,17 +173,56 @@ const buyReducer = handleActions(
           })
         );
       }
-      entities = entities.set(tradeid, entity);
-      if (status === 'finished' && list.get(0) === tradeid) {
-        return state
-          .setIn(['swaps', 'list'], list)
-          .setIn(['swaps', 'entities'], entities)
-          .setIn(['swaps', 'loading'], false);
+      entities = entities.set(uuid, entity);
+      if (status === 'finished' && list.get(0) === uuid) {
+        return (
+          state
+            // .setIn(['swaps', 'list'], list)
+            .setIn(['swaps', 'entities'], entities)
+            .setIn(['swaps', 'loading'], false)
+        );
       }
-      return state
-        .setIn(['swaps', 'list'], list)
-        .setIn(['swaps', 'entities'], entities)
-        .setIn(['swaps', 'loading'], true);
+      return (
+        state
+          // .setIn(['swaps', 'list'], list)
+          .setIn(['swaps', 'entities'], entities)
+          .setIn(['swaps', 'loading'], true)
+      );
+    },
+
+    [LOAD_RECENT_SWAPS_DATA_FROM_WEBSOCKET]: (state, { payload }) => {
+      const { uuid, expiration, method, update, status, sentflags } = payload;
+
+      // step one: find entity
+      let entities = state.getIn(['swaps', 'entities']);
+      let entity = entities.get(uuid);
+
+      // step two: update expiration
+      if (expiration) {
+        entity = entity.set('expiration', expiration);
+      }
+
+      // step three: update sentflags
+      if (method === 'update') {
+        let sentf = entity.get('sentflags');
+        if (!sentf.includes(update)) {
+          sentf = sentf.unshift(update);
+        }
+        entity = entity.set('sentflags', sentf);
+      }
+
+      if (method === 'tradestatus') {
+        entity = entity.set('sentflags', sentflags);
+      }
+
+      // step four: update status
+      if (method === 'tradestatus') {
+        entity = entity.set('status', status);
+      }
+
+      entities = entities.set(uuid, entity);
+
+      return state.setIn(['swaps', 'entities'], entities);
     },
 
     [LOAD_RECENT_SWAPS_ERROR]: (state, { error }) =>

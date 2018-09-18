@@ -168,8 +168,6 @@ export function* loadBuyCoinProcess({ payload }) {
       throw new Error('Not enough balance!');
     }
 
-    // throw new Error('Not enough balance!');
-
     // step one: get listUnspent data
     // const unspent = yield api.listUnspent({
     //   userpass,

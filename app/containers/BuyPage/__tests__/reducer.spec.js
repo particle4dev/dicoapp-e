@@ -1,5 +1,5 @@
 import buyReducer, { initialState } from '../reducer';
-import { loadPrices, loadBuyCoin } from '../actions';
+import { loadPrices, loadBuyCoin, loadBuyCoinError } from '../actions';
 
 describe('containers/BuyPage/reducers/initial', () => {
   it('should return the initial state', () => {
@@ -33,5 +33,20 @@ describe('containers/BuyPage/reducers/loadBuyCoin', () => {
         })
       )
     ).toEqual(expectedResult);
+  });
+});
+
+describe('containers/BuyPage/reducers/loadBuyCoinError', () => {
+  it('should handle the loadBuyCoinError action correctly', () => {
+    const message = 'Not enough balance!';
+    const expectedResult = initialState
+      .setIn(['buying', 'loading'], false)
+      .setIn(['buying', 'error'], {
+        message
+      });
+
+    expect(buyReducer(initialState, loadBuyCoinError(message))).toEqual(
+      expectedResult
+    );
   });
 });
