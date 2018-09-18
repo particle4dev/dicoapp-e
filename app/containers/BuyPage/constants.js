@@ -20,7 +20,7 @@ export const LOAD_RECENT_SWAPS_ERROR =
   'dicoapp/BuyPage/LOAD_RECENT_SWAPS_ERROR';
 export const REMOVE_SWAPS_DATA = 'dicoapp/BuyPage/REMOVE_SWAPS_DATA';
 export const AUTO_HIDE_SNACKBAR_TIME = 6000;
-export const TIME_LOOP = 15000;
+export const TIME_LOOP = 20000;
 export const STATE_SWAPS = [
   'Confirming',
   'My Fee',

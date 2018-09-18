@@ -1,5 +1,9 @@
 # Change Log
 
+# 0.8.0 (2018.9.18)
+
+- 0a46895 use-websocket-to-update-swap-status (#71)
+
 # 0.7.0 (2018.9.13)
 
 - 6819ef9 implement-buy-page (#56)
