@@ -17,11 +17,6 @@ export function* authorize(passphrase) {
       return e;
     });
 
-    // const info = yield call([api, 'getEndpoint'], {
-    //   userpass: data.userpass
-    // });
-    // console.log(info, 'zzzz');
-
     const requests = [];
     for (let i = 0; i < servers.length; i += 1) {
       requests.push(call([api, 'addServer'], servers[i]));
