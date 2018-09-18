@@ -1,3 +1,5 @@
+// https://github.com/hql287/Manta
+// https://jestjs.io/docs/en/mock-functions
 // import proxyquire from 'proxyquire';
 // import { initialState } from '../reducer';
 // import { APP_STATE_NAME } from '../constants';
