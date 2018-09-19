@@ -1,4 +1,4 @@
-import m from '../dot-prop';
+const m = require('../dot-prop');
 
 describe('lib/dot-props', () => {
   it('get', () => {
