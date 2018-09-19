@@ -30,7 +30,7 @@ export function generateSeed() {
   }
 
   debug(`generateSeed: ${seed}`);
-  return seed;
+  return seed.trim();
 }
 
 export function generateWif(seed) {

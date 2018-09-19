@@ -1,4 +1,7 @@
-const isObj = obj => typeof obj === 'object' && obj !== null;
+const isObj = value => {
+  const type = typeof value;
+  return value != null && (type === 'object' || type === 'function');
+};
 
 function getPathSegments(path) {
   const pathArr = path.split('.');
