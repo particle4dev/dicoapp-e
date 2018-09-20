@@ -9,7 +9,6 @@ export async function setup() {
   config = Config();
   // const c = remote.require('./main/config');
   const c = await ipc.callMain('config:get');
-  console.log(c);
   config.set(c);
 
   // listen ipc event here
