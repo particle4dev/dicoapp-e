@@ -4,6 +4,8 @@ import Base from './base';
 
 const ignoreFieldsInHeader = ['content-length'];
 
+const TIMEOUT = 30000;
+
 class FetchService extends Base {
   constructor(settings) {
     super(settings);
@@ -11,7 +13,12 @@ class FetchService extends Base {
   }
 
   request(options) {
-    const fetchOptions = Object.assign({}, options);
+    const fetchOptions = Object.assign(
+      {
+        timeout: TIMEOUT
+      },
+      options
+    );
     fetchOptions.headers = omit(fetchOptions.headers, ignoreFieldsInHeader);
 
     fetchOptions.headers = Object.assign(

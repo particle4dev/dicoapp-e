@@ -192,6 +192,7 @@ const buyReducer = handleActions(
 
     [LOAD_RECENT_SWAPS_DATA_FROM_WEBSOCKET]: (state, { payload }) => {
       const { uuid, expiration, method, update, status, sentflags } = payload;
+      const list = state.getIn(['swaps', 'list']);
 
       // step one: find entity
       let entities = state.getIn(['swaps', 'entities']);
@@ -212,7 +213,7 @@ const buyReducer = handleActions(
       }
 
       if (method === 'tradestatus') {
-        entity = entity.set('sentflags', sentflags);
+        entity = entity.set('sentflags', fromJS(sentflags));
       }
 
       // step four: update status
@@ -222,7 +223,20 @@ const buyReducer = handleActions(
 
       entities = entities.set(uuid, entity);
 
-      return state.setIn(['swaps', 'entities'], entities);
+      if (status === 'finished' && list.get(0) === uuid) {
+        return (
+          state
+            // .setIn(['swaps', 'list'], list)
+            .setIn(['swaps', 'entities'], entities)
+            .setIn(['swaps', 'loading'], false)
+        );
+      }
+      return (
+        state
+          // .setIn(['swaps', 'list'], list)
+          .setIn(['swaps', 'entities'], entities)
+          .setIn(['swaps', 'loading'], true)
+      );
     },
 
     [LOAD_RECENT_SWAPS_ERROR]: (state, { error }) =>

@@ -1,5 +1,10 @@
 import buyReducer, { initialState } from '../reducer';
-import { loadPrices, loadBuyCoin, loadBuyCoinError } from '../actions';
+import {
+  loadPrices,
+  loadBuyCoin,
+  loadBuyCoinError
+  // loadRecentSwapsDataFromWebsocket
+} from '../actions';
 
 describe('containers/BuyPage/reducers/initial', () => {
   it('should return the initial state', () => {
@@ -50,3 +55,5 @@ describe('containers/BuyPage/reducers/loadBuyCoinError', () => {
     );
   });
 });
+
+describe('containers/BuyPage/reducers/loadRecentSwapsDataFromWebsocket', () => {});
