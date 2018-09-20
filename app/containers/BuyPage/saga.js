@@ -205,8 +205,11 @@ export function* checkSwap(userpass, requestid, quoteid, isPending) {
     requestid,
     quoteid
   };
-  const swapstatusResult = yield api.swapstatus(swapelem);
+
+  const swapstatusResult = yield call([api, 'swapstatus'], swapelem);
+
   yield put(loadRecentSwapsCoin(swapstatusResult));
+
   if (isPending && swapstatusResult.status === 'finished') {
     yield put(
       loadSwapSuccess([
@@ -221,6 +224,7 @@ export function* checkSwap(userpass, requestid, quoteid, isPending) {
       ])
     );
   }
+
   return true;
 }
 
@@ -237,7 +241,8 @@ export function* loadRecentSwapsProcess() {
     };
     const swapsEntities = yield select(makeSelectSwapsEntities());
 
-    const recentswapsResult = yield api.recentswaps(swaplist);
+    const recentswapsResult = yield call([api, 'recentswaps'], swaplist);
+
     const { swaps } = recentswapsResult;
     const requests = [];
     for (let i = 0; i < swaps.length; i += 1) {
