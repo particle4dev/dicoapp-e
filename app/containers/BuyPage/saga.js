@@ -41,27 +41,24 @@ const COIN_BASE = config.get('marketmaker.tokenconfig');
 const numcoin = 100000000;
 const txfee = 10000;
 
-export function* loadPrice(coin, userpass, pubkey) {
+export function* loadPrice(coin, userpass) {
   const getprices = {
     userpass,
     base: COIN_BASE.coin,
     rel: coin
   };
   const buf = 1.08 * numcoin;
+  const bob = COIN_BASE.pubkey;
   let bestprice = 0;
   try {
     const result = yield api.orderbook(getprices);
     let ask = null;
-    if (pubkey) {
-      debug('find order by pubkey');
-      ask = result.asks.find(e => e.pubkey === pubkey);
+    if (ask = result.asks.find(e => e.pubkey === bob)) {
+      debug('found dico bob order');
     } else {
-      debug('not found pubkey so we are going to load first order');
-      ask = result.asks.find(e => e.maxvolume > 0);
+      throw new Error('dICO Bob is offline!');
     }
-    if (!ask) {
-      throw new Error('not found the best price');
-    }
+
     bestprice = Number((ask.price * numcoin).toFixed(0));
     bestprice = Number(
       (((buf / numcoin) * bestprice) / numcoin).toFixed(8) * numcoin
@@ -119,7 +116,7 @@ export function* loadPricesProcess() {
     const requests = [];
     for (let i = 0; i < balance.size; i += 1) {
       const coin = balance.get(i);
-      requests.push(call(loadPrice, coin, userpass, tokenconfig.pubkey));
+      requests.push(call(loadPrice, coin, userpass));
     }
 
     const data = yield all(requests);
