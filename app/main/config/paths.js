@@ -1,4 +1,3 @@
-const fs = require('fs');
 const util = require('electron-util');
 const { app } = require('electron');
 const { homedir } = require('os');
@@ -31,9 +30,7 @@ const marketmakerPlatformPath = binDir => {
 exports.default = function loadPaths(config) {
   // create user data path
   const userDataDir = resolve(app.getPath('userData'), config.get('APPNAME'));
-  if (!fs.existsSync(userDataDir)) {
-    fs.mkdirSync(userDataDir);
-  }
+
   const binDir = is.development
     ? resolve(__dirname, '../../bin')
     : resolve(__dirname, 'bin');

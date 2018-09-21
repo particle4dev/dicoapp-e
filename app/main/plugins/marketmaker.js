@@ -1,3 +1,4 @@
+import fs from 'fs';
 import childProcess from 'child_process';
 import ipc from 'electron-better-ipc';
 import { app } from 'electron';
@@ -20,6 +21,11 @@ const MarketMaker = () => {
       // killProcess('marketmaker');
       this.stop();
 
+      const userDataDir = config.get('paths.userDataDir');
+      if (!fs.existsSync(userDataDir)) {
+        fs.mkdirSync(userDataDir);
+      }
+
       const coins = config.get('marketmaker.data');
       const startparams = Object.assign({}, options, {
         client: 1,
@@ -33,7 +39,7 @@ const MarketMaker = () => {
       marketmakerProcess = childProcess.spawn(
         config.get('paths.marketmaker'),
         [JSON.stringify(startparams)],
-        { cwd: config.get('paths.userDataDir') }
+        { cwd: userDataDir }
       );
 
       state.isRunning = true;
