@@ -1,5 +1,4 @@
 // eslint-disable-next-line import/prefer-default-export
-
 export const APP_STATE_NAME = 'buy';
 export const LOAD_PRICES = 'dicoapp/BuyPage/LOAD_PRICES';
 export const LOAD_PRICES_SUCCESS = 'dicoapp/BuyPage/LOAD_PRICES_SUCCESS';
@@ -27,5 +26,5 @@ export const STATE_SWAPS = [
   'Bob Deposit',
   'Alice Payment',
   'Bob Payment',
-  'Alice Spend'
+  'Swap Finished' // 'Alice Spend'
 ];

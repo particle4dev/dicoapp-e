@@ -250,13 +250,3 @@ export const LOAD_SWAP_SUCCESS = [
     value: 91.64950708
   }
 ];
-
-export const WEBSOCKET_STATE_ONE = {};
-
-export const WEBSOCKET_STATE_TWO = {};
-
-export const WEBSOCKET_STATE_THREE = {};
-
-export const WEBSOCKET_STATE_FOUR = {};
-
-export const WEBSOCKET_STATE_FIVE = {};
