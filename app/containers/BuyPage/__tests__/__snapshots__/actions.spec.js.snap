@@ -1,5 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`containers/BuyPage/actions/loadBestPrice should loadBestPrice should create loadBestPrice action 1`] = `
+Object {
+  "payload": Object {
+    "address": "",
+    "age": 0,
+    "avevolume": 0,
+    "base": "COQUI",
+    "bestPrice": 0,
+    "depth": 0,
+    "maxvolume": 0,
+    "numutxos": 0,
+    "price": 0,
+    "pubkey": "",
+    "rel": "PIZZA",
+    "zcredits": 0,
+  },
+  "type": "dicoapp/BuyPage/LOAD_BEST_PRICE",
+}
+`;
+
 exports[`containers/BuyPage/actions/loadBuyCoin should loadBuyCoin should create loadBuyCoin action 1`] = `
 Object {
   "payload": Object {

@@ -41,7 +41,7 @@ const COIN_BASE = config.get('marketmaker.tokenconfig');
 const numcoin = 100000000;
 const txfee = 10000;
 
-export function* loadPrice(coin, userpass) {
+export function* loadPrice(coin, userpass, pubkey) {
   const getprices = {
     userpass,
     base: COIN_BASE.coin,
@@ -51,24 +51,16 @@ export function* loadPrice(coin, userpass) {
   let bestprice = 0;
   try {
     const result = yield api.orderbook(getprices);
-    const ask = result.asks.find(e => e.maxvolume > 0);
+    let ask = null;
+    if (pubkey) {
+      debug('find order by pubkey');
+      ask = result.asks.find(e => e.pubkey === pubkey);
+    } else {
+      debug('not found pubkey so we are going to load first order');
+      ask = result.asks.find(e => e.maxvolume > 0);
+    }
     if (!ask) {
-      return yield put(
-        loadBestPrice({
-          bestPrice: 0,
-          price: 0,
-          avevolume: 0,
-          maxvolume: 0,
-          numutxos: 0,
-          base: COIN_BASE.coin,
-          rel: coin,
-          age: 0,
-          zcredits: 0,
-          address: '',
-          pubkey: '',
-          depth: 0
-        })
-      );
+      throw new Error('not found the best price');
     }
     bestprice = Number((ask.price * numcoin).toFixed(0));
     bestprice = Number(
@@ -93,7 +85,22 @@ export function* loadPrice(coin, userpass) {
     );
   } catch (err) {
     debug(`load price process: ${err.message}`);
-    return false;
+    return yield put(
+      loadBestPrice({
+        bestPrice: 0,
+        price: 0,
+        avevolume: 0,
+        maxvolume: 0,
+        numutxos: 0,
+        base: COIN_BASE.coin,
+        rel: coin,
+        age: 0,
+        zcredits: 0,
+        address: '',
+        pubkey: '',
+        depth: 0
+      })
+    );
   }
 }
 
@@ -107,10 +114,12 @@ export function* loadPricesProcess() {
     const userpass = user.get('userpass');
     const balance = yield select(makeSelectBalanceList());
 
+    const tokenconfig = config.get('marketmaker.tokenconfig');
+
     const requests = [];
     for (let i = 0; i < balance.size; i += 1) {
       const coin = balance.get(i);
-      requests.push(call(loadPrice, coin, userpass));
+      requests.push(call(loadPrice, coin, userpass, tokenconfig.pubkey));
     }
 
     const data = yield all(requests);

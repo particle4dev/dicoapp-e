@@ -2,6 +2,7 @@ import {
   loadPrice,
   loadPrices,
   loadPricesSuccess,
+  loadBestPrice,
   loadBuyCoin,
   loadBuyCoinError,
   removeSwapsData
@@ -10,6 +11,7 @@ import {
   LOAD_PRICE,
   LOAD_PRICES,
   LOAD_PRICES_SUCCESS,
+  LOAD_BEST_PRICE,
   LOAD_BUY_COIN,
   LOAD_BUY_COIN_ERROR,
   REMOVE_SWAPS_DATA
@@ -59,6 +61,35 @@ describe('containers/BuyPage/actions/loadPricesSuccess', () => {
     };
 
     expect(loadPricesSuccess()).toEqual(expectedResult);
+  });
+});
+
+describe('containers/BuyPage/actions/loadBestPrice', () => {
+  const payload = {
+    address: '',
+    age: 0,
+    avevolume: 0,
+    base: 'COQUI',
+    bestPrice: 0,
+    depth: 0,
+    maxvolume: 0,
+    numutxos: 0,
+    price: 0,
+    pubkey: '',
+    rel: 'PIZZA',
+    zcredits: 0
+  };
+  it('should loadBestPrice should create loadBestPrice action', () => {
+    expect(loadBestPrice(payload)).toMatchSnapshot();
+  });
+
+  it('should return the correct type and the passed name', () => {
+    const expectedResult = {
+      type: LOAD_BEST_PRICE,
+      payload
+    };
+
+    expect(loadBestPrice(payload)).toEqual(expectedResult);
   });
 });
 
