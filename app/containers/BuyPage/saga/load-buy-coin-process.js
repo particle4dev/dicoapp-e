@@ -70,6 +70,7 @@ export default function* loadBuyCoinProcess({ payload, time = intervalTime }) {
         // splitting utxos
         debug('splitting utxos');
         if (!isSplittingTheFund) {
+          // FIXED ME: This is UI code. We should move it to somewhere else (react component).
           swal(
             'Splitting Procedure',
             'You will need at least 2 UTXOs to perform your swap. We are trying to split it for you. Dont turn off the application.'

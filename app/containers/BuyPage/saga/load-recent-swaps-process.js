@@ -22,19 +22,20 @@ export function* checkSwap(userpass, requestid, quoteid, isPending) {
     yield put(loadRecentSwapsCoin(swapstatusResult));
 
     if (isPending && swapstatusResult.status === 'finished') {
-      console.log(isPending);
-      //   yield put(
-      //     loadSwapSuccess([
-      //       {
-      //         coin: swapstatusResult.bob,
-      //         value: swapstatusResult.srcamount
-      //       },
-      //       {
-      //         coin: swapstatusResult.alice,
-      //         value: 0 - swapstatusResult.destamount
-      //       }
-      //     ])
-      //   );
+      // NOTE: turn this off since we really run it in subscribe func
+      debug(`isPending = ${isPending}`);
+      // yield put(
+      //   loadSwapSuccess([
+      //     {
+      //       coin: swapstatusResult.bob,
+      //       value: swapstatusResult.srcamount
+      //     },
+      //     {
+      //       coin: swapstatusResult.alice,
+      //       value: 0 - swapstatusResult.destamount
+      //     }
+      //   ])
+      // );
     }
     return true;
   } finally {
