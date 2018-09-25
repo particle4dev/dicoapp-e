@@ -1,4 +1,5 @@
 import fs from 'fs';
+import split2 from 'split2';
 import childProcess from 'child_process';
 import ipc from 'electron-better-ipc';
 import { app } from 'electron';
@@ -17,9 +18,9 @@ const MarketMaker = () => {
 
   return Object.assign({
     start: function start(options) {
-      debug('start');
       // killProcess('marketmaker');
       this.stop();
+      debug('start');
 
       const userDataDir = config.get('paths.userDataDir');
       if (!fs.existsSync(userDataDir)) {
@@ -63,6 +64,12 @@ const MarketMaker = () => {
       //   state.isRunning = false;
       //   marketmakerCrashedDialog();
       // });
+
+      marketmakerProcess.stdout.setEncoding('utf8');
+      marketmakerProcess.stdout.pipe(split2()).on('data', data => debug(data));
+
+      marketmakerProcess.stderr.setEncoding('utf8');
+      marketmakerProcess.stderr.pipe(split2()).on('data', data => debug(data));
 
       app.on('quit', () => {
         this.stop();

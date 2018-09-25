@@ -1,3 +1,4 @@
+// @flow
 /*
  * App Actions
  *
@@ -30,13 +31,9 @@ import {
   LOAD_WITHDRAW_ERROR,
   LOAD_SWAP_SUCCESS
 } from './constants';
+import type { BalancePayload } from './schema';
 
-/**
- * Load the repositories, this action starts the request saga
- *
- * @return {object} An action object with a type of LOAD_REPOS
- */
-export function login(passphrase) {
+export function login(passphrase: string) {
   return {
     type: LOGIN,
     payload: {
@@ -45,14 +42,6 @@ export function login(passphrase) {
   };
 }
 
-/**
- * Dispatched when the repositories are loaded by the request saga
- *
- * @param  {array} repos The repository data
- * @param  {string} username The current username
- *
- * @return {object}      An action object with a type of LOGIN_SUCCESS passing the repos
- */
 export function loginSuccess(user) {
   return {
     type: LOGIN_SUCCESS,
@@ -62,13 +51,6 @@ export function loginSuccess(user) {
   };
 }
 
-/**
- * Dispatched when loading the repositories fails
- *
- * @param  {object} error The error
- *
- * @return {object}       An action object with a type of LOGIN_ERROR passing the error
- */
 export function loginError(error) {
   return {
     type: LOGIN_ERROR,
@@ -76,20 +58,11 @@ export function loginError(error) {
   };
 }
 
-/**
- * Logout, this action starts the request saga
- *
- * @return {object} An action object with a type of LOGOUT
- */
 export function logout() {
   return {
     type: LOGOUT
   };
 }
-
-/**
- *
- */
 
 export function loadBalance() {
   return {
@@ -103,11 +76,7 @@ export function loadBalanceSuccess() {
   };
 }
 
-export function loadCoinBalanceSuccess(payload: {
-  address: string,
-  balance: number,
-  coin: string
-}) {
+export function loadCoinBalanceSuccess(payload: BalancePayload) {
   return {
     type: LOAD_COIN_BALANCE_SUCCESS,
     payload

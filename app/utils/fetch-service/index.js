@@ -1,4 +1,6 @@
 import fetch from 'node-fetch';
+// import axios from 'axios';
+
 import omit from 'lodash/omit';
 import Base from './base';
 
@@ -7,9 +9,9 @@ const ignoreFieldsInHeader = ['content-length'];
 const TIMEOUT = 30000;
 
 class FetchService extends Base {
-  constructor(settings) {
+  constructor(settings, connection = fetch) {
     super(settings);
-    this.connection = fetch;
+    this.connection = connection;
   }
 
   request(options) {
@@ -33,9 +35,10 @@ class FetchService extends Base {
       fetchOptions.body = JSON.stringify(options.body);
     }
 
-    // const f = this.connection
+    const f = this.connection;
 
-    return fetch(options.url, fetchOptions)
+    // return f(fetchOptions)
+    return f(options.url, fetchOptions)
       .then(this.checkStatus)
       .then(response => {
         if (response.status === 204) {
@@ -62,9 +65,10 @@ class FetchService extends Base {
       fetchOptions.body = JSON.stringify(options.body);
     }
 
-    // const f = this.connection
+    const f = this.connection;
 
-    return fetch(options.url, fetchOptions).then(response => {
+    // return f(fetchOptions)
+    return f(options.url, fetchOptions).then(response => {
       if (response.status === 204) {
         return null;
       }
@@ -78,6 +82,7 @@ class FetchService extends Base {
     if (response.ok) {
       return response;
     }
+    // response.json is not a function
 
     return response.json().then(error => {
       error.response = response; // eslint-disable-line no-param-reassign

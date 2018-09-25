@@ -31,7 +31,7 @@ export function* loadCoinTransactionsProcess(coin, address, userpass) {
     return data;
   } catch (err) {
     debug(`loadCoinTransactionsProcess fail ${coin}: ${err.message}`);
-    return false;
+    return [];
   }
 }
 

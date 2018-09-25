@@ -36,19 +36,21 @@ export function* logoutFlow() {
 
 export function* loadCoinBalanceProcess(coin, address, userpass) {
   try {
-    debug(`loadCoinBalanceProcess running${coin}`);
+    debug(`load coin balance process running ${coin}`);
     const params = {
       userpass,
       coin,
       address
     };
-    const data = yield api.getBalance(params);
+    const data = yield call([api, 'getBalance'], params);
     data.address = address;
+    // const utxo = yield call([api, 'listUnspent'], params);
     yield put(
       loadCoinBalanceSuccess({
         coin,
         address,
         balance: Number(data.balance)
+        // utxo
       })
     );
     debug(`load balance done ${coin}`);
@@ -59,7 +61,7 @@ export function* loadCoinBalanceProcess(coin, address, userpass) {
       coin: data.coin
     };
   } catch (err) {
-    debug(`loadCoinBalanceProcess fail ${coin}: ${err.message}`);
+    debug(`load coin balance process fail ${coin}: ${err.message}`);
     return false;
   }
 }

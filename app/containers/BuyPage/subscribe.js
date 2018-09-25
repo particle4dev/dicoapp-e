@@ -12,6 +12,10 @@ const allowedMethods = [
 ];
 
 export default async function buySubscribe({ result }, dispatch, getState) {
+  if (result.method !== 'postprice') {
+    console.log(JSON.stringify(result));
+  }
+
   if (result && allowedMethods.indexOf(result.method) !== -1) {
     const selectSwapsList = makeSelectSwapsList();
     const list = selectSwapsList(getState());
