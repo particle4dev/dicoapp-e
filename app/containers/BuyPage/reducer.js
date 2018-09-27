@@ -155,8 +155,16 @@ const buyReducer = handleActions(
           sentflags,
           status
         });
+      } else if (entity.get('status') === 'finished') {
+        // NOTE: stop update when a swap was finished
+        return state;
       } else {
         // update
+        // sentflags
+        const sentf = entity.get('sentflags');
+        if (sentflags && sentf.size < sentflags.length) {
+          entity = entity.set('sentflags', fromJS(sentflags));
+        }
         entity = entity.merge(
           fromJS({
             id: tradeid,
@@ -168,7 +176,6 @@ const buyReducer = handleActions(
             alice,
             bobamount: srcamount,
             aliceamount: destamount,
-            sentflags,
             status
           })
         );
@@ -197,6 +204,10 @@ const buyReducer = handleActions(
       // step one: find entity
       let entities = state.getIn(['swaps', 'entities']);
       let entity = entities.get(uuid);
+      if (entity && entity.get('status') === 'finished') {
+        // NOTE: stop update when a swap was finished
+        return state;
+      }
 
       // step two: update expiration
       if (expiration) {
@@ -208,8 +219,8 @@ const buyReducer = handleActions(
         let sentf = entity.get('sentflags');
         if (!sentf.includes(update)) {
           sentf = sentf.unshift(update);
+          entity = entity.set('sentflags', sentf);
         }
-        entity = entity.set('sentflags', sentf);
       }
 
       if (method === 'tradestatus') {

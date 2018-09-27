@@ -13,6 +13,6 @@ module.exports = {
       port: 10011
     }
   ],
-  pubkey: 'f5e71f32fbb1b16599f12c264b75f45c7bea63de6ed93899c499d35cc6ef466a',
+  pubkey: '01c1b9f76447ce8aef87e55e10f8480ddec704ea16a2f14b834276b6257bc768',
   active: 1
 };

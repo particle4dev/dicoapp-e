@@ -1,6 +1,22 @@
 const uuid = '89a2cc8d5c071b2b5e28c949573cc2ecd02dc912842e46c9f3e0326ecb739ca3';
 const requestid = 3769478507;
 const quoteid = 1873669175;
+const bob = 'COQUI';
+const alice = 'BEER';
+
+export const WEBSOCKET_STATE_ZERO = {
+  id: 3624682363,
+  uuid,
+  requestid,
+  quoteid,
+  expiration: 1536603425,
+  bob,
+  alice,
+  bobamount: 1.99009001,
+  aliceamount: 0.96320716,
+  sentflags: [],
+  status: 'pending'
+};
 
 export const WEBSOCKET_STATE_ONE = {
   queueid: 0,
