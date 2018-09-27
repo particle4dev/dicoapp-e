@@ -1,9 +1,10 @@
 /* eslint-disable react/no-array-index-key */
 // @flow
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import type { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import Grid from '@material-ui/core/Grid';
 import {
@@ -28,18 +29,13 @@ type Props = {
   list: Object,
   // eslint-disable-next-line flowtype/no-weak-types
   entities: Object,
-  className: string,
   // eslint-disable-next-line flowtype/no-weak-types
   dispatchLoadBalance: Function,
   // eslint-disable-next-line flowtype/no-weak-types
   dispatchLoadWithdraw: Function
 };
 
-type State = {};
-
-class Overview extends Component<Props, State> {
-  state = {};
-
+class Overview extends PureComponent<Props> {
   componentDidMount = () => {
     debug('watch transactions');
     const { dispatchLoadBalance } = this.props;
@@ -49,16 +45,10 @@ class Overview extends Component<Props, State> {
   render() {
     debug(`render`);
 
-    const {
-      classes,
-      className,
-      list,
-      entities,
-      dispatchLoadWithdraw
-    } = this.props;
+    const { classes, list, entities, dispatchLoadWithdraw } = this.props;
 
     return (
-      <Grid container spacing={0} className={className}>
+      <React.Fragment>
         {list.map((t, k) => (
           <Grid key={k} item xs={12} className={classes.containerSection}>
             <Wallet
@@ -67,14 +57,15 @@ class Overview extends Component<Props, State> {
             />
           </Grid>
         ))}
-      </Grid>
+      </React.Fragment>
     );
   }
 }
 
 Overview.displayName = 'Overview';
 
-export function mapDispatchToProps(dispatch) {
+// eslint-disable-next-line flowtype/no-weak-types
+export function mapDispatchToProps(dispatch: Dispatch<Object>) {
   return {
     dispatchLoadBalance: () => dispatch(loadBalance()),
     dispatchLoadWithdraw: (payload: {

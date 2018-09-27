@@ -5,9 +5,10 @@ import { ConnectedRouter } from 'react-router-redux';
 import { AppContainer } from 'react-hot-loader';
 import { createHashHistory } from 'history';
 import { MuiThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from './components/Theme';
 import configureStore from './store/configureStore';
-import App from './containers/App';
+import Routes from './containers/Routes';
 import './app.global.css';
 
 // Create redux store with history
@@ -20,11 +21,12 @@ const render = AppComponent => {
   ReactDOM.render(
     <AppContainer>
       <Provider store={store}>
-        <ConnectedRouter history={history}>
-          <MuiThemeProvider theme={theme}>
+        <MuiThemeProvider theme={theme}>
+          <CssBaseline />
+          <ConnectedRouter history={history}>
             <AppComponent />
-          </MuiThemeProvider>
-        </ConnectedRouter>
+          </ConnectedRouter>
+        </MuiThemeProvider>
       </Provider>
     </AppContainer>,
     MOUNT_NODE
@@ -32,12 +34,12 @@ const render = AppComponent => {
 };
 
 if (module.hot) {
-  module.hot.accept(['./containers/App'], () => {
+  module.hot.accept(['./containers/Routes'], () => {
     // ReactDOM.unmountComponentAtNode(MOUNT_NODE);
     // render();
-    const NextRoot = require('./containers/App'); // eslint-disable-line global-require
+    const NextRoot = require('./containers/Routes'); // eslint-disable-line global-require
     render(NextRoot);
   });
 }
 
-render(App);
+render(Routes);

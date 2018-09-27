@@ -1,8 +1,9 @@
 // @flow
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import type { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -68,15 +69,10 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   transactions: Object,
   // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadTransactions: Function,
-  className: string
+  dispatchLoadTransactions: Function
 };
 
-type State = {};
-
-class Transactions extends Component<Props, State> {
-  state = {};
-
+class Transactions extends PureComponent<Props> {
   componentDidMount = () => {
     debug('watch transactions');
 
@@ -108,10 +104,10 @@ class Transactions extends Component<Props, State> {
   render() {
     debug(`render`);
 
-    const { loading, classes, className, transactions, error } = this.props;
+    const { loading, classes, transactions, error } = this.props;
 
     return (
-      <Grid container spacing={0} className={className}>
+      <React.Fragment>
         <Grid item xs={12} className={classes.containerSection}>
           <Card className={classes.card}>
             {loading && <LinearProgress />}
@@ -173,14 +169,15 @@ class Transactions extends Component<Props, State> {
             </CardContent>
           </Card>
         </Grid>
-      </Grid>
+      </React.Fragment>
     );
   }
 }
 
 Transactions.displayName = 'Transactions';
 
-export function mapDispatchToProps(dispatch) {
+// eslint-disable-next-line flowtype/no-weak-types
+export function mapDispatchToProps(dispatch: Dispatch<Object>) {
   return {
     dispatchLoadTransactions: () => dispatch(loadTransactions())
   };

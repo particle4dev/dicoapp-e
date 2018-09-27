@@ -1,15 +1,12 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import React, { PureComponent } from 'react';
+import type { ChildrenArray } from 'react';
 // import { remote } from 'electron';
 // import { setWindowBounds } from 'electron-util';
 import { withStyles } from '@material-ui/core/styles';
 // import Typography from '@material-ui/core/Typography';
-// import IconButton from '@material-ui/core/IconButton';
-// import MenuIcon from '@material-ui/icons/Menu';
-
 // import { minWindowSize } from '../../config/config-default';
-import DICDrawer from '../../components/Drawer';
-// import routes from '../../constants/routes.json';
+import DICDrawer from '../Drawer';
 
 const debug = require('debug')('dicoapp:containers:layout:NavigationLayout');
 
@@ -23,12 +20,12 @@ const debug = require('debug')('dicoapp:containers:layout:NavigationLayout');
 //   win.center();
 // };
 
-// const drawerWidth = 240;
-
-const styles = theme => ({
+// const styles = theme => ({
+const styles = () => ({
   content: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
+    // backgroundColor: theme.palette.background.default,
+    backgroundColor: '#fff',
     // padding: theme.spacing.unit * 3,
     marginLeft: 72,
     // marginTop: 64,
@@ -50,24 +47,47 @@ const styles = theme => ({
   }
 });
 
-class NavigationLayout extends Component {
+type Props = {
+  background?: string,
+  // eslint-disable-next-line flowtype/no-weak-types
+  classes: Object,
+  // eslint-disable-next-line flowtype/no-weak-types
+  children: ChildrenArray<any>
+};
+
+class NavigationLayout extends PureComponent<Props> {
   // constructor(props) {
   //   super(props);
   //   setAppWindowBounds();
   // }
 
+  static defaultProps = {
+    background: '#fff'
+  };
+
   render() {
     debug(`render`);
 
-    // eslint-disable-next-line react/prop-types
-    const { children, classes } = this.props;
+    const { background, children, classes } = this.props;
 
     return (
       <React.Fragment>
-        <aside className={classes.dicoDrawer}>
+        <aside
+          className={classes.dicoDrawer}
+          style={{
+            background
+          }}
+        >
           <DICDrawer />
         </aside>
-        <main className={classes.content}>{children}</main>
+        <main
+          className={classes.content}
+          style={{
+            background
+          }}
+        >
+          {children}
+        </main>
         {/* <div className={classes.root}> */}
         {/* <DICTypography> */}
         {/* <header className="mdc-toolbar mdc-toolbar--fixed fl-empty-layout__header"> */}
@@ -83,12 +103,6 @@ class NavigationLayout extends Component {
     );
   }
 }
-
-NavigationLayout.propTypes = {
-  children: PropTypes.node.isRequired
-};
-
-NavigationLayout.defaultProps = {};
 
 NavigationLayout.displayName = 'NavigationLayout';
 

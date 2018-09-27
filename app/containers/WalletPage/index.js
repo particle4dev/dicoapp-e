@@ -1,18 +1,17 @@
 // @flow
 import React, { Component } from 'react';
+import classNames from 'classnames';
 import { compose } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
+// import Card from '@material-ui/core/Card';
+// import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
 import ErrorBoundary from '../../components/ErrorBoundary';
+import MDCAppBar from '../../components/AppBar';
 import { NavigationLayout } from '../Layout';
 
 import Overview from './components/Overview';
@@ -29,7 +28,19 @@ type Props = {
 // const styles = theme => ({
 const styles = () => ({
   container: {
-    padding: 24
+    padding: 24,
+    marginTop: 65
+  },
+
+  containerSection: {
+    paddingBottom: 25
+  },
+
+  cardContent: {
+    position: 'relative',
+    paddingTop: 0,
+    paddingLeft: 0,
+    paddingRight: 0
   }
 });
 
@@ -45,27 +56,21 @@ class WalletPage extends Component<Props> {
 
     return (
       <React.Fragment>
-        <AppBar position="static" color="default">
-          <Toolbar>
-            <Typography variant="title" color="inherit">
-              Wallet
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Grid container spacing={0} className={classes.container}>
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="title" gutterBottom>
-                  Overview
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+        <MDCAppBar title="Wallet" />
 
-        <Overview className={classes.container} />
-        <Transactions className={classes.container} />
+        <Grid
+          container
+          spacing={0}
+          className={classNames(classes.container, classes.container)}
+        >
+          <Grid item xs={12} className={classes.containerSection}>
+            <Typography variant="title" gutterBottom>
+              Overview
+            </Typography>
+          </Grid>
+          <Overview />
+          <Transactions />
+        </Grid>
       </React.Fragment>
     );
   }
@@ -81,7 +86,7 @@ const WalletPageWapper = compose(
 )(WalletPage);
 
 const Index = () => (
-  <NavigationLayout>
+  <NavigationLayout background="#eeeeee">
     <ErrorBoundary>
       <WalletPageWapper />
     </ErrorBoundary>

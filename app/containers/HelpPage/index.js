@@ -2,14 +2,14 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Grid from '@material-ui/core/Grid';
 import ErrorBoundary from '../../components/ErrorBoundary';
+import MDCAppBar from '../../components/AppBar';
 import { NavigationLayout } from '../Layout';
 
 const styles = {
   container: {
+    marginTop: 65,
     padding: 24
   },
 
@@ -31,13 +31,7 @@ class HelpPage extends Component<Props> {
 
     return (
       <React.Fragment>
-        <AppBar position="static" color="default">
-          <Toolbar>
-            <Typography variant="title" color="inherit">
-              Help
-            </Typography>
-          </Toolbar>
-        </AppBar>
+        <MDCAppBar title="Help" />
         <Grid container spacing={0} className={classes.container}>
           <Grid item xs={12} className={classes.containerSection}>
             <Typography variant="title" gutterBottom>

@@ -6,32 +6,32 @@ import type { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import type { List, Map } from 'immutable';
 import { withStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
+// import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Divider from '@material-ui/core/Divider';
+// import Divider from '@material-ui/core/Divider';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
+// import MenuIcon from '@material-ui/icons/Menu';
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
 import injectWebsocket from '../../utils/inject-websocket';
 import { WEBSOCKET_DAEMON } from '../../utils/constants';
+import MDCAppBar from '../../components/AppBar';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import { NavigationLayout } from '../Layout';
 import { makeSelectBalanceEntities } from '../App/selectors';
 import { loadBalance } from '../App/actions';
+import AmountSection from './components/AmountSection';
+import CurrencySection from './components/CurrencySection';
+import PaymentSection from './components/PaymentSection';
+// import TestSwap from './components/TestSwap';
 import { APP_STATE_NAME } from './constants';
 import reducer from './reducer';
 import saga from './saga';
 import subscribe from './subscribe';
-import AmountSection from './components/AmountSection';
-import CurrencySection from './components/CurrencySection';
-import PaymentSection from './components/PaymentSection';
-import TestSwap from './components/TestSwap';
 import { loadPrices, loadPrice } from './actions';
 import {
   makeSelectBalanceList,
@@ -43,6 +43,7 @@ const debug = require('debug')('dicoapp:containers:BuyPage');
 
 const styles = () => ({
   container: {
+    marginTop: 65,
     padding: 24
   },
 
@@ -55,13 +56,20 @@ const styles = () => ({
   },
 
   cardContent: {
-    position: 'relative'
+    position: 'relative',
+    paddingTop: 0,
+    paddingLeft: 0,
+    paddingRight: 0
   },
 
   cardContent__rightBtn: {
     position: 'absolute',
-    right: 15,
-    top: 5
+    right: 0,
+    top: -12
+  },
+
+  cardContent__title: {
+    marginBottom: 25
   }
 });
 
@@ -128,65 +136,83 @@ class BuyPage extends Component<Props, State> {
 
     return (
       <React.Fragment>
-        <AppBar position="static" color="default">
+        <MDCAppBar title="Buy" />
+        {/* <AppBar position="fixed" color="default" className={classes.cardContent__appBar}>
           <Toolbar>
+            <IconButton className={classes.cardContent__appBarBtn} color="inherit" aria-label="Menu">
+              <MenuIcon />
+            </IconButton>
             <Typography variant="title" color="inherit">
               Buy
             </Typography>
           </Toolbar>
-        </AppBar>
+          <Divider />
+        </AppBar> */}
         <Grid container spacing={0} className={classes.container}>
           <Grid item xs={12} className={classes.containerSection}>
-            <Card>
-              {loading && <LinearProgress />}
-              <CardContent>
-                <Typography variant="title" gutterBottom>
-                  Currency
-                </Typography>
-                <Divider className={classes.hr} />
+            {/* <Card> */}
+            {loading && <LinearProgress />}
+            <CardContent className={classes.cardContent}>
+              <Typography
+                variant="title"
+                gutterBottom
+                className={classes.cardContent__title}
+              >
+                Currency
+              </Typography>
+              {/* <Divider className={classes.hr} /> */}
 
-                <CurrencySection
-                  balance={balance}
-                  onClick={this.onReloadPrices}
-                />
-              </CardContent>
-              <CardContent className={classes.cardContent}>
-                <Typography variant="title" gutterBottom>
-                  Payment Method
-                </Typography>
-                <IconButton
-                  aria-label="Reload prices"
-                  className={classes.cardContent__rightBtn}
-                  onClick={this.onReloadPrices}
-                >
-                  <Icon>cached</Icon>
-                </IconButton>
-                <Divider className={classes.hr} />
-                <PaymentSection
-                  onClick={this.onClickPaymentCoin}
-                  paymentCoin={paymentCoin}
-                  list={list}
-                  entities={entities}
-                  balance={balance}
-                  dispatchLoadPrice={dispatchLoadPrice}
-                />
-              </CardContent>
-              <CardContent>
-                <Typography variant="title" gutterBottom>
-                  Amount
-                </Typography>
-                <Divider className={classes.hr} />
-                <AmountSection paymentCoin={paymentCoin} />
-              </CardContent>
-            </Card>
+              <CurrencySection
+                balance={balance}
+                onClick={this.onReloadPrices}
+              />
+            </CardContent>
+            <CardContent className={classes.cardContent}>
+              <Typography
+                variant="title"
+                gutterBottom
+                className={classes.cardContent__title}
+              >
+                Payment Method
+              </Typography>
+              <IconButton
+                aria-label="Reload prices"
+                className={classes.cardContent__rightBtn}
+                onClick={this.onReloadPrices}
+              >
+                <Icon>cached</Icon>
+              </IconButton>
+              {/* <Divider className={classes.hr} /> */}
+              <PaymentSection
+                onClick={this.onClickPaymentCoin}
+                paymentCoin={paymentCoin}
+                list={list}
+                entities={entities}
+                balance={balance}
+                dispatchLoadPrice={dispatchLoadPrice}
+              />
+            </CardContent>
+            <CardContent className={classes.cardContent}>
+              <Typography
+                variant="title"
+                gutterBottom
+                className={classes.cardContent__title}
+              >
+                Amount
+              </Typography>
+              {/* <Divider className={classes.hr} /> */}
+              <AmountSection paymentCoin={paymentCoin} />
+            </CardContent>
+            {/* </Card> */}
           </Grid>
         </Grid>
-        <TestSwap />
+        {/* <TestSwap /> */}
       </React.Fragment>
     );
   }
 }
 
+// eslint-disable-next-line flowtype/no-weak-types
 export function mapDispatchToProps(dispatch: Dispatch<Object>) {
   return {
     dispatchLoadPrices: () => dispatch(loadPrices()),

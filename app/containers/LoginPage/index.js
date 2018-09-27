@@ -38,7 +38,8 @@ const styles = () => ({
     bottom: 0,
     left: 0,
     right: 0,
-    overflow: 'auto'
+    overflow: 'auto',
+    background: '#fff'
   },
 
   loginContainer__center: {
@@ -51,7 +52,10 @@ const styles = () => ({
   },
 
   loginContainer__card: {
-    width: 400
+    width: 430,
+    borderRadius: 8,
+    boxShadow:
+      '0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2)'
   },
 
   loginContainer__logo: {
@@ -62,7 +66,7 @@ const styles = () => ({
   },
 
   loginContainer__content: {
-    width: 308,
+    width: 400,
     margin: '0px auto',
     textAlign: 'center'
   },
@@ -80,7 +84,6 @@ const styles = () => ({
 
   loginContainer__bottomButton: {
     height: 62,
-    backgroundColor: '#efefef',
     color: '#333'
   }
 });

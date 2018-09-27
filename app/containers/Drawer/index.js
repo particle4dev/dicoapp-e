@@ -3,26 +3,25 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import type { Dispatch } from 'redux';
 import { withRouter } from 'react-router';
+import type { Location } from 'react-router';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import IconButton from '@material-ui/core/IconButton';
+// import IconButton from '@material-ui/core/IconButton';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
-// import DashboardIcon from '@material-ui/icons/Dashboard';
 import LiveHelpIcon from '@material-ui/icons/LiveHelp';
-import HomeIcon from '@material-ui/icons/Home';
+// import HomeIcon from '@material-ui/icons/Home';
 import { withStyles } from '@material-ui/core/styles';
-// FIXME: this is a quick way. We should move this function to layout
-import { showLogoutDialog } from '../../containers/LogoutDialog/actions';
+import { showLogoutDialog } from '../LogoutDialog/actions';
 import routes from '../../constants/routes.json';
 
-const debug = require('debug')('dicoapp:components:Drawer');
+const debug = require('debug')('dicoapp:containers:Drawer');
 
 const drawerWidth = 240;
 
@@ -34,6 +33,7 @@ const styles = theme => ({
     padding: 12,
     ...theme.mixins.toolbar
   },
+
   drawerPaper: {
     position: 'relative',
     whiteSpace: 'nowrap',
@@ -41,8 +41,11 @@ const styles = theme => ({
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen
-    })
+    }),
+    borderRight: 'none',
+    background: 'transparent'
   },
+
   drawerPaperClose: {
     overflowX: 'hidden',
     transition: theme.transitions.create('width', {
@@ -54,11 +57,38 @@ const styles = theme => ({
       width: theme.spacing.unit * 9
     }
   },
+
   docked: {
     height: '100%'
   },
+
   logoButton: {
     height: 'auto'
+  },
+
+  drawer__icon: {
+    position: 'relative',
+    width: 72,
+    height: 72,
+    paddingTop: 0
+  },
+
+  drawer__iconSelected: {
+    '& svg': {
+      fill: '#4285f4'
+    },
+    color: '#4285f4'
+  },
+
+  drawer__text: {
+    fontSize: 10,
+    marginTop: 6,
+    position: 'absolute',
+    top: 40,
+    left: 0,
+    right: 0,
+    pointerEvents: 'none',
+    textAlign: 'center'
   }
 });
 
@@ -67,49 +97,63 @@ type Props = {
   classes: Object,
   // eslint-disable-next-line flowtype/no-weak-types
   history: Object,
+  location: Location,
   // eslint-disable-next-line flowtype/no-weak-types
   dispatchShowLogoutDialog: Function
 };
 
 type State = {
-  anchor: string
+  anchor: string,
+  fakeURL: string | null
 };
 
 class DICDrawer extends Component<Props, State> {
+  static defaultProps = {};
+
   state = {
-    anchor: 'left'
+    anchor: 'left',
+    fakeURL: null
+  };
+
+  goto = router => {
+    this.setState(
+      {
+        fakeURL: router
+      },
+      () => {
+        const { history } = this.props;
+        setTimeout(() => {
+          history.push(router);
+        }, 0);
+      }
+    );
   };
 
   gotoHomePage = () => {
-    const { history } = this.props;
-    history.push(routes.WALLET);
+    this.goto(routes.WALLET);
   };
 
   gotoWalletPage = () => {
-    const { history } = this.props;
-    history.push(routes.WALLET);
+    this.goto(routes.WALLET);
   };
 
-  // gotoDashboardPage = () => {
-  //   const { history } = this.props;
-  //   history.push(routes.DASHBOARD);
-  // };
-
   gotoBuyPage = () => {
-    const { history } = this.props;
-    history.push(routes.BUY);
+    this.goto(routes.BUY);
   };
 
   gotoHelpPage = () => {
-    const { history } = this.props;
-    history.push(routes.HELP);
+    this.goto(routes.HELP);
   };
 
   render() {
     debug(`render`);
 
-    const { classes, dispatchShowLogoutDialog } = this.props;
-    const { anchor } = this.state;
+    const { classes, location, dispatchShowLogoutDialog } = this.props;
+    const { anchor, fakeURL } = this.state;
+    let { pathname = '/' } = location;
+    if (fakeURL) {
+      pathname = fakeURL;
+    }
 
     return (
       <Drawer
@@ -121,14 +165,13 @@ class DICDrawer extends Component<Props, State> {
         anchor={anchor}
       >
         <div className={classes.toolbar}>
-          <IconButton
+          {/* <IconButton
             className={classes.logoButton}
             onClick={this.gotoHomePage}
           >
             <HomeIcon />
-          </IconButton>
+          </IconButton> */}
         </div>
-        <Divider />
         <List>
           {/* <ListItem button selected onClick={this.gotoDashboardPage}>
             <ListItemIcon selected>
@@ -136,28 +179,47 @@ class DICDrawer extends Component<Props, State> {
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
           </ListItem> */}
-          <ListItem button onClick={this.gotoWalletPage}>
+          <ListItem
+            button
+            className={classNames(classes.drawer__icon, {
+              [classes.drawer__iconSelected]: pathname === routes.WALLET
+            })}
+            onClick={this.gotoWalletPage}
+          >
             <ListItemIcon>
               <AccountBalanceWalletIcon />
             </ListItemIcon>
-            <ListItemText primary="Wallet" />
+            <span className={classes.drawer__text}>Wallet</span>
           </ListItem>
-          <ListItem button onClick={this.gotoBuyPage}>
+          <ListItem
+            button
+            className={classNames(classes.drawer__icon, {
+              [classes.drawer__iconSelected]: pathname === routes.BUY
+            })}
+            onClick={this.gotoBuyPage}
+          >
             <ListItemIcon>
               <AddShoppingCartIcon />
             </ListItemIcon>
-            <ListItemText primary="Buy" />
+            <span className={classes.drawer__text}>Buy</span>
           </ListItem>
-          <ListItem button onClick={this.gotoHelpPage}>
+          <ListItem
+            button
+            className={classNames(classes.drawer__icon, {
+              [classes.drawer__iconSelected]: pathname === routes.HELP
+            })}
+            onClick={this.gotoHelpPage}
+          >
             <ListItemIcon>
               <LiveHelpIcon />
             </ListItemIcon>
-            <ListItemText primary="Help" />
+            <span className={classes.drawer__text}>Help</span>
           </ListItem>
-        </List>
-        <Divider />
-        <List>
-          <ListItem button onClick={dispatchShowLogoutDialog}>
+          <ListItem
+            button
+            className={classes.drawer__icon}
+            onClick={dispatchShowLogoutDialog}
+          >
             <ListItemIcon>
               <PowerSettingsNewIcon />
             </ListItemIcon>
@@ -171,7 +233,8 @@ class DICDrawer extends Component<Props, State> {
 
 DICDrawer.displayName = 'DICDrawer';
 
-export function mapDispatchToProps(dispatch) {
+// eslint-disable-next-line flowtype/no-weak-types
+export function mapDispatchToProps(dispatch: Dispatch<Object>) {
   return {
     dispatchShowLogoutDialog: () => dispatch(showLogoutDialog())
   };
