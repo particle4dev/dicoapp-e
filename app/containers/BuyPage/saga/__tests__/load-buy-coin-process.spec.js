@@ -3,6 +3,7 @@
 import nock from 'nock';
 import { fromJS } from 'immutable';
 import { runSaga } from 'redux-saga';
+import api from '../../../../utils/barter-dex-api/index';
 import loadBuyCoinProcess from '../load-buy-coin-process';
 import data, {
   listunspentstep1,
@@ -15,6 +16,7 @@ import data, {
 const TEST_URL = 'http://127.0.0.1:7783';
 
 describe('containers/BuyPage/saga/load-buy-coin-process', () => {
+  api.setUserpass('userpass');
   it(
     'should handle loadBuyCoinProcess correctly',
     async done => {
@@ -22,9 +24,12 @@ describe('containers/BuyPage/saga/load-buy-coin-process', () => {
       let buystep = 0;
       // const scope = nock(TEST_URL)
       nock(TEST_URL)
+        .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
         .persist()
         .post('/', () => true)
-        .reply(200, (uri, { method }, cb) => {
+        .reply(200, (uri, body, cb) => {
+          const { method } = JSON.parse(body);
+
           if (method === 'listunspent' && listunspentstep === 0) {
             listunspentstep = 1;
             cb(null, listunspentstep1);
@@ -98,9 +103,12 @@ describe('containers/BuyPage/saga/load-buy-coin-process', () => {
       let listunspentstep = 0;
       let buystep = 0;
       nock(TEST_URL)
+        .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
         .persist()
         .post('/', () => true)
-        .reply(200, (uri, { method }, cb) => {
+        .reply(200, (uri, body, cb) => {
+          const { method } = JSON.parse(body);
+
           if (method === 'listunspent' && listunspentstep === 0) {
             listunspentstep = 1;
             cb(null, listunspentstep1);
@@ -145,7 +153,6 @@ describe('containers/BuyPage/saga/load-buy-coin-process', () => {
           type: 'dicoapp/BuyPage/LOAD_BUY_COIN_ERROR'
         }
       ]);
-      done();
 
       nock.cleanAll();
       nock.enableNetConnect();

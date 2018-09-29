@@ -1,5 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react';
+import { shell } from 'electron';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -7,8 +8,8 @@ import type { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import Table from '@material-ui/core/Table';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
@@ -21,7 +22,8 @@ import CachedIcon from '@material-ui/icons/Cached';
 import {
   makeSelectTransactionsLoading,
   makeSelectTransactionsError,
-  makeSelectTransactionsList
+  makeSelectTransactionsList,
+  makeSelectTransactionsEntities
 } from '../selectors';
 import { loadTransactions } from '../actions';
 
@@ -67,7 +69,9 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   classes: Object,
   // eslint-disable-next-line flowtype/no-weak-types
-  transactions: Object,
+  list: Object,
+  // eslint-disable-next-line flowtype/no-weak-types
+  entities: Object,
   // eslint-disable-next-line flowtype/no-weak-types
   dispatchLoadTransactions: Function
 };
@@ -101,10 +105,44 @@ class Transactions extends PureComponent<Props> {
     dispatchLoadTransactions();
   };
 
+  onClickTranstactions = (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    // https://github.com/electron/electron/blob/master/docs/api/shell.md#shellopenexternalurl
+    shell.openExternal(evt.target.href);
+  };
+
+  renderRecord = (v, k) => {
+    const { entities } = this.props;
+    const t = entities.get(v);
+    if (!t) return null;
+    return (
+      <TableRow key={t.get('tx_hash')}>
+        <TableCell>{k + 1}</TableCell>
+        <TableCell>{t.get('coin')}</TableCell>
+        <TableCell>{t.get('height')}</TableCell>
+        <TableCell>
+          {/* eslint-disable-next-line react/jsx-no-target-blank */}
+          {explorer[t.get('coin')] && (
+            <a
+              style={{ color: '#000' }}
+              href={`${explorer[t.get('coin')]}/${t.get('tx_hash')}`}
+              // target="_blank"
+              // rel="noopener noreferrer"
+              onClick={this.onClickTranstactions}
+            >
+              {t.get('tx_hash')}
+            </a>
+          )}
+          {!explorer[t.get('coin')] && t.get('tx_hash')}
+        </TableCell>
+      </TableRow>
+    );
+  };
+
   render() {
     debug(`render`);
 
-    const { loading, classes, transactions, error } = this.props;
+    const { loading, classes, list, error } = this.props;
 
     return (
       <React.Fragment>
@@ -139,32 +177,7 @@ class Transactions extends PureComponent<Props> {
                     <TableCell className={classes.th}>Transaction id</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
-                  {transactions &&
-                    transactions.map((t, k) => (
-                      <TableRow key={t.get('tx_hash')}>
-                        <TableCell>{k + 1}</TableCell>
-                        <TableCell>{t.get('coin')}</TableCell>
-                        <TableCell>{t.get('height')}</TableCell>
-                        <TableCell>
-                          {/* eslint-disable-next-line react/jsx-no-target-blank */}
-                          {explorer[t.get('coin')] && (
-                            <a
-                              style={{ color: '#000' }}
-                              href={`${explorer[t.get('coin')]}/${t.get(
-                                'tx_hash'
-                              )}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {t.get('tx_hash')}
-                            </a>
-                          )}
-                          {!explorer[t.get('coin')] && t.get('tx_hash')}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
+                <TableBody>{list && list.map(this.renderRecord)}</TableBody>
               </Table>
             </CardContent>
           </Card>
@@ -186,7 +199,8 @@ export function mapDispatchToProps(dispatch: Dispatch<Object>) {
 const mapStateToProps = createStructuredSelector({
   loading: makeSelectTransactionsLoading(),
   error: makeSelectTransactionsError(),
-  transactions: makeSelectTransactionsList()
+  list: makeSelectTransactionsList(),
+  entities: makeSelectTransactionsEntities()
 });
 
 const withConnect = connect(

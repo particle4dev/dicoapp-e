@@ -1,7 +1,7 @@
-import { call, put, select, all } from 'redux-saga/effects';
+import { call, put, select, all, cancelled } from 'redux-saga/effects';
+import { CANCEL } from 'redux-saga';
 import getConfig from '../../../utils/config';
-import api from '../../../utils/barter-dex-api';
-import { makeSelectCurrentUser } from '../../App/selectors';
+import api from '../../../utils/barter-dex-api/index';
 import { loadBestPrice, loadPricesSuccess, loadPricesError } from '../actions';
 import { makeSelectBalanceList } from '../selectors';
 
@@ -12,17 +12,18 @@ const debug = require('debug')(
   'dicoapp:containers:BuyPage:saga:load-prices-process'
 );
 
-export function* loadPrice(coin, userpass) {
+export function* loadPrice(coin) {
   const getprices = {
-    userpass,
     base: COIN_BASE.coin,
     rel: coin
   };
   const buf = 1.08 * numcoin;
   const bob = COIN_BASE.pubkey;
   let bestprice = 0;
+  let request = null;
   try {
-    const result = yield call([api, 'orderbook'], getprices);
+    request = api.orderbook(getprices);
+    const result = yield request;
     const ask = result.asks.find(e => e.pubkey === bob);
     if (!ask) {
       throw new Error('dICO Bob is offline!');
@@ -67,20 +68,21 @@ export function* loadPrice(coin, userpass) {
         depth: 0
       })
     );
+  } finally {
+    if (yield cancelled()) {
+      debug(`load price process cancelled ${coin}`);
+      if (request && request[CANCEL]) {
+        request[CANCEL]();
+      }
+    }
   }
 }
 
 export function* loadPriceProcess({ payload }) {
   try {
-    // load user data
-    const user = yield select(makeSelectCurrentUser());
-    if (!user) {
-      throw new Error('not found user');
-    }
-    const userpass = user.get('userpass');
     const { coin } = payload;
 
-    return yield call(loadPrice, coin, userpass);
+    return yield call(loadPrice, coin);
   } catch (err) {
     // FIXME: handling error
     return yield put(loadPricesError(err.message));
@@ -89,12 +91,6 @@ export function* loadPriceProcess({ payload }) {
 
 export default function* loadPricesProcess() {
   try {
-    // load user data
-    const user = yield select(makeSelectCurrentUser());
-    if (!user) {
-      throw new Error('not found user');
-    }
-    const userpass = user.get('userpass');
     const balance = yield select(makeSelectBalanceList());
 
     // const tokenconfig = config.get('marketmaker.tokenconfig');
@@ -102,7 +98,7 @@ export default function* loadPricesProcess() {
     const requests = [];
     for (let i = 0; i < balance.size; i += 1) {
       const coin = balance.get(i);
-      requests.push(call(loadPrice, coin, userpass));
+      requests.push(call(loadPrice, coin));
     }
 
     const data = yield all(requests);

@@ -18,6 +18,7 @@ import FileCopyIcon from '@material-ui/icons/FileCopy';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
+
 import { required, requiredNumber } from '../../../components/Form/helper';
 import validate from '../../../components/Form/validate';
 import { getCoinIcon } from '../../../components/CryptoIcons';
@@ -122,6 +123,14 @@ const styles = theme => ({
   },
   iconSmall: {
     fontSize: 20
+  },
+
+  withdraw__button: {
+    boxShadow: 'none'
+  },
+
+  withdraw__form: {
+    // marginBottom: 20
   }
 });
 
@@ -279,7 +288,7 @@ class Wallet extends Component<Props, State> {
               <Typography variant="body1" gutterBottom>
                 Available: {data.get('balance')} {data.get('coin')}
               </Typography>
-              <form>
+              <form className={classes.withdraw__form}>
                 <ValidationAmountInput
                   id="amount"
                   label="Amount to withdraw"
@@ -305,13 +314,14 @@ class Wallet extends Component<Props, State> {
                 <Button
                   variant="contained"
                   color="primary"
-                  className={classes.button}
+                  className={classes.withdraw__button}
                   onClick={this.handleWithdraw}
                   disabled={loading}
                 >
                   Withdraw
                 </Button>
               </form>
+              {/* <Divider className={classes.hr} /> */}
             </ExpansionPanelDetails>
           </ExpansionPanel>
         </Grid>

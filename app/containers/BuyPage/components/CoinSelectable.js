@@ -21,7 +21,7 @@ const styles = () => ({
     // marginRight: 10,
     marginRight: 20,
     marginBottom: 10,
-    border: '2px solid lightgray',
+    border: '1px solid lightgray',
     cursor: 'pointer',
     borderRadius: 5,
     position: 'relative'

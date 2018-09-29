@@ -2,7 +2,7 @@ import swal from 'sweetalert';
 // import { put, call, select, cancel, cancelled } from 'redux-saga/effects';
 import { put, call, select, cancelled } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
-import api from '../../../utils/barter-dex-api';
+import api from '../../../utils/barter-dex-api/index';
 import {
   makeSelectCurrentUser,
   makeSelectBalanceEntities
@@ -59,8 +59,8 @@ export default function* loadBuyCoinProcess({ payload, time = intervalTime }) {
       //   yield cancel();
       // }
 
-      // step five: get listUnspent data
-      const unspent = yield call([api, 'listUnspent'], {
+      // step five: get listunspent data
+      const unspent = yield call([api, 'listunspent'], {
         userpass,
         coin: paymentcoin,
         address: smartaddress.get('smartaddress')

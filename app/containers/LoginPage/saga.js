@@ -1,9 +1,9 @@
 // https://github.com/sotojuan/saga-login-flow/blob/master/app/sagas/index.js
-
-import { all, fork, take, race, call, put } from 'redux-saga/effects';
+import { all, take, race, call, put } from 'redux-saga/effects';
+import takeFirst from '../../utils/sagas/take-first';
 import { LOGIN, LOGOUT } from '../App/constants';
 import { loginSuccess, loginError } from '../App/actions';
-import api from '../../utils/barter-dex-api';
+import api from '../../utils/barter-dex-api/index';
 import getConfig from '../../utils/config';
 
 const debug = require('debug')('dicoapp:containers:LoginPage:saga');
@@ -13,11 +13,8 @@ const config = getConfig();
 export function* authorize(passphrase) {
   try {
     debug(`authorize is running`);
-    const data = yield api.login(passphrase);
-    const servers = config.get('marketmaker.electrums').map(e => {
-      e.userpass = data.userpass;
-      return e;
-    });
+    const data = yield call([api, 'login'], passphrase);
+    const servers = config.get('marketmaker.electrums');
 
     const requests = [];
     for (let i = 0; i < servers.length; i += 1) {
@@ -55,26 +52,23 @@ export function* authorize(passphrase) {
 //   yield takeLatest(LOGIN, loginProcess);
 // }
 
-export function* loginFlow() {
+export function* loginFlow({ payload }) {
   debug(`login flow`);
-  while (true) {
-    const { payload } = yield take(LOGIN);
-    const { passphrase } = payload;
-    // A `LOGOUT` action may happen while the `authorize` effect is going on, which may
-    // lead to a race condition. This is unlikely, but just in case, we call `race` which
-    // returns the "winner", i.e. the one that finished first
-    const winner = yield race({
-      auth: call(authorize, passphrase),
-      logout: take(LOGOUT)
-    });
+  const { passphrase } = payload;
+  // A `LOGOUT` action may happen while the `authorize` effect is going on, which may
+  // lead to a race condition. This is unlikely, but just in case, we call `race` which
+  // returns the "winner", i.e. the one that finished first
+  const winner = yield race({
+    auth: call(authorize, passphrase),
+    logout: take(LOGOUT)
+  });
 
-    if (winner.auth) {
-      yield put(loginSuccess(winner.auth));
-      // forwardTo('/dashboard') // Go to dashboard page
-    }
+  if (winner.auth) {
+    yield put(loginSuccess(winner.auth));
+    // forwardTo('/dashboard') // Go to dashboard page
   }
 }
 
 export default function* root() {
-  yield fork(loginFlow);
+  yield takeFirst(LOGIN, loginFlow);
 }

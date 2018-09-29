@@ -124,8 +124,8 @@ export function loadWithdrawError(
 ) {
   return {
     type: LOAD_WITHDRAW_ERROR,
+    payload,
     error: {
-      payload,
       message
     }
   };

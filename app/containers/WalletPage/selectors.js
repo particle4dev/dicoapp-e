@@ -21,10 +21,16 @@ const makeSelectTransactionsList = () =>
     transactionsState.get('list')
   );
 
+const makeSelectTransactionsEntities = () =>
+  createSelector(makeSelectTransactions(), transactionsState =>
+    transactionsState.get('entities')
+  );
+
 export {
   selectWallet,
   makeSelectTransactionsLoading,
   makeSelectTransactionsError,
   makeSelectTransactionsList,
+  makeSelectTransactionsEntities,
   makeSelectTransactions
 };

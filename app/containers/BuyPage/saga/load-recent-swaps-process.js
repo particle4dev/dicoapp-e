@@ -1,6 +1,5 @@
 import { put, all, call, cancelled, select } from 'redux-saga/effects';
-import api from '../../../utils/barter-dex-api';
-import { makeSelectCurrentUser } from '../../App/selectors';
+import api from '../../../utils/barter-dex-api/index';
 // import { loadSwapSuccess } from '../../App/actions';
 import { loadRecentSwapsCoin, loadRecentSwapsError } from '../actions';
 import { makeSelectSwapsEntities } from '../selectors';
@@ -9,10 +8,9 @@ const debug = require('debug')(
   'dicoapp:containers:BuyPage:saga:load-recent-swaps-process'
 );
 
-export function* checkSwap(userpass, requestid, quoteid, isPending) {
+export function* checkSwap(requestid, quoteid, isPending) {
   try {
     const swapelem = {
-      userpass,
       requestid,
       quoteid
     };
@@ -47,18 +45,9 @@ export function* checkSwap(userpass, requestid, quoteid, isPending) {
 
 export default function* loadRecentSwapsProcess() {
   try {
-    // step one: load user data
-    const user = yield select(makeSelectCurrentUser());
-    if (!user) {
-      throw new Error('not found user');
-    }
-    const userpass = user.get('userpass');
-    const swaplist = {
-      userpass
-    };
-    const swapsEntities = yield select(makeSelectSwapsEntities());
+    const recentswapsResult = yield call([api, 'recentswaps']);
 
-    const recentswapsResult = yield call([api, 'recentswaps'], swaplist);
+    const swapsEntities = yield select(makeSelectSwapsEntities());
 
     const { swaps } = recentswapsResult;
     const requests = [];
@@ -71,9 +60,9 @@ export default function* loadRecentSwapsProcess() {
           val.get('quoteid') === swapobj[1]
       );
       if (!e) {
-        requests.push(call(checkSwap, userpass, swapobj[0], swapobj[1]));
+        requests.push(call(checkSwap, swapobj[0], swapobj[1]));
       } else if (e.get('status') === 'pending') {
-        requests.push(call(checkSwap, userpass, swapobj[0], swapobj[1], true));
+        requests.push(call(checkSwap, swapobj[0], swapobj[1], true));
       }
     }
     const data = yield all(requests);

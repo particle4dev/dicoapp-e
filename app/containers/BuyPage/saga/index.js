@@ -1,4 +1,5 @@
 import { takeEvery, takeLatest } from 'redux-saga/effects';
+import takeFirst from '../../../utils/sagas/take-first';
 import {
   LOAD_PRICES,
   LOAD_PRICE,
@@ -8,7 +9,6 @@ import {
 import loadBuyCoinProcess from './load-buy-coin-process';
 import loadPricesProcess, { loadPriceProcess } from './load-prices-process';
 import loadRecentSwapsProcess from './load-recent-swaps-process';
-import takeFirst from './take-first';
 
 /**
  * Root saga manages watcher lifecycle
