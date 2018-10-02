@@ -130,7 +130,8 @@
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/internals/mocks/fileMock.js",
       "\\.(css|less|sass|scss)$": "identity-obj-proxy",
-      "../config": "<rootDir>/__mocks__/config.js"
+      "electron-util": "<rootDir>/__mocks__/electron-util.js",
+      "config$": "<rootDir>/__mocks__/config.js"
     },
     "moduleFileExtensions": [
       "js"
@@ -242,12 +243,14 @@
     "history": "^4.7.2",
     "hoist-non-react-statics": "^3.0.1",
     "immutable": "^3.8.2",
+    "intl": "^1.2.5",
     "invariant": "^2.2.4",
     "lodash": "^4.17.10",
     "qrcode.react": "^0.8.0",
     "react": "^16.5.0",
     "react-dom": "^16.5.0",
     "react-hot-loader": "^4.3.4",
+    "react-intl": "^2.7.0",
     "react-redux": "^5.0.7",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",

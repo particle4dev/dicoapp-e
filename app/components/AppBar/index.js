@@ -1,5 +1,6 @@
 // @flow
-import React, { Component } from 'react';
+import React from 'react';
+import type { Node } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -21,14 +22,12 @@ const styles = () => ({
 });
 
 type Props = {
-  title: string,
+  title: Node,
   // eslint-disable-next-line flowtype/no-weak-types
   classes: Object
 };
 
-type State = {};
-
-class MDCAppBar extends Component<Props, State> {
+class MDCAppBar extends React.PureComponent<Props> {
   props: Props;
 
   static propTypes = {};

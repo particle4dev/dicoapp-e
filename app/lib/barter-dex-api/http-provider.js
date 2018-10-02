@@ -12,13 +12,13 @@ function json(body) {
   return body.data;
 }
 
-const config = getConfig();
-
 const headers = {
   Accept: 'application/json'
 };
 
 const TIMEOUT = 300000; // 5 min
+
+const config = getConfig();
 
 export default function httpProvider(
   state: StateType,
@@ -62,6 +62,23 @@ export default function httpProvider(
         data,
         url,
         method: 'post',
+        cancelToken: source.token
+      };
+      const request = axios(serverparams)
+        .then(json)
+        .catch(toError);
+      request[CANCEL] = () => source.cancel();
+      return request;
+    },
+    // eslint-disable-next-line flowtype/no-weak-types
+    get(params: Object) {
+      const source = CancelToken.source();
+      const serverparams = {
+        timeout: TIMEOUT,
+        headers,
+        params,
+        url,
+        method: 'get',
         cancelToken: source.token
       };
       const request = axios(serverparams)

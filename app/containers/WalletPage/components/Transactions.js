@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import type { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import { FormattedMessage } from 'react-intl';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -151,7 +152,9 @@ class Transactions extends PureComponent<Props> {
             {loading && <LinearProgress />}
             <CardContent>
               <Typography variant="title" gutterBottom>
-                Last Transactions
+                <FormattedMessage id="dicoapp.containers.Wallet.last_transactions">
+                  {(...content) => content}
+                </FormattedMessage>
               </Typography>
               <div className={classes.btns}>
                 <IconButton

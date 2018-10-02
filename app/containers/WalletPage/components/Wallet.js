@@ -1,10 +1,11 @@
 // @flow
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import QRCode from 'qrcode.react';
 // import Avatar from '@material-ui/core/Avatar';
 // import IconButton from '@material-ui/core/IconButton';
+import { FormattedMessage } from 'react-intl';
+import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
 // import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -254,7 +255,9 @@ class Wallet extends Component<Props, State> {
                 <div className={classes.bitcoinQRCodeContainer}>
                   <div className={classes.bitcoinQRCodeItem}>
                     <Typography variant="subheading" gutterBottom>
-                      Your deposit address
+                      <FormattedMessage id="dicoapp.containers.Wallet.deposit_address">
+                        {(...content) => content}
+                      </FormattedMessage>
                     </Typography>
                     <Typography variant="title" gutterBottom>
                       {data.get('address')}

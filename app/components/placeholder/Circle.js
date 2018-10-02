@@ -17,6 +17,8 @@ const styles = () => ({
 type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   classes: Object,
+  // eslint-disable-next-line flowtype/no-weak-types
+  style: Object,
   className?: string
 };
 
@@ -26,10 +28,10 @@ class Circle extends PureComponent<Props> {
   };
 
   render() {
-    const { className, classes } = this.props;
+    const { className, classes, style } = this.props;
     const classesCircle = ClassNames(classes.placeholder__circle, className);
 
-    return <Animation className={classesCircle} />;
+    return <Animation className={classesCircle} style={style} />;
   }
 }
 

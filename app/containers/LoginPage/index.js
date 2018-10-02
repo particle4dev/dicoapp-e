@@ -5,6 +5,8 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import { FormattedMessage, injectIntl } from 'react-intl';
+import type { IntlShape } from 'react-intl';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -100,7 +102,8 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   error: Object | boolean,
   // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLogin: Function
+  dispatchLogin: Function,
+  intl: IntlShape
 };
 
 type State = {
@@ -115,9 +118,16 @@ class LoginPage extends Component<Props, State> {
   };
 
   componentDidUpdate = prevProps => {
-    const { authenticated, error, history } = this.props;
+    const { authenticated, error, history, intl } = this.props;
     if (authenticated && !prevProps.authenticated) {
-      swal('Success', 'Welcome to the GLX dICO Wallet!', 'success');
+      swal(
+        'Success',
+        intl.formatMessage({
+          defaultMessage: 'Login Successful Message',
+          id: 'dicoapp.containers.LoginPage.login_successful_message'
+        }),
+        'success'
+      );
       history.push('/buy');
     }
     if (!authenticated && error) {
@@ -174,11 +184,15 @@ class LoginPage extends Component<Props, State> {
                 className={classes.loginContainer__item}
                 gutterBottom
               >
-                Welcome to dICO App
+                <FormattedMessage id="dicoapp.containers.LoginPage.headline">
+                  {(...content) => content}
+                </FormattedMessage>
               </Typography>
 
               <Typography variant="subheading" gutterBottom>
-                Please type in your Seed to Login to your existing Account
+                <FormattedMessage id="dicoapp.containers.LoginPage.subheading">
+                  {(...content) => content}
+                </FormattedMessage>
               </Typography>
 
               <Passphrase
@@ -200,7 +214,9 @@ class LoginPage extends Component<Props, State> {
                   classes.loginContainer__loginButton
                 )}
               >
-                Log In
+                <FormattedMessage id="dicoapp.containers.LoginPage.submit">
+                  {(...content) => content}
+                </FormattedMessage>
               </Button>
             </CardContent>
 
@@ -209,7 +225,9 @@ class LoginPage extends Component<Props, State> {
               className={classes.loginContainer__bottomButton}
               onClick={this.gotoSeedPage}
             >
-              Click Here to Create a New Account
+              <FormattedMessage id="dicoapp.containers.LoginPage.new_account">
+                {(...content) => content}
+              </FormattedMessage>
             </Button>
           </Card>
         </div>
@@ -241,6 +259,7 @@ const LoginPageWapper = compose(
   withReducer,
   withSaga,
   withConnect,
+  injectIntl,
   withStyles(styles)
 )(LoginPage);
 

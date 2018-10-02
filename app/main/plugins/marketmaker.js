@@ -4,10 +4,12 @@ import childProcess from 'child_process';
 import ipc from 'electron-better-ipc';
 import { app } from 'electron';
 import killProcess from './killprocess';
-import config from '../config';
+import getConfig from '../config';
 
 // const { marketmakerCrashedDialog } = require('../dialogs');
 const debug = require('debug')('dicoapp:plugins:marketmaker');
+
+const config = getConfig();
 
 const MarketMaker = () => {
   const state = {

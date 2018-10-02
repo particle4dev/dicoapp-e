@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import type { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import { FormattedMessage, injectIntl } from 'react-intl';
+import type { IntlShape } from 'react-intl';
 import type { List, Map } from 'immutable';
 import { withStyles } from '@material-ui/core/styles';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
@@ -106,6 +108,10 @@ const styles = () => ({
     color: '#fff',
     borderRadius: 4,
     padding: '6px 24px'
+  },
+
+  swapform_button: {
+    margin: '0 auto'
   }
 });
 
@@ -135,7 +141,8 @@ type Props = {
   dispatchLoadRecentSwapsError: Function,
   // eslint-disable-next-line flowtype/no-weak-types
   dispatchClearBuyCoinError: Function,
-  swapsLoading: boolean
+  swapsLoading: boolean,
+  intl: IntlShape
 };
 
 type State = {
@@ -341,10 +348,13 @@ class AmountSection extends Component<Props, State> {
   };
 
   renderForm = () => {
-    const { classes, paymentCoin, buyingLoading } = this.props;
+    const { classes, paymentCoin, buyingLoading, intl } = this.props;
     const { disabledBuyButton } = this.state;
     const disabled = paymentCoin === '';
-    let label = 'SELECT YOUR PAYMENT';
+    let label = intl.formatMessage({
+      defaultMessage: 'SELECT YOUR PAYMENT',
+      id: 'dicoapp.containers.BuyPage.select_payment'
+    });
     if (paymentCoin !== '') {
       label = paymentCoin;
     }
@@ -470,6 +480,7 @@ class AmountSection extends Component<Props, State> {
 
         <Grid item xs={6} className={classes.amountform__itemCenter}>
           <CoinSelectable
+            className={classes.swapform_button}
             icon={getCoinIcon(entity.get('alice'))}
             title="Deposit"
             subTitle={
@@ -482,6 +493,7 @@ class AmountSection extends Component<Props, State> {
         <SwapHorizIcon className={classes.amountform__switchBtn} />
         <Grid item xs={6} className={classes.amountform__itemCenter}>
           <CoinSelectable
+            className={classes.swapform_button}
             icon={getCoinIcon(entity.get('bob'))}
             title="Receive"
             subTitle={
@@ -520,7 +532,9 @@ class AmountSection extends Component<Props, State> {
               swapsError && <React.Fragment>Cancel</React.Fragment>}
             {!swapsLoading &&
               !swapsError && (
-                <React.Fragment>Press here to make another swap</React.Fragment>
+                <FormattedMessage id="dicoapp.containers.BuyPage.swap_successful_message">
+                  {(...content) => content}
+                </FormattedMessage>
               )}
           </BuyButton>
         </Grid>
@@ -599,5 +613,6 @@ const withConnect = connect(
 
 export default compose(
   withConnect,
+  injectIntl,
   withStyles(styles)
 )(AmountSection);

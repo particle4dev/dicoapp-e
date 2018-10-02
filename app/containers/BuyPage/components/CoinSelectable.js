@@ -81,7 +81,8 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   dispatchLoadPrice?: Function,
   // eslint-disable-next-line flowtype/no-weak-types
-  data?: string
+  data?: string,
+  className: string
 };
 
 class CoinSelectable extends PureComponent<Props> {
@@ -119,6 +120,7 @@ class CoinSelectable extends PureComponent<Props> {
 
     const {
       classes,
+      className,
       icon,
       title,
       subTitle,
@@ -127,7 +129,7 @@ class CoinSelectable extends PureComponent<Props> {
       children
     } = this.props;
 
-    const buttonClasses = ClassNames(classes.btn, {
+    const buttonClasses = ClassNames(classes.btn, className, {
       [classes.btnSelected]: selected,
       [classes.btnDisabled]: disabled
     });

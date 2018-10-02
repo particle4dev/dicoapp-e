@@ -13,9 +13,11 @@
 import { app, BrowserWindow } from 'electron';
 import MenuBuilder from './main/menu';
 import marketmaker from './main/plugins/marketmaker';
-import config from './main/config';
+import getConfig from './main/config';
 
 const debug = require('debug')('dicoapp:main');
+
+const config = getConfig();
 
 let mainWindow = null;
 

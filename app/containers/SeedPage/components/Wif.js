@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import type { Dispatch } from 'redux';
+import { FormattedMessage } from 'react-intl';
 import { withStyles } from '@material-ui/core/styles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -97,7 +99,11 @@ class Wif extends Component<Props, State> {
     return (
       <ExpansionPanel expanded={open} onChange={this.onChange}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography>Reveal private WIF key</Typography>
+          <Typography>
+            <FormattedMessage id="dicoapp.containers.SeedPage.Passphrase.reveal_wif">
+              {(...content) => content}
+            </FormattedMessage>
+          </Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.wifContainer}>
           <Typography className={classes.wifContent}>{wif}</Typography>
@@ -113,7 +119,8 @@ class Wif extends Component<Props, State> {
   }
 }
 
-export function mapDispatchToProps(dispatch) {
+// eslint-disable-next-line flowtype/no-weak-types
+export function mapDispatchToProps(dispatch: Dispatch<Object>) {
   return {
     dispatchOpenWifExpansion: () => dispatch(openWifExpansion()),
     dispatchCloseWifExpansion: () => dispatch(closeWifExpansion())

@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import type { List } from 'immutable';
 import { withStyles } from '@material-ui/core/styles';
 import { getCoinIcon } from '../../../components/CryptoIcons';
-import { Line } from '../../../components/placeholder';
+import { Line, Circle } from '../../../components/placeholder';
 import getConfig from '../../../utils/config';
 import { covertSymbolToName, floor } from '../utils';
 import CoinSelectable from './CoinSelectable';
@@ -17,7 +17,34 @@ const line = (
   <Line
     width={60}
     style={{
+      marginTop: 8
+    }}
+  />
+);
+
+const lineTitle = (
+  <Line
+    width={90}
+    style={{
+      margin: '5px 0px'
+    }}
+  />
+);
+
+const lineContent = (
+  <Line
+    width={90}
+    style={{
       margin: 0
+    }}
+  />
+);
+
+const circle = (
+  <Circle
+    style={{
+      width: 32,
+      height: 32
     }}
   />
 );
@@ -25,6 +52,7 @@ const line = (
 const styles = () => ({});
 
 type Props = {
+  loading: boolean,
   // eslint-disable-next-line flowtype/no-weak-types
   // classes: Object,
   // eslint-disable-next-line flowtype/no-weak-types
@@ -65,7 +93,7 @@ class PaymentSection extends PureComponent<Props> {
           title={name}
           subTitle={`${floor(b.get('balance'), 3)} ${b.get('coin')}`}
         >
-          {line}
+          {lineContent}
         </CoinSelectable>
       );
     }
@@ -88,9 +116,18 @@ class PaymentSection extends PureComponent<Props> {
     );
   };
 
+  renderLoading = () => (
+    <CoinSelectable icon={circle} title={lineTitle} subTitle={line}>
+      {lineContent}
+    </CoinSelectable>
+  );
+
   render() {
     debug(`render`);
-    const { list } = this.props;
+    const { list, loading } = this.props;
+    if (loading && list.size === 0) {
+      return this.renderLoading();
+    }
     return list.map(this.renderPaymentCoin);
   }
 }

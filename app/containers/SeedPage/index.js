@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { compose } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
+import { FormattedMessage } from 'react-intl';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
@@ -148,7 +149,9 @@ class SeedPage extends Component<Props, State> {
                   className={classes.bottom30}
                   gutterBottom
                 >
-                  Generate a new Passphrase/Seed
+                  <FormattedMessage id="dicoapp.containers.SeedPage.title">
+                    {(...content) => content}
+                  </FormattedMessage>
                 </Typography>
                 <Typography
                   gutterBottom
@@ -158,7 +161,7 @@ class SeedPage extends Component<Props, State> {
                   details. Once your new login data is generated and shown in
                   the box below please <b>back up</b> your Seed and your WIF key
                   to a secure place. Without this data you will <b>NOT</b> be
-                  able to access your funds/tokens.. If your lose your Seed you
+                  able to access your funds/tokens. If your lose your Seed you
                   will also lose all your funds/addresses associated with this
                   Seed. The Seed is the password that gains you access to your
                   funds/tokens on the blockchain.
@@ -184,7 +187,9 @@ class SeedPage extends Component<Props, State> {
                 className={classes.bottomButton}
                 onClick={this.gotoLoginPage}
               >
-                Back to Log in
+                <FormattedMessage id="dicoapp.containers.SeedPage.bottom_button">
+                  {(...content) => content}
+                </FormattedMessage>
               </Button>
             </Card>
           </div>

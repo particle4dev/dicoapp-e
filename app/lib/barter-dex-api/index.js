@@ -1,11 +1,11 @@
 // @flow
-// import getConfig from '../config';
 // import type { EndpointType, CancelRequest } from './schema';
 import httpprovider from './http-provider';
 import addServerFactory from './add-server';
 import balanceFactory from './balance';
 import buyFactory from './buy';
 import getendpointFactory from './get-endpoint';
+import isReadyFactory from './is-ready';
 import listTransactionsFactory from './list-transactions';
 import listunspentFactory from './listunspent';
 import orderbookFactory from './orderbook';
@@ -14,8 +14,6 @@ import recentswapsFactory from './recentswaps';
 import sendRawTransactionFactory from './send-raw-transaction';
 import swapstatusFactory from './swapstatus';
 import withdrawFactory from './withdraw';
-
-// const config = getConfig();
 
 // const debug = require('debug')('dicoapp:utils:barter-dex-api');
 
@@ -42,6 +40,7 @@ function BarterDexAPI(): Object {
     balanceFactory(state),
     buyFactory(state),
     getendpointFactory(state),
+    isReadyFactory(state),
     listTransactionsFactory(state),
     listunspentFactory(state),
     orderbookFactory(state),

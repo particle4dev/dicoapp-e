@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import { FormattedMessage } from 'react-intl';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import ErrorBoundary from '../../components/ErrorBoundary';
@@ -31,7 +32,13 @@ class HelpPage extends Component<Props> {
 
     return (
       <React.Fragment>
-        <MDCAppBar title="Help" />
+        <MDCAppBar
+          title={
+            <FormattedMessage id="dicoapp.containers.HelpPage.title">
+              {(...content) => content}
+            </FormattedMessage>
+          }
+        />
         <Grid container spacing={0} className={classes.container}>
           <Grid item xs={12} className={classes.containerSection}>
             <Typography variant="title" gutterBottom>

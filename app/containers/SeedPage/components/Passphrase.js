@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import type { Dispatch } from 'redux';
+import { FormattedMessage } from 'react-intl';
 import { createStructuredSelector } from 'reselect';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -122,7 +124,9 @@ class Passphrase extends Component<Props, State> {
             className={classes.passphraseButton}
             onClick={this.handleGenerateSeed}
           >
-            Generate
+            <FormattedMessage id="dicoapp.containers.SeedPage.Passphrase.generate">
+              {(...content) => content}
+            </FormattedMessage>
           </Button>
           <Button
             disabled={passphrase === ''}
@@ -132,7 +136,9 @@ class Passphrase extends Component<Props, State> {
             className={classes.passphraseButton}
             onClick={this.copySeedToClipboard}
           >
-            Copy Seed to clipboard
+            <FormattedMessage id="dicoapp.containers.SeedPage.Passphrase.copy_seed">
+              {(...content) => content}
+            </FormattedMessage>
           </Button>
         </div>
       </React.Fragment>
@@ -140,7 +146,8 @@ class Passphrase extends Component<Props, State> {
   }
 }
 
-export function mapDispatchToProps(dispatch) {
+// eslint-disable-next-line flowtype/no-weak-types
+export function mapDispatchToProps(dispatch: Dispatch<Object>) {
   return {
     dispatchGeneratePassphrase: (passphrase: string) =>
       dispatch(generatePassphrase(passphrase))

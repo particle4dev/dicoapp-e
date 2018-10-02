@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import { FormattedMessage } from 'react-intl';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -53,18 +54,28 @@ class LogoutDialog extends Component<Props> {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Logout!</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          <FormattedMessage id="dicoapp.containers.LogoutDialog.title">
+            {(...content) => content}
+          </FormattedMessage>
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to logout?
+            <FormattedMessage id="dicoapp.containers.LogoutDialog.description">
+              {(...content) => content}
+            </FormattedMessage>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={this.onCancelLogoutDialog} color="primary">
-            Cancel
+            <FormattedMessage id="dicoapp.containers.LogoutDialog.cancel">
+              {(...content) => content}
+            </FormattedMessage>
           </Button>
           <Button onClick={this.onAgreeLogoutDialog} color="primary" autoFocus>
-            Ok
+            <FormattedMessage id="dicoapp.containers.LogoutDialog.submit">
+              {(...content) => content}
+            </FormattedMessage>
           </Button>
         </DialogActions>
       </Dialog>

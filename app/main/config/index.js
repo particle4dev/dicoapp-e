@@ -7,7 +7,7 @@ const loadSymbol = require('./symbol').default;
 
 let config = null;
 
-function setup() {
+module.exports = function setup() {
   if (config) return config;
 
   config = Config();
@@ -21,6 +21,4 @@ function setup() {
   ipc.answerRenderer('config:get', () => config.get());
 
   return config;
-}
-
-module.exports = setup();
+};

@@ -3,7 +3,7 @@ import { CANCEL } from 'redux-saga';
 import takeFirst from '../../utils/sagas/take-first';
 import { LOAD_TRANSACTIONS } from './constants';
 import { makeSelectCurrentUser } from '../App/selectors';
-import api from '../../utils/barter-dex-api/index';
+import api from '../../lib/barter-dex-api';
 import {
   loadTransactionSuccess,
   loadTransactionsSuccess,
