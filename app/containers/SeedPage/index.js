@@ -157,21 +157,18 @@ class SeedPage extends Component<Props, State> {
                   gutterBottom
                   className={classNames(classes.description, classes.item)}
                 >
-                  Click on &quot;Generate&quot; to create your New Account
-                  details. Once your new login data is generated and shown in
-                  the box below please <b>back up</b> your Seed and your WIF key
-                  to a secure place. Without this data you will <b>NOT</b> be
-                  able to access your funds/tokens. If your lose your Seed you
-                  will also lose all your funds/addresses associated with this
-                  Seed. The Seed is the password that gains you access to your
-                  funds/tokens on the blockchain.
+                  <FormattedMessage id="dicoapp.containers.SeedPage.instructions">
+                    {(...content) => content}
+                  </FormattedMessage>
                 </Typography>
                 <Typography
                   variant="title"
                   className={classNames(classes.textLeft, classes.item)}
                   gutterBottom
                 >
-                  Seed (click to copy)
+                  <FormattedMessage id="dicoapp.containers.SeedPage.copy">
+                    {(...content) => content}
+                  </FormattedMessage>
                 </Typography>
                 <Passphrase
                   handleCopySuccessfully={this.handleCopySuccessfully}

@@ -175,9 +175,21 @@ class Transactions extends PureComponent<Props> {
                 <TableHead>
                   <TableRow>
                     <TableCell className={classes.th}>#</TableCell>
-                    <TableCell className={classes.th}>Coin</TableCell>
-                    <TableCell className={classes.th}>Block height</TableCell>
-                    <TableCell className={classes.th}>Transaction id</TableCell>
+                    <TableCell className={classes.th}>
+                      <FormattedMessage id="dicoapp.containers.Wallet.last_transactions_coin">
+                        {(...content) => content}
+                      </FormattedMessage>
+                    </TableCell>
+                    <TableCell className={classes.th}>
+                      <FormattedMessage id="dicoapp.containers.Wallet.last_transactions_blockheight">
+                        {(...content) => content}
+                      </FormattedMessage>
+                    </TableCell>
+                    <TableCell className={classes.th}>
+                      <FormattedMessage id="dicoapp.containers.Wallet.last_transactions_transactionid">
+                        {(...content) => content}
+                      </FormattedMessage>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{list && list.map(this.renderRecord)}</TableBody>

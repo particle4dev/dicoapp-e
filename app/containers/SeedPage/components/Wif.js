@@ -20,11 +20,6 @@ import clipboardCopy from '../../../utils/clipboard-copy';
 const styles = () => ({
   wifContainer: {
     '-ms-box-orient': 'horizontal',
-    // display: '-webkit-box',
-    // display: '-moz-box',
-    // display: '-ms-flexbox',
-    // display: '-moz-flex',
-    // display: '-webkit-flex',
     display: 'flex',
     '-webkit-justify-content': 'space-around',
     'justify-content': 'space-around',

@@ -396,7 +396,9 @@ class AmountSection extends Component<Props, State> {
               className={classes.amountform__item}
               onClick={this.onClickBuyCoinButton}
             >
-              Buy {COIN_BASE.coin}
+              <FormattedMessage id="dicoapp.containers.BuyPage.execute_buy">
+                {(...content) => `${content} (${COIN_BASE.coin})`}
+              </FormattedMessage>
             </BuyButton>
           </form>
         )}
@@ -445,7 +447,9 @@ class AmountSection extends Component<Props, State> {
                 variant="contained"
                 className={classes.amountform__item}
               >
-                Loading ...
+                <FormattedMessage id="dicoapp.containers.BuyPage.loading">
+                  {(...content) => content}
+                </FormattedMessage>
               </BuyButton>
             </Grid>
           </Grid>

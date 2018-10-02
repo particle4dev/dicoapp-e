@@ -273,7 +273,9 @@ class Wallet extends Component<Props, State> {
                           classes.iconSmall
                         )}
                       />
-                      Copy to keyboard
+                      <FormattedMessage id="dicoapp.containers.Wallet.copy_address">
+                        {(...content) => content}
+                      </FormattedMessage>
                     </Button>
                   </div>
                   <QRCode value={data.get('address')} />
