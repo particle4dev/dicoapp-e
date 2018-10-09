@@ -21,7 +21,7 @@ const styles = () => ({
     marginBottom: 10,
     border: '1px solid lightgray',
     cursor: 'pointer',
-    borderRadius: 5,
+    borderRadius: 8,
     position: 'relative'
   },
 
@@ -65,6 +65,7 @@ const styles = () => ({
 });
 
 type Props = {
+  key: string,
   // eslint-disable-next-line flowtype/no-weak-types
   classes: Object,
   icon: Node,
@@ -116,6 +117,7 @@ class CoinSelectable extends PureComponent<Props> {
     debug(`render`);
 
     const {
+      key,
       classes,
       className,
       icon,
@@ -135,7 +137,7 @@ class CoinSelectable extends PureComponent<Props> {
       <ButtonBase
         disabled={disabled}
         focusRipple
-        key="title"
+        key={key}
         className={buttonClasses}
         focusVisibleClassName={classes.focusVisible}
         onClick={this.onClick}
