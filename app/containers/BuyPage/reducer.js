@@ -12,8 +12,9 @@ import {
   CLEAR_BUY_COIN_ERROR,
   LOAD_RECENT_SWAPS_COIN,
   LOAD_RECENT_SWAPS_DATA_FROM_WEBSOCKET,
-  LOAD_RECENT_SWAPS_ERROR,
-  REMOVE_SWAPS_DATA
+  // LOAD_RECENT_SWAPS_ERROR,
+  SWAP_TIMEOUT,
+  SWAP_MAKE_A_NEW
 } from './constants';
 
 import { LOGOUT } from '../App/constants';
@@ -25,14 +26,24 @@ export const initialState = fromJS({
     error: false,
     entities: {}
   },
+
+  // This data struct answers those question:
+  // Can I make another swap?
+  // Did current swap timeout?
   buying: {
     loading: false,
     error: false
   },
+
+  // This data struct answers those question:
+  // How many are swap currently processing?
+  // How many did swap finished?
+  // Current swap?
+  //
   swaps: {
-    loading: false,
-    error: false,
-    list: [],
+    currentSwap: null,
+    processingList: [],
+    finishedList: [],
     entities: {}
   }
 });
@@ -81,11 +92,16 @@ const buyReducer = handleActions(
         basevalue,
         relvalue
       } = payload;
-      const list = state.getIn(['swaps', 'list']);
+      let processingList = state.getIn(['swaps', 'processingList']);
       const entities = state.getIn(['swaps', 'entities']);
+      if (!processingList.includes(uuid)) {
+        processingList = processingList.push(uuid);
+      }
+
       // step one: update date
       return state
-        .setIn(['swaps', 'list'], list.unshift(uuid))
+        .setIn(['swaps', 'processingList'], processingList)
+        .setIn(['swaps', 'currentSwap'], uuid)
         .setIn(
           ['swaps', 'entities'],
           entities.set(
@@ -105,7 +121,8 @@ const buyReducer = handleActions(
             })
           )
         )
-        .setIn(['swaps', 'loading'], true);
+        .setIn(['buying', 'loading'], true)
+        .setIn(['buying', 'error'], false);
     },
 
     [LOAD_BUY_COIN_ERROR]: (state, { error }) =>
@@ -119,6 +136,16 @@ const buyReducer = handleActions(
         .setIn(['buying', 'loading'], false),
 
     [LOAD_RECENT_SWAPS_COIN]: (state, { payload }) => {
+      // NOTE: still not hanle this case
+      // error: "swap never started"
+      // uuid: ""
+      // status: "finished"
+      // bob: ""
+      // src: ""
+      // alice: ""
+      // dest: ""
+      // requestid: 1999249337
+      // quoteid: 2452050470
       const {
         tradeid,
         uuid,
@@ -132,11 +159,12 @@ const buyReducer = handleActions(
         sentflags,
         status
       } = payload;
+      // stop when not found uuid
+      if (!uuid && uuid === '') return state;
       // step one: update list
-      const list = state.getIn(['swaps', 'list']);
-      // if (!list.find(e => e === uuid) && status === 'pending') {
-      //   list = list.unshift(uuid);
-      // }
+      let processingList = state.getIn(['swaps', 'processingList']);
+      let finishedList = state.getIn(['swaps', 'finishedList']);
+
       // step two: update entities
       let entities = state.getIn(['swaps', 'entities']);
       let entity = entities.get(uuid);
@@ -181,25 +209,21 @@ const buyReducer = handleActions(
         );
       }
       entities = entities.set(uuid, entity);
-      if (status === 'finished' && list.get(0) === uuid) {
-        return (
-          state
-            // .setIn(['swaps', 'list'], list)
-            .setIn(['swaps', 'entities'], entities)
-            .setIn(['swaps', 'loading'], false)
-        );
+      if (status === 'finished' && processingList.contains(uuid)) {
+        processingList = processingList.filter(o => o !== uuid);
+        finishedList = finishedList.push(uuid);
+        return state
+          .setIn(['swaps', 'processingList'], processingList)
+          .setIn(['swaps', 'finishedList'], finishedList)
+          .setIn(['swaps', 'entities'], entities);
       }
-      return (
-        state
-          // .setIn(['swaps', 'list'], list)
-          .setIn(['swaps', 'entities'], entities)
-          .setIn(['swaps', 'loading'], true)
-      );
+      return state.setIn(['swaps', 'entities'], entities);
     },
 
     [LOAD_RECENT_SWAPS_DATA_FROM_WEBSOCKET]: (state, { payload }) => {
       const { uuid, expiration, method, update, status, sentflags } = payload;
-      const list = state.getIn(['swaps', 'list']);
+      let processingList = state.getIn(['swaps', 'processingList']);
+      let finishedList = state.getIn(['swaps', 'finishedList']);
 
       // step one: find entity
       let entities = state.getIn(['swaps', 'entities']);
@@ -234,33 +258,56 @@ const buyReducer = handleActions(
 
       entities = entities.set(uuid, entity);
 
-      if (status === 'finished' && list.get(0) === uuid) {
-        return (
-          state
-            // .setIn(['swaps', 'list'], list)
-            .setIn(['swaps', 'entities'], entities)
-            .setIn(['swaps', 'loading'], false)
-        );
+      if (status === 'finished' && processingList.contains(uuid)) {
+        processingList = processingList.filter(o => o !== uuid);
+        finishedList = finishedList.push(uuid);
+        return state
+          .setIn(['swaps', 'processingList'], processingList)
+          .setIn(['swaps', 'finishedList'], finishedList)
+          .setIn(['swaps', 'entities'], entities);
       }
-      return (
-        state
-          // .setIn(['swaps', 'list'], list)
-          .setIn(['swaps', 'entities'], entities)
-          .setIn(['swaps', 'loading'], true)
-      );
+      return state.setIn(['swaps', 'entities'], entities);
     },
 
-    [LOAD_RECENT_SWAPS_ERROR]: (state, { error }) =>
-      state.setIn(['swaps', 'error'], error).setIn(['swaps', 'loading'], false),
+    // NOTE: FIXME
+    // [LOAD_RECENT_SWAPS_ERROR]: (state, { error }) =>
+    //   state.setIn(['swaps', 'error'], error).setIn(['swaps', 'loading'], false),
 
-    [REMOVE_SWAPS_DATA]: state =>
+    [SWAP_MAKE_A_NEW]: state =>
       state
-        .setIn(['swaps', 'list'], fromJS([]))
-        .setIn(['swaps', 'entities'], fromJS({}))
-        .setIn(['swaps', 'error'], false)
-        .setIn(['swaps', 'loading'], false)
         .setIn(['buying', 'error'], false)
-        .setIn(['buying', 'loading'], false),
+        .setIn(['buying', 'loading'], false)
+        .setIn(['swaps', 'currentSwap'], null),
+
+    [SWAP_TIMEOUT]: (state, { payload }) => {
+      // NOTE: Todo
+      // notification to user
+      const { uuid } = payload;
+      // step one: get data
+      let processingList = state.getIn(['swaps', 'processingList']);
+      let finishedList = state.getIn(['swaps', 'finishedList']);
+      let entities = state.getIn(['swaps', 'entities']);
+      let entity = entities.get(uuid);
+      // step two: remove swap from processingList
+      processingList = processingList.filter(o => o !== uuid);
+      if (!finishedList.includes(uuid)) finishedList = finishedList.push(uuid);
+      // step three: add error message and update swap's status
+      if (entity) {
+        entity = entity
+          .set(
+            'error',
+            fromJS({
+              message: 'Timeout'
+            })
+          )
+          .set('status', 'finished');
+        entities = entities.set(uuid, entity);
+      }
+      return state
+        .setIn(['swaps', 'finishedList'], finishedList)
+        .setIn(['swaps', 'processingList'], processingList)
+        .setIn(['swaps', 'entities'], entities);
+    },
 
     [LOGOUT]: () => initialState
   },

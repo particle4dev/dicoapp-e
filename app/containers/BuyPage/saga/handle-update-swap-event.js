@@ -1,11 +1,20 @@
 import { put, all, call, cancelled, select } from 'redux-saga/effects';
+import { delay } from 'redux-saga';
+import takeFirst from '../../../utils/sagas/take-first';
 import api from '../../../lib/barter-dex-api';
 // import { loadSwapSuccess } from '../../App/actions';
-import { loadRecentSwapsCoin, loadRecentSwapsError } from '../actions';
-import { makeSelectSwapsEntities } from '../selectors';
+import {
+  loadRecentSwapsCoin,
+  loadRecentSwapsError,
+  loadRecentSwaps
+} from '../actions';
+import { makeSelectSwapsEntities, makeSelectCurrentSwaps } from '../selectors';
 
+import { CHECK_UPDATE_SWAP_EVENT, LOAD_RECENT_SWAPS } from '../constants';
+
+const DELAY_TIME = 20 * 1000; // 20s
 const debug = require('debug')(
-  'dicoapp:containers:BuyPage:saga:load-recent-swaps-process'
+  'dicoapp:containers:BuyPage:saga:handle-update-swap-event'
 );
 
 export function* checkSwap(requestid, quoteid, isPending) {
@@ -43,7 +52,7 @@ export function* checkSwap(requestid, quoteid, isPending) {
   }
 }
 
-export default function* loadRecentSwapsProcess() {
+export function* loadRecentSwapsProcess() {
   try {
     const recentswapsResult = yield call([api, 'recentswaps']);
 
@@ -75,4 +84,44 @@ export default function* loadRecentSwapsProcess() {
       console.log('Sync cancelled!');
     }
   }
+}
+
+export function* checkUpdateSwapEvent(payload, times) {
+  try {
+    let n = times;
+
+    while (true) {
+      debug('start');
+      // step one: get current swap
+      const currentSwaps = yield select(makeSelectCurrentSwaps());
+      debug('currentSwaps', currentSwaps.toJS());
+      // if not found stop
+      if (currentSwaps.size === 0) {
+        debug('stop');
+        break;
+      }
+
+      yield put(loadRecentSwaps());
+
+      if (n) {
+        n -= 1;
+        if (n <= 0) break;
+      }
+      yield call(delay, DELAY_TIME);
+    }
+  } catch (err) {
+    // eslint-disable-next-line no-empty
+  } finally {
+    if (yield cancelled()) {
+      console.log('to do something');
+    }
+  }
+}
+
+/**
+ * Root saga manages watcher lifecycle
+ */
+export default function* root() {
+  yield takeFirst(CHECK_UPDATE_SWAP_EVENT, checkUpdateSwapEvent);
+  yield takeFirst(LOAD_RECENT_SWAPS, loadRecentSwapsProcess);
 }

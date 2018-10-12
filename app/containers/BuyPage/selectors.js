@@ -35,17 +35,40 @@ const makeSelectBuyingError = () =>
 const makeSelectSwaps = () =>
   createSelector(selectBuy, buyState => buyState.get('swaps'));
 
-const makeSelectSwapsLoading = () =>
-  createSelector(makeSelectSwaps(), swapsState => swapsState.get('loading'));
-
-const makeSelectSwapsError = () =>
-  createSelector(makeSelectSwaps(), swapsState => swapsState.get('error'));
-
-const makeSelectSwapsList = () =>
-  createSelector(makeSelectSwaps(), swapsState => swapsState.get('list'));
-
 const makeSelectSwapsEntities = () =>
   createSelector(makeSelectSwaps(), swapsState => swapsState.get('entities'));
+
+const makeSelectCurrentSwapsList = () =>
+  createSelector(makeSelectSwaps(), swapsState =>
+    swapsState.get('processingList')
+  );
+
+const makeSelectCurrentSwaps = () =>
+  createSelector(
+    makeSelectSwaps(),
+    makeSelectSwapsEntities(),
+    (swapsState, swapsEntities) =>
+      swapsState.get('processingList').map(e => swapsEntities.get(e))
+  );
+
+const makeSelectFinishedSwaps = () =>
+  createSelector(
+    makeSelectSwaps(),
+    makeSelectSwapsEntities(),
+    (swapsState, swapsEntities) =>
+      swapsState.get('finishedList').map(e => swapsEntities.get(e))
+  );
+
+const makeSelectCurrentSwap = () =>
+  createSelector(
+    makeSelectSwaps(),
+    makeSelectSwapsEntities(),
+    (swapsState, swapsEntities) => {
+      const c = swapsState.get('currentSwap');
+      if (!c) return null;
+      return swapsEntities.get(c);
+    }
+  );
 
 const makeSelectBalanceList = () =>
   createSelector(makeSelectBalanceListApp(), balanceList => {
@@ -63,9 +86,10 @@ export {
   makeSelectBuyingLoading,
   makeSelectBuyingError,
   makeSelectSwaps,
-  makeSelectSwapsLoading,
-  makeSelectSwapsError,
-  makeSelectSwapsList,
   makeSelectSwapsEntities,
+  makeSelectCurrentSwapsList,
+  makeSelectCurrentSwaps,
+  makeSelectFinishedSwaps,
+  makeSelectCurrentSwap,
   makeSelectBalanceList
 };

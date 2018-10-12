@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 // @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -6,7 +7,7 @@ import type { Dispatch } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import type { IntlShape } from 'react-intl';
-import type { List, Map } from 'immutable';
+import type { Map } from 'immutable';
 import { withStyles } from '@material-ui/core/styles';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import Grid from '@material-ui/core/Grid';
@@ -22,24 +23,21 @@ import validate from '../../../components/Form/validate';
 import { makeSelectBalanceEntities } from '../../App/selectors';
 import getConfig from '../../../utils/config';
 import type { BuyCoinPayload } from '../schema';
-import { Loops } from '../utils';
-import { AUTO_HIDE_SNACKBAR_TIME, STATE_SWAPS, TIME_LOOP } from '../constants';
+import { AUTO_HIDE_SNACKBAR_TIME, STATE_SWAPS } from '../constants';
 import {
   loadBuyCoin,
   loadRecentSwaps,
-  removeSwapsData,
+  makeANewSwap,
   clearBuyCoinError,
-  loadRecentSwapsError
+  checkUpdateSwapEvent,
+  checkTimeoutEvent
 } from '../actions';
 import {
   makeSelectPricesLoading,
   makeSelectPricesEntities,
   makeSelectBuyingLoading,
   makeSelectBuyingError,
-  makeSelectSwapsList,
-  makeSelectSwapsEntities,
-  makeSelectSwapsError,
-  makeSelectSwapsLoading
+  makeSelectCurrentSwap
 } from '../selectors';
 import AmountInput from './AmountInput';
 import BuyButton from './BuyButton';
@@ -96,7 +94,7 @@ const styles = () => ({
   amountform__switchBtn: {
     position: 'absolute',
     textAlign: 'center',
-    top: '25%',
+    top: '35%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
     fontSize: 25,
@@ -124,24 +122,22 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   dispatchLoadRecentSwaps: Function,
   // eslint-disable-next-line flowtype/no-weak-types
-  dispatchRemoveSwapsData: Function,
+  dispatchMakeANewSwap: Function,
+  // eslint-disable-next-line flowtype/no-weak-types
+  dispatchCheckUpdateSwapEvent: Function,
+  // eslint-disable-next-line flowtype/no-weak-types
+  dispatchCheckTimeoutEvent: Function,
   // eslint-disable-next-line flowtype/no-weak-types
   balance: Object,
   entities: Map<*, *>,
   buyingLoading: boolean,
   // eslint-dis,able-next-line flowtype/no-weak-types
   // buyingError: boolean | Object,
-  swapsList: List<*>,
-  swapsEntities: Map<*, *>,
+  entity?: Map<*, *>,
   // eslint-disable-next-line flowtype/no-weak-types
   buyingError: boolean | Object,
   // eslint-disable-next-line flowtype/no-weak-types
-  swapsError: boolean | Object,
-  // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadRecentSwapsError: Function,
-  // eslint-disable-next-line flowtype/no-weak-types
   dispatchClearBuyCoinError: Function,
-  swapsLoading: boolean,
   intl: IntlShape
 };
 
@@ -152,12 +148,9 @@ type State = {
 };
 
 class AmountSection extends Component<Props, State> {
-  // eslint-disable-next-line flowtype/no-weak-types
-  checkSwapStatusLoops: Object | null;
-
-  idHandleTimeoutError: TimeoutID | null;
-
-  static defaultProps = {};
+  static defaultProps = {
+    entity: null
+  };
 
   constructor(props) {
     super(props);
@@ -173,7 +166,7 @@ class AmountSection extends Component<Props, State> {
   }
 
   static getDerivedStateFromProps = (props, state) => {
-    const { buyingError, swapsError } = props;
+    const { buyingError } = props;
     const { openSnackbar } = state;
     if (openSnackbar === false && buyingError) {
       return {
@@ -187,18 +180,6 @@ class AmountSection extends Component<Props, State> {
         snackbarMessage: ''
       };
     }
-    if (openSnackbar === false && swapsError) {
-      return {
-        openSnackbar: true,
-        snackbarMessage: swapsError.message
-      };
-    }
-    if (openSnackbar === true && !swapsError) {
-      return {
-        openSnackbar: false,
-        snackbarMessage: ''
-      };
-    }
     return null;
   };
 
@@ -207,69 +188,23 @@ class AmountSection extends Component<Props, State> {
     dispatchLoadRecentSwaps();
   };
 
-  componentDidUpdate(prevProps) {
-    const { swapsList, swapsEntities } = this.props;
+  // componentDidUpdate(prevProps) {
+  componentDidUpdate() {
+    const {
+      entity,
+      dispatchCheckUpdateSwapEvent,
+      dispatchCheckTimeoutEvent
+    } = this.props;
     // eslint-disable-next-line react/destructuring-assignment
-    if (swapsList.size === 1) {
-      const entity = swapsEntities.get(swapsList.get(0));
-      const oldEntity = prevProps.swapsEntities.get(swapsList.get(0));
-      if (
-        oldEntity &&
-        oldEntity.get('sentflags').size === entity.get('sentflags').size
-      )
-        return;
-      this.clearCheckSwapStatusLoops();
-      if (entity.get('status') === 'finished') {
-        return this.clearHandleTimeoutError();
-      }
-      this.setupCheckSwapStatusLoops();
-      const delay =
-        (entity.get('expiration') - Date.now() / 1000) * 1000 + TIME_LOOP;
-      if (delay < 0) this.handleTimeoutError();
-      else {
-        this.clearHandleTimeoutError();
-        this.setupHandleTimeoutError(delay);
-      }
+    if (
+      entity &&
+      entity.get('status') === 'pending' &&
+      entity.get('sentflags').size === 0
+    ) {
+      dispatchCheckUpdateSwapEvent();
+      dispatchCheckTimeoutEvent();
     }
   }
-
-  componentWillUnmount = () => {
-    if (this.checkSwapStatusLoops) {
-      this.checkSwapStatusLoops.cancel();
-      this.checkSwapStatusLoops = null;
-    }
-    this.clearHandleTimeoutError();
-  };
-
-  clearCheckSwapStatusLoops = () => {
-    if (this.checkSwapStatusLoops) {
-      this.checkSwapStatusLoops.cancel();
-      this.checkSwapStatusLoops = null;
-    }
-  };
-
-  setupCheckSwapStatusLoops = () => {
-    const { dispatchLoadRecentSwaps } = this.props;
-    this.checkSwapStatusLoops = new Loops(TIME_LOOP, dispatchLoadRecentSwaps);
-    this.checkSwapStatusLoops.setup();
-  };
-
-  clearHandleTimeoutError = () => {
-    if (this.idHandleTimeoutError) {
-      clearTimeout(this.idHandleTimeoutError);
-      this.idHandleTimeoutError = null;
-    }
-  };
-
-  setupHandleTimeoutError = delay => {
-    this.idHandleTimeoutError = setTimeout(this.handleTimeoutError, delay);
-  };
-
-  handleTimeoutError = () => {
-    this.clearCheckSwapStatusLoops();
-    const { dispatchLoadRecentSwapsError } = this.props;
-    dispatchLoadRecentSwapsError('Timeout');
-  };
 
   closeSnackbar = (evt, reason) => {
     if (reason !== 'clickaway') {
@@ -343,11 +278,11 @@ class AmountSection extends Component<Props, State> {
 
   clickProcessButton = (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
-    const { dispatchRemoveSwapsData } = this.props;
-    dispatchRemoveSwapsData();
+    const { dispatchMakeANewSwap } = this.props;
+    dispatchMakeANewSwap();
   };
 
-  renderForm = () => {
+  renderSubmitForm = () => {
     const { classes, paymentCoin, buyingLoading, intl } = this.props;
     const { disabledBuyButton } = this.state;
     const disabled = paymentCoin === '';
@@ -360,114 +295,113 @@ class AmountSection extends Component<Props, State> {
     }
 
     return (
-      <React.Fragment>
-        {!buyingLoading && (
-          <form>
-            <ValidationBaseInput
-              label={COIN_BASE.coin}
-              id={COIN_BASE.coin}
-              type="number"
-              disabled={disabled}
-              className={classes.amountform__item}
-              ref={this.baseInput}
-              onChange={this.onChangeBaseInput}
-            />
-            <br />
-            <br />
-            <SwapHorizIcon />
-            <br />
-            <br />
-            <ValidationPaymentInput
-              label={label}
-              id={label}
-              type="number"
-              balance={this.getBalance()}
-              disabled={disabled}
-              className={classes.amountform__item}
-              ref={this.paymentInput}
-              onChange={this.onChangePaymentInput}
-            />
-            <br />
-            <br />
-            <BuyButton
-              disabled={disabledBuyButton || buyingLoading}
-              color="primary"
-              variant="contained"
-              className={classes.amountform__item}
-              onClick={this.onClickBuyCoinButton}
-            >
-              <FormattedMessage id="dicoapp.containers.BuyPage.execute_buy">
-                {(...content) => `${content} (${COIN_BASE.coin})`}
-              </FormattedMessage>
-            </BuyButton>
-          </form>
-        )}
-
-        {buyingLoading && (
-          <Grid container spacing={24}>
-            <Grid item xs={6} className={classes.amountform__itemCenter}>
-              <CoinSelectable
-                icon={<Circle />}
-                title="Deposit"
-                subTitle={
-                  <Line
-                    width={60}
-                    style={{
-                      margin: '10px auto'
-                    }}
-                  />
-                }
-              />
-            </Grid>
-            <Grid item xs={6} className={classes.amountform__itemCenter}>
-              <CoinSelectable
-                icon={<Circle />}
-                title="Receive"
-                subTitle={
-                  <Line
-                    width={60}
-                    style={{
-                      margin: '10px auto'
-                    }}
-                  />
-                }
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.amountform__itemCenter}>
-              <Typography variant="body2" gutterBottom>
-                Step {0}
-                /6: {STATE_SWAPS[0]}
-              </Typography>
-              <LinearProgress color="primary" variant="determinate" value={0} />
-            </Grid>
-            <Grid item xs={12} className={classes.amountform__itemCenter}>
-              <BuyButton
-                disabled
-                color="primary"
-                variant="contained"
-                className={classes.amountform__item}
-              >
-                <FormattedMessage id="dicoapp.containers.BuyPage.loading">
-                  {(...content) => content}
-                </FormattedMessage>
-              </BuyButton>
-            </Grid>
-          </Grid>
-        )}
-      </React.Fragment>
+      <form>
+        <ValidationBaseInput
+          label={COIN_BASE.coin}
+          id={COIN_BASE.coin}
+          type="number"
+          disabled={disabled}
+          className={classes.amountform__item}
+          ref={this.baseInput}
+          onChange={this.onChangeBaseInput}
+        />
+        <br />
+        <br />
+        <SwapHorizIcon />
+        <br />
+        <br />
+        <ValidationPaymentInput
+          label={label}
+          id={label}
+          type="number"
+          balance={this.getBalance()}
+          disabled={disabled}
+          className={classes.amountform__item}
+          ref={this.paymentInput}
+          onChange={this.onChangePaymentInput}
+        />
+        <br />
+        <br />
+        <BuyButton
+          disabled={disabledBuyButton || buyingLoading}
+          color="primary"
+          variant="contained"
+          className={classes.amountform__item}
+          onClick={this.onClickBuyCoinButton}
+        >
+          <FormattedMessage id="dicoapp.containers.BuyPage.execute_buy">
+            {(...content) => `${content} (${COIN_BASE.coin})`}
+          </FormattedMessage>
+        </BuyButton>
+      </form>
     );
   };
 
-  renderProcess = () => {
-    const {
-      classes,
-      swapsList,
-      swapsEntities,
-      swapsLoading,
-      swapsError
-    } = this.props;
-    const entity = swapsEntities.get(swapsList.get(0));
+  renderConfirmForm = () => {
+    const { classes } = this.props;
+    return (
+      <Grid container spacing={24}>
+        <Grid item xs={12} className={classes.amountform__itemCenter}>
+          <Typography gutterBottom className={classes.amountform__warning}>
+            The swap is running, don't exit the application
+          </Typography>
+        </Grid>
+        <Grid item xs={6} className={classes.amountform__itemCenter}>
+          <CoinSelectable
+            icon={<Circle />}
+            title="Deposit"
+            subTitle={
+              <Line
+                width={60}
+                style={{
+                  margin: '10px auto'
+                }}
+              />
+            }
+          />
+        </Grid>
+        <Grid item xs={6} className={classes.amountform__itemCenter}>
+          <CoinSelectable
+            icon={<Circle />}
+            title="Receive"
+            subTitle={
+              <Line
+                width={60}
+                style={{
+                  margin: '10px auto'
+                }}
+              />
+            }
+          />
+        </Grid>
+        <Grid item xs={12} className={classes.amountform__itemCenter}>
+          <Typography variant="body2" gutterBottom>
+            Step {0}
+            /6: {STATE_SWAPS[0]}
+          </Typography>
+          <LinearProgress color="primary" variant="determinate" value={0} />
+        </Grid>
+        <Grid item xs={12} className={classes.amountform__itemCenter}>
+          <BuyButton
+            disabled
+            color="primary"
+            variant="contained"
+            className={classes.amountform__item}
+          >
+            <FormattedMessage id="dicoapp.containers.BuyPage.loading">
+              {(...content) => content}
+            </FormattedMessage>
+          </BuyButton>
+        </Grid>
+      </Grid>
+    );
+  };
 
+  renderProcessingSwapForm = () => {
+    const { classes, entity } = this.props;
+    const swapsLoading = entity.get('status') !== 'finished';
+    const swapsError = entity.get('error');
+    const confirmed = entity.get('sentflags').size > 0;
     return (
       <Grid
         container
@@ -476,11 +410,11 @@ class AmountSection extends Component<Props, State> {
           position: 'relative'
         }}
       >
-        {/* {swapsLoading && (
-          <Grid item xs={12} className={classes.amountform__itemCenter}>
-            <Typography gutterBottom className={classes.amountform__warning}>The swap is running, don't exit the application</Typography>
-          </Grid>
-        )} */}
+        <Grid item xs={12} className={classes.amountform__itemCenter}>
+          <Typography gutterBottom className={classes.amountform__warning}>
+            The swap is running, don't exit the application
+          </Typography>
+        </Grid>
 
         <Grid item xs={6} className={classes.amountform__itemCenter}>
           <CoinSelectable
@@ -525,13 +459,20 @@ class AmountSection extends Component<Props, State> {
         </Grid>
         <Grid item xs={12} className={classes.amountform__itemCenter}>
           <BuyButton
-            disabled={swapsLoading}
+            disabled={swapsLoading && !confirmed}
             color="primary"
             variant="contained"
             className={classes.amountform__item}
             onClick={this.clickProcessButton}
           >
-            {swapsLoading && <React.Fragment>Loading...</React.Fragment>}
+            {swapsLoading &&
+              !confirmed && <React.Fragment>Loading...</React.Fragment>}
+            {swapsLoading &&
+              confirmed && (
+                <FormattedMessage id="dicoapp.containers.BuyPage.swap_successful_message">
+                  {(...content) => content}
+                </FormattedMessage>
+              )}
             {!swapsLoading &&
               swapsError && <React.Fragment>Cancel</React.Fragment>}
             {!swapsLoading &&
@@ -546,15 +487,46 @@ class AmountSection extends Component<Props, State> {
     );
   };
 
+  renderProcessing = () => {
+    const { entity } = this.props;
+    if (!entity) return this.renderConfirmForm();
+    return this.renderProcessingSwapForm();
+  };
+
+  // renderForm = () => {
+  //   const { classes, paymentCoin, buyingLoading, intl } = this.props;
+  //   const { disabledBuyButton } = this.state;
+  //   const disabled = paymentCoin === '';
+  //   let label = intl.formatMessage({
+  //     defaultMessage: 'SELECT YOUR PAYMENT',
+  //     id: 'dicoapp.containers.BuyPage.select_payment'
+  //   });
+  //   if (paymentCoin !== '') {
+  //     label = paymentCoin;
+  //   }
+
+  //   return (
+  //     <React.Fragment>
+  //       {!buyingLoading && (
+
+  //       )}
+
+  //       {buyingLoading && (
+
+  //       )}
+  //     </React.Fragment>
+  //   );
+  // };
+
   render() {
     debug(`render`);
-    const { classes, swapsList } = this.props;
+    const { classes, buyingLoading } = this.props;
     const { openSnackbar, snackbarMessage } = this.state;
 
     return (
       <div className={classes.amountform}>
-        {swapsList.size === 0 && this.renderForm()}
-        {swapsList.size !== 0 && this.renderProcess()}
+        {!buyingLoading && this.renderSubmitForm()}
+        {buyingLoading && this.renderProcessing()}
 
         <Snackbar
           anchorOrigin={{
@@ -591,10 +563,10 @@ export function mapDispatchToProps(dispatch: Dispatch<Object>) {
     dispatchLoadBuyCoin: (payload: BuyCoinPayload) =>
       dispatch(loadBuyCoin(payload)),
     dispatchLoadRecentSwaps: () => dispatch(loadRecentSwaps()),
-    dispatchRemoveSwapsData: () => dispatch(removeSwapsData()),
+    dispatchMakeANewSwap: () => dispatch(makeANewSwap()),
     dispatchClearBuyCoinError: () => dispatch(clearBuyCoinError()),
-    dispatchLoadRecentSwapsError: (message: string) =>
-      dispatch(loadRecentSwapsError(message))
+    dispatchCheckUpdateSwapEvent: () => dispatch(checkUpdateSwapEvent()),
+    dispatchCheckTimeoutEvent: () => dispatch(checkTimeoutEvent())
   };
 }
 
@@ -604,10 +576,7 @@ const mapStateToProps = createStructuredSelector({
   balance: makeSelectBalanceEntities(),
   buyingLoading: makeSelectBuyingLoading(),
   buyingError: makeSelectBuyingError(),
-  swapsList: makeSelectSwapsList(),
-  swapsEntities: makeSelectSwapsEntities(),
-  swapsError: makeSelectSwapsError(),
-  swapsLoading: makeSelectSwapsLoading()
+  entity: makeSelectCurrentSwap()
 });
 
 const withConnect = connect(
@@ -620,3 +589,5 @@ export default compose(
   injectIntl,
   withStyles(styles)
 )(AmountSection);
+
+/* eslint-enable react/no-unescaped-entities */

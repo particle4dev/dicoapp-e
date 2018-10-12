@@ -1,14 +1,25 @@
 // @flow
-
-import React, { Component } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
+import type { List } from 'immutable';
+import { createStructuredSelector } from 'reselect';
 import { withStyles } from '@material-ui/core/styles';
 // import { FormattedMessage } from 'react-intl';
 import Grid from '@material-ui/core/Grid';
 import CardContent from '@material-ui/core/CardContent';
-import List from '@material-ui/core/List';
+import MDCList from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import PageSectionTitle from '../../components/PageSectionTitle';
+import { getCoinIcon } from '../../components/CryptoIcons';
+import {
+  makeSelectBalanceEntities,
+  makeSelectBalanceLoading
+} from '../App/selectors';
+import { makeSelectCurrentSwaps, makeSelectFinishedSwaps } from './selectors';
+import { getMonth } from './utils';
 
 const debug = require('debug')('dicoapp:containers:BuyPage:MyOrders');
 
@@ -42,20 +53,85 @@ const styles = () => ({
 
   myOrder__listItem: {
     paddingLeft: 0
+  },
+
+  myOrder__ItemDay: {
+    flex: 'none'
+  },
+
+  myOrder__ItemText: {
+    // flex: '5 1 auto'
+  },
+
+  myOrder__ItemTextRight: {
+    textAlign: 'right',
+    top: '50%',
+    right: 4,
+    position: 'absolute',
+    transform: 'translateY(-50%)'
+  },
+
+  myOrder__linearProgress: {
+    height: 2
   }
 });
 
 type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
-  classes: Object
+  classes: Object,
+  currentSwaps: List<*>,
+  finishedSwaps: List<*>
 };
 
-type State = {};
-
-class MyOrders extends Component<Props, State> {
+class MyOrders extends React.PureComponent<Props> {
   props: Props;
 
-  state = {};
+  renderSwap = swap => {
+    const { classes } = this.props;
+    const date = new Date(swap.get('expiration') * 1000);
+    return (
+      <React.Fragment>
+        <ListItem
+          key={swap.get('uuid')}
+          button
+          className={classes.myOrder__listItem}
+        >
+          <ListItemText
+            primary={getMonth(date)}
+            secondary={date.getDate()}
+            className={classes.myOrder__ItemDay}
+          />
+          {/* {getCoinIcon(swap.get('alice'))} */}
+          {getCoinIcon(swap.get('bob'))}
+          <ListItemText
+            primary={swap.get('uuid')}
+            secondary={`Step ${swap.get('sentflags').size + 1}/6`}
+            className={classes.myOrder__ItemText}
+          />
+          <ListItemText
+            primary={`+ ${swap.get('bobamount')} ${swap.get('bob')}`}
+            secondary={`- ${swap.get('aliceamount')} ${swap.get('alice')}`}
+            className={classes.myOrder__ItemTextRight}
+          />
+        </ListItem>
+        <LinearProgress
+          variant="determinate"
+          value={swap.get('sentflags').size * 20}
+          className={classes.myOrder__linearProgress}
+        />
+      </React.Fragment>
+    );
+  };
+
+  renderCurrentSwaps = () => {
+    const { currentSwaps } = this.props;
+    return currentSwaps.map(this.renderSwap);
+  };
+
+  renderfinishedSwaps = () => {
+    const { finishedSwaps } = this.props;
+    return finishedSwaps.map(this.renderSwap);
+  };
 
   render() {
     debug('render');
@@ -68,27 +144,13 @@ class MyOrders extends Component<Props, State> {
           <CardContent className={classes.cardContent}>
             <PageSectionTitle title="Swap in progress" />
 
-            <List dense={false}>
-              <ListItem button className={classes.myOrder__listItem}>
-                <ListItemText
-                  primary="c44eddd651e21616cabc9220afa74717706b92472b639aaf9479b81dd3bf8f3e"
-                  secondary="Step 3/6 (Bob Deposit)"
-                />
-              </ListItem>
-            </List>
+            <MDCList dense={false}>{this.renderCurrentSwaps()}</MDCList>
           </CardContent>
 
           <CardContent className={classes.cardContent}>
             <PageSectionTitle title="History" />
 
-            <List dense={false}>
-              <ListItem button className={classes.myOrder__listItem}>
-                <ListItemText
-                  primary="c44eddd651e21616cabc9220afa74717706b92472b639aaf9479b81dd3bf8f3e"
-                  secondary="Step 6/6 (Swap Finished)"
-                />
-              </ListItem>
-            </List>
+            <MDCList dense={false}>{this.renderfinishedSwaps()}</MDCList>
           </CardContent>
         </Grid>
       </Grid>
@@ -96,4 +158,26 @@ class MyOrders extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(MyOrders);
+// eslint-disable-next-line flowtype/no-weak-types
+// export function mapDispatchToProps(dispatch: Dispatch<Object>) {
+//   return {};
+// }
+
+const mapStateToProps = createStructuredSelector({
+  balance: makeSelectBalanceEntities(),
+  balanceLoading: makeSelectBalanceLoading(),
+  currentSwaps: makeSelectCurrentSwaps(),
+  finishedSwaps: makeSelectFinishedSwaps()
+});
+
+const withConnect = connect(
+  mapStateToProps,
+  null
+);
+
+const MyOrdersWapper = compose(
+  withConnect,
+  withStyles(styles)
+)(MyOrders);
+
+export default MyOrdersWapper;

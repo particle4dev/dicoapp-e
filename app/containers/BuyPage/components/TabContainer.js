@@ -20,14 +20,17 @@ type Props = {
   classes: Object,
   // eslint-disable-next-line flowtype/no-weak-types
   children: Element<any>,
-  className: string,
-  selected: boolean,
-  href: string
+  className?: string,
+  selected: boolean
 };
 
 type State = {};
 
-class TabContainer extends React.Component<Props, State> {
+export class TabContainer extends React.PureComponent<Props, State> {
+  static defaultProps = {
+    className: ''
+  };
+
   // shouldComponentUpdate(nextProps) {
   //   // NOTE: always render when selected === true
   //   const { selected } = this.props;
