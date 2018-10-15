@@ -9,17 +9,18 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import CardContent from '@material-ui/core/CardContent';
 import MDCList from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import PageSectionTitle from '../../components/PageSectionTitle';
-import { getCoinIcon } from '../../components/CryptoIcons';
 import {
   makeSelectBalanceEntities,
   makeSelectBalanceLoading
 } from '../App/selectors';
-import { makeSelectCurrentSwaps, makeSelectFinishedSwaps } from './selectors';
-import { getMonth } from './utils';
+import {
+  makeSelectCurrentSwaps,
+  makeSelectFinishedSwaps,
+  makeSelectSwapsEntities
+} from './selectors';
+import PageSectionTitle from '../../components/PageSectionTitle';
+import SwapDetailModal from './components/SwapDetailModal';
+import TransactionRecord from './components/TransactionRecord';
 
 const debug = require('debug')('dicoapp:containers:BuyPage:MyOrders');
 
@@ -51,28 +52,8 @@ const styles = () => ({
     top: -12
   },
 
-  myOrder__listItem: {
-    paddingLeft: 0
-  },
-
-  myOrder__ItemDay: {
-    flex: 'none'
-  },
-
-  myOrder__ItemText: {
-    // flex: '5 1 auto'
-  },
-
-  myOrder__ItemTextRight: {
-    textAlign: 'right',
-    top: '50%',
-    right: 4,
-    position: 'absolute',
-    transform: 'translateY(-50%)'
-  },
-
-  myOrder__linearProgress: {
-    height: 2
+  swapform_button: {
+    margin: '0 auto'
   }
 });
 
@@ -80,48 +61,50 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   classes: Object,
   currentSwaps: List<*>,
-  finishedSwaps: List<*>
+  finishedSwaps: List<*>,
+  swapsEntities: Map<*, *>
 };
 
-class MyOrders extends React.PureComponent<Props> {
+type State = {
+  right: boolean,
+  uuid?: string | null
+};
+
+class MyOrders extends React.PureComponent<Props, State> {
   props: Props;
 
-  renderSwap = swap => {
-    const { classes } = this.props;
-    const date = new Date(swap.get('expiration') * 1000);
-    return (
-      <React.Fragment>
-        <ListItem
-          key={swap.get('uuid')}
-          button
-          className={classes.myOrder__listItem}
-        >
-          <ListItemText
-            primary={getMonth(date)}
-            secondary={date.getDate()}
-            className={classes.myOrder__ItemDay}
-          />
-          {/* {getCoinIcon(swap.get('alice'))} */}
-          {getCoinIcon(swap.get('bob'))}
-          <ListItemText
-            primary={swap.get('uuid')}
-            secondary={`Step ${swap.get('sentflags').size + 1}/6`}
-            className={classes.myOrder__ItemText}
-          />
-          <ListItemText
-            primary={`+ ${swap.get('bobamount')} ${swap.get('bob')}`}
-            secondary={`- ${swap.get('aliceamount')} ${swap.get('alice')}`}
-            className={classes.myOrder__ItemTextRight}
-          />
-        </ListItem>
-        <LinearProgress
-          variant="determinate"
-          value={swap.get('sentflags').size * 20}
-          className={classes.myOrder__linearProgress}
-        />
-      </React.Fragment>
-    );
+  state = {
+    right: false,
+    uuid: null
   };
+
+  openRight = (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    const { target } = evt;
+    const { uuid } = this.state;
+    const u = {
+      right: true
+    };
+    if (target.value && target.value !== uuid) {
+      u.uuid = target.value;
+    }
+    this.setState(u);
+  };
+
+  closeRight = (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    this.setState({
+      right: false
+    });
+  };
+
+  renderSwap = swap => (
+    <TransactionRecord
+      key={swap.get('uuid')}
+      onClick={this.openRight}
+      swap={swap}
+    />
+  );
 
   renderCurrentSwaps = () => {
     const { currentSwaps } = this.props;
@@ -136,24 +119,32 @@ class MyOrders extends React.PureComponent<Props> {
   render() {
     debug('render');
 
-    const { classes } = this.props;
-
+    const { classes, swapsEntities } = this.props;
+    const { right, uuid } = this.state;
     return (
-      <Grid container spacing={0} className={classes.container}>
-        <Grid item xs={12} className={classes.containerSection}>
-          <CardContent className={classes.cardContent}>
-            <PageSectionTitle title="Swap in progress" />
+      <React.Fragment>
+        <Grid container spacing={0} className={classes.container}>
+          <Grid item xs={12} className={classes.containerSection}>
+            <CardContent className={classes.cardContent}>
+              <PageSectionTitle title="Swap in progress" />
 
-            <MDCList dense={false}>{this.renderCurrentSwaps()}</MDCList>
-          </CardContent>
+              <MDCList dense={false}>{this.renderCurrentSwaps()}</MDCList>
+            </CardContent>
 
-          <CardContent className={classes.cardContent}>
-            <PageSectionTitle title="History" />
+            <CardContent className={classes.cardContent}>
+              <PageSectionTitle title="History" />
 
-            <MDCList dense={false}>{this.renderfinishedSwaps()}</MDCList>
-          </CardContent>
+              <MDCList dense={false}>{this.renderfinishedSwaps()}</MDCList>
+            </CardContent>
+          </Grid>
         </Grid>
-      </Grid>
+        <SwapDetailModal
+          open={right}
+          onClose={this.closeRight}
+          onOpen={this.openRight}
+          swap={swapsEntities.get(uuid)}
+        />
+      </React.Fragment>
     );
   }
 }
@@ -167,7 +158,8 @@ const mapStateToProps = createStructuredSelector({
   balance: makeSelectBalanceEntities(),
   balanceLoading: makeSelectBalanceLoading(),
   currentSwaps: makeSelectCurrentSwaps(),
-  finishedSwaps: makeSelectFinishedSwaps()
+  finishedSwaps: makeSelectFinishedSwaps(),
+  swapsEntities: makeSelectSwapsEntities()
 });
 
 const withConnect = connect(
