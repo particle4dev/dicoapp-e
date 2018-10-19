@@ -1,5 +1,12 @@
 # Change Log
 
+# 0.10.0 (2018.10.19)
+
+- 225f6b2 add-more-detail-in-swap-modal (#58)
+- 2cbb545 swap-detail-page-or-swap-detail-modal (#55)
+- 9d262c0 implement-my-orders-tab-in-buy-page (#53)
+- 333c877 refactor-layout-to-support-tab-in-buy-page (#50)
+
 # 0.9.0 (2018.9.30)
 
 - f026285 cancel-http-requests-when-switch-page (#36)
