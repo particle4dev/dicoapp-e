@@ -9,12 +9,13 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import type { IntlShape } from 'react-intl';
 import type { Map } from 'immutable';
 import { withStyles } from '@material-ui/core/styles';
-import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import CloseIcon from '@material-ui/icons/Close';
 import { Circle, Line } from '../../../components/placeholder';
 import { getCoinIcon } from '../../../components/CryptoIcons';
@@ -30,7 +31,8 @@ import {
   makeANewSwap,
   clearBuyCoinError,
   checkUpdateSwapEvent,
-  checkTimeoutEvent
+  checkTimeoutEvent,
+  openDetailModal
 } from '../actions';
 import {
   makeSelectPricesLoading,
@@ -78,7 +80,7 @@ const ValidationPaymentInput = validate(TextInput, [requiredNumber, lessThan], {
   onChange: true
 });
 
-const styles = () => ({
+const styles = theme => ({
   amountform: {
     width: '50%'
   },
@@ -108,8 +110,21 @@ const styles = () => ({
     padding: '6px 24px'
   },
 
-  swapform_button: {
+  amountform__button: {
     margin: '0 auto'
+  },
+
+  amountform__circularProgress: {
+    color: '#fff',
+    marginLeft: 5
+  },
+
+  amountform__uuidlink: {
+    textDecoration: 'none',
+    color: theme.palette.primary.main,
+    fontSize: '0.75rem',
+    fontWeight: 400,
+    lineHeight: '1.375em'
   }
 });
 
@@ -138,6 +153,8 @@ type Props = {
   buyingError: boolean | Object,
   // eslint-disable-next-line flowtype/no-weak-types
   dispatchClearBuyCoinError: Function,
+  // eslint-disable-next-line flowtype/no-weak-types
+  dispatchOpenDetailModal: Function,
   intl: IntlShape
 };
 
@@ -211,6 +228,12 @@ class AmountSection extends Component<Props, State> {
       const { dispatchClearBuyCoinError } = this.props;
       dispatchClearBuyCoinError();
     }
+  };
+
+  openSwapDetailModal = (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    const { dispatchOpenDetailModal, entity } = this.props;
+    dispatchOpenDetailModal(entity.get('uuid'));
   };
 
   getBestPrice = () => {
@@ -418,7 +441,7 @@ class AmountSection extends Component<Props, State> {
 
         <Grid item xs={6} className={classes.amountform__itemCenter}>
           <CoinSelectable
-            className={classes.swapform_button}
+            className={classes.amountform__button}
             icon={getCoinIcon(entity.get('alice'))}
             title="Deposit"
             subTitle={
@@ -431,7 +454,7 @@ class AmountSection extends Component<Props, State> {
         <SwapHorizIcon className={classes.amountform__switchBtn} />
         <Grid item xs={6} className={classes.amountform__itemCenter}>
           <CoinSelectable
-            className={classes.swapform_button}
+            className={classes.amountform__button}
             icon={getCoinIcon(entity.get('bob'))}
             title="Receive"
             subTitle={
@@ -453,9 +476,13 @@ class AmountSection extends Component<Props, State> {
           />
         </Grid>
         <Grid item xs={12} className={classes.amountform__itemCenter}>
-          <Typography variant="caption" gutterBottom>
+          <a
+            href={`#tx/${entity.get('uuid')}`}
+            className={classes.amountform__uuidlink}
+            onClick={this.openSwapDetailModal}
+          >
             UUID: {entity.get('uuid')}
-          </Typography>
+          </a>
         </Grid>
         <Grid item xs={12} className={classes.amountform__itemCenter}>
           <BuyButton
@@ -466,12 +493,27 @@ class AmountSection extends Component<Props, State> {
             onClick={this.clickProcessButton}
           >
             {swapsLoading &&
-              !confirmed && <React.Fragment>Loading...</React.Fragment>}
+              !confirmed && (
+                <React.Fragment>
+                  Loading...
+                  <CircularProgress
+                    size={20}
+                    className={classes.amountform__circularProgress}
+                  />
+                </React.Fragment>
+              )}
             {swapsLoading &&
               confirmed && (
-                <FormattedMessage id="dicoapp.containers.BuyPage.swap_successful_message">
-                  {(...content) => content}
-                </FormattedMessage>
+                <React.Fragment>
+                  <FormattedMessage id="dicoapp.containers.BuyPage.swap_successful_message">
+                    {(...content) => content}
+                  </FormattedMessage>
+                  <CircularProgress
+                    size={20}
+                    color="secondary"
+                    className={classes.amountform__circularProgress}
+                  />
+                </React.Fragment>
               )}
             {!swapsLoading &&
               swapsError && <React.Fragment>Cancel</React.Fragment>}
@@ -566,7 +608,8 @@ export function mapDispatchToProps(dispatch: Dispatch<Object>) {
     dispatchMakeANewSwap: () => dispatch(makeANewSwap()),
     dispatchClearBuyCoinError: () => dispatch(clearBuyCoinError()),
     dispatchCheckUpdateSwapEvent: () => dispatch(checkUpdateSwapEvent()),
-    dispatchCheckTimeoutEvent: () => dispatch(checkTimeoutEvent())
+    dispatchCheckTimeoutEvent: () => dispatch(checkTimeoutEvent()),
+    dispatchOpenDetailModal: (uuid: string) => dispatch(openDetailModal(uuid))
   };
 }
 

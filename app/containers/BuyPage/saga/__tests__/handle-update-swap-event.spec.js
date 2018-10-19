@@ -3,9 +3,9 @@ import { runSaga } from 'redux-saga';
 import data from './fake-data';
 import { checkUpdateSwapEvent } from '../handle-update-swap-event';
 import { CHECK_UPDATE_SWAP_EVENT, LOAD_RECENT_SWAPS } from '../../constants';
-import { SWAP_STATE_ZERO } from '../../__tests__/fake-data';
+import { SWAP_STATE_ZERO } from '../../../__tests__/fake-data';
 
-const TIMEOUT = 10 * 100;
+const TIMEOUT = 20 * 1000;
 
 describe('containers/BuyPage/saga/handle-update-swap-event', () => {
   const {

@@ -10,6 +10,7 @@ import {
   timeoutSwap,
   makeANewSwap
 } from '../actions';
+import { SWAP_TX_DEFAULT } from '../constants';
 import {
   WEBSOCKET_STATE_ZERO,
   WEBSOCKET_STATE_ONE,
@@ -26,7 +27,7 @@ import {
   SWAP_STATE_FOUR,
   SWAP_STATE_FIVE
   // LOAD_SWAP_SUCCESS
-} from './fake-data';
+} from '../../__tests__/fake-data';
 
 describe('containers/BuyPage/reducers/initial', () => {
   it('should return the initial state', () => {
@@ -79,14 +80,59 @@ describe('containers/BuyPage/reducers/loadBuyCoinError', () => {
 });
 
 describe('containers/BuyPage/reducers/loadRecentSwapsDataFromWebsocket', () => {
-  const { uuid } = WEBSOCKET_STATE_ZERO;
-
+  const {
+    uuid,
+    tradeid,
+    requestid,
+    quoteid,
+    expiration,
+    bob,
+    alice,
+    basevalue,
+    relvalue,
+    bobsmartaddress,
+    alicesmartaddress
+  } = WEBSOCKET_STATE_ZERO;
   let store = initialState
     .setIn(['swaps', 'processingList'], fromJS([uuid]))
     .setIn(
       ['swaps', 'entities'],
       fromJS({
-        [uuid]: WEBSOCKET_STATE_ZERO
+        [uuid]: {
+          id: tradeid,
+          uuid,
+          requestid,
+          quoteid,
+          expiration,
+          bob,
+          alice,
+          bobsmartaddress,
+          alicesmartaddress,
+          bobamount: basevalue,
+          aliceamount: relvalue,
+          sentflags: [],
+          status: 'pending',
+          myfee: {
+            tx: SWAP_TX_DEFAULT,
+            value: 0
+          },
+          bobdeposit: {
+            tx: SWAP_TX_DEFAULT,
+            value: 0
+          },
+          alicepayment: {
+            tx: SWAP_TX_DEFAULT,
+            value: 0
+          },
+          bobpayment: {
+            tx: SWAP_TX_DEFAULT,
+            value: 0
+          },
+          alicespend: {
+            tx: SWAP_TX_DEFAULT,
+            value: 0
+          }
+        }
       })
     );
 
@@ -95,7 +141,15 @@ describe('containers/BuyPage/reducers/loadRecentSwapsDataFromWebsocket', () => {
     let entity = entities.get(uuid);
     entity = entity
       .set('sentflags', fromJS(['myfee']))
-      .set('expiration', WEBSOCKET_STATE_ONE.result.expiration);
+      .set('expiration', WEBSOCKET_STATE_ONE.result.expiration)
+      .set(
+        'myfee',
+        fromJS({
+          coin: WEBSOCKET_STATE_ONE.result.coin,
+          tx: WEBSOCKET_STATE_ONE.result.txid,
+          value: WEBSOCKET_STATE_ONE.result.amount
+        })
+      );
     let expectedResult = store.setIn(
       ['swaps', 'entities'],
       entities.set(uuid, entity)
@@ -118,7 +172,15 @@ describe('containers/BuyPage/reducers/loadRecentSwapsDataFromWebsocket', () => {
         'sentflags',
         entity.get('sentflags').unshift(WEBSOCKET_STATE_THREE.result.update)
       )
-      .set('expiration', WEBSOCKET_STATE_THREE.result.expiration);
+      .set('expiration', WEBSOCKET_STATE_THREE.result.expiration)
+      .set(
+        'bobdeposit',
+        fromJS({
+          coin: WEBSOCKET_STATE_THREE.result.coin,
+          tx: WEBSOCKET_STATE_THREE.result.txid,
+          value: WEBSOCKET_STATE_THREE.result.amount
+        })
+      );
     expectedResult = store.setIn(
       ['swaps', 'entities'],
       entities.set(uuid, entity)
@@ -141,7 +203,15 @@ describe('containers/BuyPage/reducers/loadRecentSwapsDataFromWebsocket', () => {
         'sentflags',
         entity.get('sentflags').unshift(WEBSOCKET_STATE_FOUR.result.update)
       )
-      .set('expiration', WEBSOCKET_STATE_FOUR.result.expiration);
+      .set('expiration', WEBSOCKET_STATE_FOUR.result.expiration)
+      .set(
+        'alicepayment',
+        fromJS({
+          coin: WEBSOCKET_STATE_FOUR.result.coin,
+          tx: WEBSOCKET_STATE_FOUR.result.txid,
+          value: WEBSOCKET_STATE_FOUR.result.amount
+        })
+      );
     expectedResult = store.setIn(
       ['swaps', 'entities'],
       entities.set(uuid, entity)
@@ -182,7 +252,15 @@ describe('containers/BuyPage/reducers/loadRecentSwapsDataFromWebsocket', () => {
         'sentflags',
         entity.get('sentflags').unshift(WEBSOCKET_STATE_SIX.result.update)
       )
-      .set('expiration', WEBSOCKET_STATE_SIX.result.expiration);
+      .set('expiration', WEBSOCKET_STATE_SIX.result.expiration)
+      .set(
+        'bobpayment',
+        fromJS({
+          coin: WEBSOCKET_STATE_SIX.result.coin,
+          tx: WEBSOCKET_STATE_SIX.result.txid,
+          value: WEBSOCKET_STATE_SIX.result.amount
+        })
+      );
     expectedResult = store.setIn(
       ['swaps', 'entities'],
       entities.set(uuid, entity)
@@ -200,10 +278,21 @@ describe('containers/BuyPage/reducers/loadRecentSwapsDataFromWebsocket', () => {
 
     entities = store.getIn(['swaps', 'entities']);
     entity = entities.get(uuid);
+    const d = WEBSOCKET_STATE_SEVEN.result.txChain.find(
+      e => e.stage === 'alicespend'
+    );
     entity = entity
       .set('sentflags', fromJS(WEBSOCKET_STATE_SEVEN.result.sentflags))
       .set('expiration', WEBSOCKET_STATE_SEVEN.result.expiration)
-      .set('status', 'finished');
+      .set('status', 'finished')
+      .set(
+        'alicespend',
+        fromJS({
+          coin: d.coin,
+          tx: d.txid,
+          value: d.amount
+        })
+      );
     expectedResult = store
       .setIn(['swaps', 'processingList'], fromJS([]))
       .setIn(['swaps', 'finishedList'], fromJS([uuid]))
@@ -241,7 +330,9 @@ describe('containers/BuyPage/reducers/loadRecentSwapsCoin', () => {
     bob,
     alice,
     basevalue,
-    relvalue
+    relvalue,
+    bobsmartaddress,
+    alicesmartaddress
   } = SWAP_STATE_ZERO;
   let store = initialState
     .setIn(['swaps', 'processingList'], fromJS([uuid]))
@@ -256,10 +347,32 @@ describe('containers/BuyPage/reducers/loadRecentSwapsCoin', () => {
           expiration,
           bob,
           alice,
+          bobsmartaddress,
+          alicesmartaddress,
           bobamount: basevalue,
           aliceamount: relvalue,
           sentflags: [],
-          status: 'pending'
+          status: 'pending',
+          myfee: {
+            tx: SWAP_TX_DEFAULT,
+            value: 0
+          },
+          bobdeposit: {
+            tx: SWAP_TX_DEFAULT,
+            value: 0
+          },
+          alicepayment: {
+            tx: SWAP_TX_DEFAULT,
+            value: 0
+          },
+          bobpayment: {
+            tx: SWAP_TX_DEFAULT,
+            value: 0
+          },
+          alicespend: {
+            tx: SWAP_TX_DEFAULT,
+            value: 0
+          }
         }
       })
     );
@@ -267,13 +380,22 @@ describe('containers/BuyPage/reducers/loadRecentSwapsCoin', () => {
   it('should handle the loadRecentSwapsCoin action correctly', () => {
     let entities = store.getIn(['swaps', 'entities']);
     let entity = entities.get(uuid);
+    const d1 = SWAP_STATE_ONE.txChain.find(e => e.stage === 'myfee');
     entity = entity
       .set('sentflags', fromJS(SWAP_STATE_ONE.sentflags))
       .set('expiration', SWAP_STATE_ONE.expiration)
       .set('requestid', SWAP_STATE_ONE.requestid)
       .set('quoteid', SWAP_STATE_ONE.quoteid)
       .set('bobamount', SWAP_STATE_ONE.srcamount)
-      .set('aliceamount', SWAP_STATE_ONE.destamount);
+      .set('aliceamount', SWAP_STATE_ONE.destamount)
+      .set(
+        'myfee',
+        fromJS({
+          coin: d1.coin,
+          tx: d1.txid,
+          value: d1.amount
+        })
+      );
     let expectedResult = store.setIn(
       ['swaps', 'entities'],
       entities.set(uuid, entity)
@@ -281,15 +403,25 @@ describe('containers/BuyPage/reducers/loadRecentSwapsCoin', () => {
     store = buyReducer(store, loadRecentSwapsCoin(SWAP_STATE_ONE));
     expect(store).toEqual(expectedResult);
 
+    store = expectedResult;
     entities = store.getIn(['swaps', 'entities']);
     entity = entities.get(uuid);
+    const d2 = SWAP_STATE_TWO.txChain.find(e => e.stage === 'bobdeposit');
     entity = entity
       .set('sentflags', fromJS(SWAP_STATE_TWO.sentflags))
       .set('expiration', SWAP_STATE_TWO.expiration)
       .set('requestid', SWAP_STATE_TWO.requestid)
       .set('quoteid', SWAP_STATE_TWO.quoteid)
       .set('bobamount', SWAP_STATE_TWO.srcamount)
-      .set('aliceamount', SWAP_STATE_TWO.destamount);
+      .set('aliceamount', SWAP_STATE_TWO.destamount)
+      .set(
+        'bobdeposit',
+        fromJS({
+          coin: d2.coin,
+          tx: d2.txid,
+          value: d2.amount
+        })
+      );
     expectedResult = store.setIn(
       ['swaps', 'entities'],
       entities.set(uuid, entity)
@@ -299,15 +431,25 @@ describe('containers/BuyPage/reducers/loadRecentSwapsCoin', () => {
     store = buyReducer(store, loadRecentSwapsCoin(SWAP_STATE_ONE));
     expect(store).toEqual(expectedResult);
 
+    store = expectedResult;
     entities = store.getIn(['swaps', 'entities']);
     entity = entities.get(uuid);
+    const d3 = SWAP_STATE_THREE.txChain.find(e => e.stage === 'alicepayment');
     entity = entity
       .set('sentflags', fromJS(SWAP_STATE_THREE.sentflags))
       .set('expiration', SWAP_STATE_THREE.expiration)
       .set('requestid', SWAP_STATE_THREE.requestid)
       .set('quoteid', SWAP_STATE_THREE.quoteid)
       .set('bobamount', SWAP_STATE_THREE.srcamount)
-      .set('aliceamount', SWAP_STATE_THREE.destamount);
+      .set('aliceamount', SWAP_STATE_THREE.destamount)
+      .set(
+        'alicepayment',
+        fromJS({
+          coin: d3.coin,
+          tx: d3.txid,
+          value: d3.amount
+        })
+      );
     expectedResult = store.setIn(
       ['swaps', 'entities'],
       entities.set(uuid, entity)
@@ -319,15 +461,25 @@ describe('containers/BuyPage/reducers/loadRecentSwapsCoin', () => {
     store = buyReducer(store, loadRecentSwapsCoin(SWAP_STATE_TWO));
     expect(store).toEqual(expectedResult);
 
+    store = expectedResult;
     entities = store.getIn(['swaps', 'entities']);
     entity = entities.get(uuid);
+    const d4 = SWAP_STATE_FOUR.txChain.find(e => e.stage === 'bobpayment');
     entity = entity
       .set('sentflags', fromJS(SWAP_STATE_FOUR.sentflags))
       .set('expiration', SWAP_STATE_FOUR.expiration)
       .set('requestid', SWAP_STATE_FOUR.requestid)
       .set('quoteid', SWAP_STATE_FOUR.quoteid)
       .set('bobamount', SWAP_STATE_FOUR.srcamount)
-      .set('aliceamount', SWAP_STATE_FOUR.destamount);
+      .set('aliceamount', SWAP_STATE_FOUR.destamount)
+      .set(
+        'bobpayment',
+        fromJS({
+          coin: d4.coin,
+          tx: d4.txid,
+          value: d4.amount
+        })
+      );
     expectedResult = store.setIn(
       ['swaps', 'entities'],
       entities.set(uuid, entity)
@@ -341,8 +493,10 @@ describe('containers/BuyPage/reducers/loadRecentSwapsCoin', () => {
     store = buyReducer(store, loadRecentSwapsCoin(SWAP_STATE_TWO));
     expect(store).toEqual(expectedResult);
 
+    store = expectedResult;
     entities = store.getIn(['swaps', 'entities']);
     entity = entities.get(uuid);
+    const d5 = SWAP_STATE_FIVE.txChain.find(e => e.stage === 'alicespend');
     entity = entity
       .set('sentflags', fromJS(SWAP_STATE_FIVE.sentflags))
       .set('expiration', SWAP_STATE_FIVE.expiration)
@@ -350,7 +504,15 @@ describe('containers/BuyPage/reducers/loadRecentSwapsCoin', () => {
       .set('quoteid', SWAP_STATE_FIVE.quoteid)
       .set('bobamount', SWAP_STATE_FIVE.srcamount)
       .set('aliceamount', SWAP_STATE_FIVE.destamount)
-      .set('status', 'finished');
+      .set('status', 'finished')
+      .set(
+        'alicespend',
+        fromJS({
+          coin: d5.coin,
+          tx: d5.txid,
+          value: d5.amount
+        })
+      );
     expectedResult = store
       .setIn(['swaps', 'processingList'], fromJS([]))
       .setIn(['swaps', 'finishedList'], fromJS([uuid]))
@@ -378,7 +540,10 @@ describe('containers/BuyPage/reducers/loadBuyCoinSuccess', () => {
     bob,
     alice,
     basevalue,
-    relvalue
+    relvalue,
+    bobsmartaddress,
+    alicesmartaddress,
+    requested
   } = SWAP_STATE_ZERO;
   it('should handle the loadBuyCoinSuccess action correctly', () => {
     const list = initialState.getIn(['swaps', 'processingList']);
@@ -400,10 +565,33 @@ describe('containers/BuyPage/reducers/loadBuyCoinSuccess', () => {
             expiration,
             bob,
             alice,
+            bobsmartaddress,
+            alicesmartaddress,
+            requested,
             bobamount: basevalue,
             aliceamount: relvalue,
             sentflags: [],
-            status: 'pending'
+            status: 'pending',
+            myfee: {
+              tx: SWAP_TX_DEFAULT,
+              value: 0
+            },
+            bobdeposit: {
+              tx: SWAP_TX_DEFAULT,
+              value: 0
+            },
+            alicepayment: {
+              tx: SWAP_TX_DEFAULT,
+              value: 0
+            },
+            bobpayment: {
+              tx: SWAP_TX_DEFAULT,
+              value: 0
+            },
+            alicespend: {
+              tx: SWAP_TX_DEFAULT,
+              value: 0
+            }
           })
         )
       );
