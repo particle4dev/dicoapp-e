@@ -1,24 +1,35 @@
 /* eslint-disable react/no-array-index-key */
 // @flow
-import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import React from 'react';
+import ClassNames from 'classnames';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import type { Dispatch } from 'redux';
+import { withStyles } from '@material-ui/core/styles';
 import { createStructuredSelector } from 'reselect';
 import Grid from '@material-ui/core/Grid';
 import {
   makeSelectBalanceList,
   makeSelectBalanceEntities
-} from '../../App/selectors';
-import { loadBalance, loadWithdraw } from '../../App/actions';
-import Wallet from './Wallet';
+} from '../App/selectors';
+import { loadBalance } from '../App/actions';
+import Asset from './components/Asset';
+import { openWithdrawModal, openDepositModal } from './actions';
 
-const debug = require('debug')('dicoapp:containers:WalletPage:Overview');
+const debug = require('debug')('dicoapp:containers:WalletPage:PortfolioTab');
 
-const styles = () => ({
+const styles = theme => ({
   containerSection: {
-    paddingBottom: 30
+    paddingBottom: theme.spacing.unit * 4
+    // paddingRight: 30
+  },
+
+  portfolioTab__tabLeft: {
+    paddingLeft: theme.spacing.unit * 2
+  },
+
+  portfolioTab__tabRight: {
+    paddingRight: theme.spacing.unit * 2
   }
 });
 
@@ -32,10 +43,12 @@ type Props = {
   // eslint-disable-next-line flowtype/no-weak-types
   dispatchLoadBalance: Function,
   // eslint-disable-next-line flowtype/no-weak-types
-  dispatchLoadWithdraw: Function
+  openWithdraw: Function,
+  // eslint-disable-next-line flowtype/no-weak-types
+  openDeposit: Function
 };
 
-class Overview extends PureComponent<Props> {
+class PortfolioTab extends React.PureComponent<Props> {
   componentDidMount = () => {
     debug('watch transactions');
     const { dispatchLoadBalance } = this.props;
@@ -43,19 +56,22 @@ class Overview extends PureComponent<Props> {
   };
 
   renderWallet = (t, k) => {
-    const { classes, entities, dispatchLoadWithdraw } = this.props;
+    const { classes, entities, openWithdraw, openDeposit } = this.props;
     const data = entities.get(t);
     return (
       <Grid
-        key={`wallet_page_overview${k}`}
+        key={`wallet_page_overview${data.get('coin')}`}
         item
-        xs={12}
-        className={classes.containerSection}
+        xs={6}
+        className={ClassNames(classes.containerSection, {
+          [classes.portfolioTab__tabLeft]: k % 2 === 1,
+          [classes.portfolioTab__tabRight]: k % 2 === 0
+        })}
       >
-        <Wallet
-          key={data.get('coin')}
+        <Asset
           data={data}
-          dispatchLoadWithdraw={dispatchLoadWithdraw}
+          openWithdraw={openWithdraw}
+          openDeposit={openDeposit}
         />
       </Grid>
     );
@@ -66,21 +82,22 @@ class Overview extends PureComponent<Props> {
 
     const { list } = this.props;
 
-    return list.map(this.renderWallet);
+    return (
+      <Grid container spacing={16}>
+        {list.map(this.renderWallet)}
+      </Grid>
+    );
   }
 }
 
-Overview.displayName = 'Overview';
+PortfolioTab.displayName = 'Overview';
 
 // eslint-disable-next-line flowtype/no-weak-types
 export function mapDispatchToProps(dispatch: Dispatch<Object>) {
   return {
-    dispatchLoadBalance: () => dispatch(loadBalance()),
-    dispatchLoadWithdraw: (payload: {
-      amount: number,
-      address: string,
-      coin: string
-    }) => dispatch(loadWithdraw(payload))
+    openWithdraw: (coin: string) => dispatch(openWithdrawModal(coin)),
+    openDeposit: (coin: string) => dispatch(openDepositModal(coin)),
+    dispatchLoadBalance: () => dispatch(loadBalance())
   };
 }
 
@@ -97,5 +114,5 @@ const withConnect = connect(
 export default compose(
   withConnect,
   withStyles(styles)
-)(Overview);
+)(PortfolioTab);
 /* eslint-enable react/no-array-index-key */

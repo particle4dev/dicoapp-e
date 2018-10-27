@@ -1,11 +1,11 @@
 /* eslint-disable import/no-named-as-default */
 // @flow
 import React, { Component } from 'react';
-import classNames from 'classnames';
+// import classNames from 'classnames';
 import { compose } from 'redux';
 import { FormattedMessage } from 'react-intl';
 import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
+// import Grid from '@material-ui/core/Grid';
 import injectReducer from '../../utils/inject-reducer';
 import injectSaga from '../../utils/inject-saga';
 import ErrorBoundary from '../../components/ErrorBoundary';
@@ -16,8 +16,10 @@ import MDCTabBar from '../../components/AppBar/TabBar';
 import PageSectionTitle from '../../components/PageSectionTitle';
 import { NavigationLayout } from '../Layout';
 import HeaderTabs from './components/HeaderTabs';
-import Overview from './components/Overview';
-import Transactions from './components/Transactions';
+import TransactionsTab from './TransactionsTab';
+import WithdrawModal from './WithdrawModal';
+import DepositModal from './DepositModal';
+import PortfolioTab from './PortfolioTab';
 import ProgressBar from './ProgressBar';
 import reducer from './reducer';
 import saga from './saga';
@@ -37,7 +39,8 @@ const styles = () => ({
   container: {
     // marginTop: 65,
     marginTop: 112,
-    padding: '40px 24px 24px 24px'
+    padding: '40px 24px 24px 24px',
+    flexGrow: 1
   },
 
   containerSection: {
@@ -81,43 +84,30 @@ class WalletPage extends Component<Props, State> {
                 <HeaderTabs handleChange={this.handleChange} value={value} />
               </MDCTabBar>
             </MDCAppBar>
-            <TabContainer selected={value === 0}>
-              <Grid
-                container
-                spacing={0}
-                className={classNames(classes.container, classes.container)}
-              >
-                {/* <Grid item xs={12} className={classes.containerSection}> */}
-                <PageSectionTitle
-                  title={
-                    <FormattedMessage id="dicoapp.containers.Wallet.overview">
-                      {(...content) => content}
-                    </FormattedMessage>
-                  }
-                />
-                {/* </Grid> */}
-                <Overview />
-              </Grid>
+            <TabContainer selected={value === 0} className={classes.container}>
+              <PageSectionTitle
+                title={
+                  <FormattedMessage id="dicoapp.containers.Wallet.overview">
+                    {(...content) => content}
+                  </FormattedMessage>
+                }
+              />
+              <PortfolioTab />
             </TabContainer>
-            <TabContainer selected={value === 1}>
-              <Grid
-                container
-                spacing={0}
-                className={classNames(classes.container, classes.container)}
-              >
-                {/* <Grid item xs={12} className={classes.containerSection}> */}
-                <PageSectionTitle
-                  title={
-                    <FormattedMessage id="dicoapp.containers.Wallet.last_transactions">
-                      {(...content) => content}
-                    </FormattedMessage>
-                  }
-                />
-                <Transactions />
-              </Grid>
+            <TabContainer selected={value === 1} className={classes.container}>
+              <PageSectionTitle
+                title={
+                  <FormattedMessage id="dicoapp.containers.Wallet.last_transactions">
+                    {(...content) => content}
+                  </FormattedMessage>
+                }
+              />
+              <TransactionsTab />
             </TabContainer>
           </ErrorBoundary>
         </NavigationLayout>
+        <WithdrawModal />
+        <DepositModal />
       </React.Fragment>
     );
   }

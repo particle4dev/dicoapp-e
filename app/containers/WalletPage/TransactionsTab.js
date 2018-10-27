@@ -16,16 +16,16 @@ import TableRow from '@material-ui/core/TableRow';
 import IconButton from '@material-ui/core/IconButton';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import CachedIcon from '@material-ui/icons/Cached';
-import explorer from '../../../lib/explorer';
+import explorer from '../../lib/explorer';
 import {
   makeSelectTransactionsLoading,
   makeSelectTransactionsError,
   makeSelectTransactionsList,
   makeSelectTransactionsEntities
-} from '../selectors';
-import { loadTransactions } from '../actions';
+} from './selectors';
+import { loadTransactions } from './actions';
 
-const debug = require('debug')('dicoapp:containers:WalletPage:Transactions');
+const debug = require('debug')('dicoapp:containers:WalletPage:TransactionsTab');
 
 const styles = () => ({
   containerSection: {
@@ -67,7 +67,7 @@ type Props = {
   dispatchLoadTransactions: Function
 };
 
-class Transactions extends PureComponent<Props> {
+class TransactionsTab extends PureComponent<Props> {
   componentDidMount = () => {
     debug('watch transactions');
 
@@ -137,51 +137,53 @@ class Transactions extends PureComponent<Props> {
     const { loading, classes, list, error } = this.props;
 
     return (
-      <Grid item xs={12} className={classes.containerSection}>
-        <div className={classes.btns}>
-          <IconButton
-            disabled={loading}
-            onClick={this.onClickReloadTranstactions}
-          >
-            <CachedIcon />
-          </IconButton>
-        </div>
-        {error && (
-          <SnackbarContent
-            // className={classNames(classes[variant], className)}
-            aria-describedby="client-snackbar"
-            message={error.message}
-          />
-        )}
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell className={classes.th}>#</TableCell>
-              <TableCell className={classes.th}>
-                <FormattedMessage id="dicoapp.containers.Wallet.last_transactions_coin">
-                  {(...content) => content}
-                </FormattedMessage>
-              </TableCell>
-              <TableCell className={classes.th}>
-                <FormattedMessage id="dicoapp.containers.Wallet.last_transactions_blockheight">
-                  {(...content) => content}
-                </FormattedMessage>
-              </TableCell>
-              <TableCell className={classes.th}>
-                <FormattedMessage id="dicoapp.containers.Wallet.last_transactions_transactionid">
-                  {(...content) => content}
-                </FormattedMessage>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>{list && list.map(this.renderRecord)}</TableBody>
-        </Table>
+      <Grid container spacing={12}>
+        <Grid item xs={12} className={classes.containerSection}>
+          <div className={classes.btns}>
+            <IconButton
+              disabled={loading}
+              onClick={this.onClickReloadTranstactions}
+            >
+              <CachedIcon />
+            </IconButton>
+          </div>
+          {error && (
+            <SnackbarContent
+              // className={classNames(classes[variant], className)}
+              aria-describedby="client-snackbar"
+              message={error.message}
+            />
+          )}
+          <Table className={classes.table}>
+            <TableHead>
+              <TableRow>
+                <TableCell className={classes.th}>#</TableCell>
+                <TableCell className={classes.th}>
+                  <FormattedMessage id="dicoapp.containers.Wallet.last_transactions_coin">
+                    {(...content) => content}
+                  </FormattedMessage>
+                </TableCell>
+                <TableCell className={classes.th}>
+                  <FormattedMessage id="dicoapp.containers.Wallet.last_transactions_blockheight">
+                    {(...content) => content}
+                  </FormattedMessage>
+                </TableCell>
+                <TableCell className={classes.th}>
+                  <FormattedMessage id="dicoapp.containers.Wallet.last_transactions_transactionid">
+                    {(...content) => content}
+                  </FormattedMessage>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>{list && list.map(this.renderRecord)}</TableBody>
+          </Table>
+        </Grid>
       </Grid>
     );
   }
 }
 
-Transactions.displayName = 'Transactions';
+TransactionsTab.displayName = 'Transactions';
 
 // eslint-disable-next-line flowtype/no-weak-types
 export function mapDispatchToProps(dispatch: Dispatch<Object>) {
@@ -205,4 +207,4 @@ const withConnect = connect(
 export default compose(
   withConnect,
   withStyles(styles)
-)(Transactions);
+)(TransactionsTab);
