@@ -1,5 +1,5 @@
 // @flow
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { shell } from 'electron';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
@@ -53,6 +53,12 @@ const styles = () => ({
 let idInterval = null;
 const LOAD_TRANSACTION_TIME = 90000;
 
+// FIXME: create new table component, avoid re render
+// type TableProps = {
+// };
+// class Table extends React.PureComponent<TableProps> {
+// }
+
 type Props = {
   loading: boolean,
   // eslint-disable-next-line flowtype/no-weak-types
@@ -67,7 +73,7 @@ type Props = {
   dispatchLoadTransactions: Function
 };
 
-class TransactionsTab extends PureComponent<Props> {
+class TransactionsTab extends React.PureComponent<Props> {
   componentDidMount = () => {
     debug('watch transactions');
 
