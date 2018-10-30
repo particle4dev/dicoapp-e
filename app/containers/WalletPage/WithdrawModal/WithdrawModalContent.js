@@ -10,7 +10,11 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import TextField from '@material-ui/core/TextField';
+
+import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+
 import { getCoinIcon } from '../../../components/CryptoIcons';
 import { required, requiredNumber } from '../../../components/Form/helper';
 import BuyButton from '../../../components/BuyButton';
@@ -22,10 +26,12 @@ const debug = require('debug')(
 
 export const lessThan = (value: mixed, props: mixed) =>
   new Promise((resolve, reject) => {
-    const { balance } = props;
+    const { balance, fee } = props;
     const n = Number(value);
     const b = Number(balance);
-    if (n >= b) {
+    const f = Number(fee);
+
+    if (n > b - f) {
       return reject(new Error('Value is large than balance'));
     }
     return resolve(true);
@@ -44,15 +50,12 @@ export const notSameAddress = (value: mixed, props: mixed) =>
 const TextInput = ({ onChange, value, error, isError, ...props }) => (
   <TextField
     {...props}
-    // id="outlined-adornment-weight"
-    // className={classNames(classes.margin, classes.textField)}
     variant="outlined"
-    // label="Weight"
-    // helperText="Weight"
     error={isError}
     helperText={error}
     value={value}
     onChange={onChange}
+    margin="dense"
   />
 );
 
@@ -109,16 +112,45 @@ const styles = theme => ({
   },
 
   withdraw__listItemSecondaryAction: {
-    right: -10
+    right: 0,
+    top: 24
+  },
+
+  withdraw__listItemSecondaryLogo: {
+    right: -10,
+    top: 24
+  },
+
+  withdraw__transactionFee: {
+    padding: '10px 0',
+    width: '100%',
+    display: 'flex',
+    position: 'relative'
+  },
+
+  withdraw__transactionFeeValue: {
+    position: 'absolute',
+    transform: 'translateY(-50%)',
+    top: '24px',
+    right: 0
   }
 });
 
-class WithdrawModalContent extends React.PureComponent<Props> {
+type State = {
+  invaidAmountInput: boolean,
+  invaidAddressInput: boolean
+};
+
+class WithdrawModalContent extends React.PureComponent<Props, State> {
   constructor(props) {
     super(props);
 
     this.amountInput = React.createRef();
     this.addressInput = React.createRef();
+    this.state = {
+      invaidAmountInput: true,
+      invaidAddressInput: true
+    };
   }
 
   getSnapshotBeforeUpdate(prevProps) {
@@ -150,6 +182,63 @@ class WithdrawModalContent extends React.PureComponent<Props> {
     }
   }
 
+  controlInvaidAmountInput = (state: boolean) => {
+    const { invaidAmountInput } = this.state;
+    if (invaidAmountInput !== state) {
+      this.setState({
+        invaidAmountInput: state
+      });
+    }
+  };
+
+  controlInvaidAddressInput = (state: boolean) => {
+    const { invaidAddressInput } = this.state;
+    if (invaidAddressInput !== state) {
+      this.setState({
+        invaidAddressInput: state
+      });
+    }
+  };
+
+  onChangeAddressInput = async () => {
+    try {
+      const addressInput = this.addressInput.current;
+      const address = await addressInput.value();
+
+      debug(`onChangeInput: address=${address}`);
+      this.controlInvaidAddressInput(false);
+    } catch (err) {
+      this.controlInvaidAddressInput(true);
+      debug(`onChangeInput: ${err.message}`);
+    }
+  };
+
+  onChangeAmountInput = async () => {
+    try {
+      const amountInput = this.amountInput.current;
+      const amount = await amountInput.value();
+
+      debug(`onChangeInput: amount=${amount}`);
+      this.controlInvaidAmountInput(false);
+    } catch (err) {
+      this.controlInvaidAmountInput(true);
+      debug(`onChangeInput: ${err.message}`);
+    }
+  };
+
+  onClickAllButton = async (evt: SyntheticInputEvent<>) => {
+    evt.preventDefault();
+    try {
+      const { coin } = this.props;
+      const amountInput = this.amountInput.current;
+      await amountInput.setValue(coin.get('balance') - coin.get('fee'));
+      this.controlInvaidAmountInput(false);
+    } catch (err) {
+      this.controlInvaidAmountInput(true);
+      debug(`onClickAllButton: ${err.message}`);
+    }
+  };
+
   handleWithdraw = async (evt: SyntheticInputEvent<>) => {
     evt.preventDefault();
     const { dispatchLoadWithdraw, coin } = this.props;
@@ -173,6 +262,7 @@ class WithdrawModalContent extends React.PureComponent<Props> {
 
   render = () => {
     const { classes, coin } = this.props;
+    const { invaidAmountInput, invaidAddressInput } = this.state;
     const loading = coin.get('loading');
     const CIcon = getCoinIcon(coin.get('coin'));
 
@@ -203,34 +293,38 @@ class WithdrawModalContent extends React.PureComponent<Props> {
             >
               <ListItemText primary="Asset" secondary={coin.get('coin')} />
               <ListItemSecondaryAction
-                className={classes.withdraw__listItemSecondaryAction}
+                className={classes.withdraw__listItemSecondaryLogo}
               >
                 <IconButton aria-label="coin-icon">{CIcon}</IconButton>
               </ListItemSecondaryAction>
             </ListItem>
             <ListItem
               classes={{
-                gutters: classes.withdraw__listItem
+                secondaryAction: classes.withdraw__listItem
               }}
             >
-              <ListItemText
-                primary="Withdraw from"
-                secondary={coin.get('address')}
-              />
+              <ListItemText primary="Withdraw from" />
+              <ListItemSecondaryAction
+                className={classes.withdraw__listItemSecondaryAction}
+              >
+                <Typography variant="body1" color="textSecondary" gutterBottom>
+                  {coin.get('address')}
+                </Typography>
+              </ListItemSecondaryAction>
             </ListItem>
             <ListItem
               classes={{
-                gutters: classes.withdraw__listItem
+                secondaryAction: classes.withdraw__listItem
               }}
             >
-              <ListItemText
-                primary="Available"
-                secondary={
-                  <span>
-                    {coin.get('balance')} {coin.get('coin')}
-                  </span>
-                }
-              />
+              <ListItemText primary="Available" />
+              <ListItemSecondaryAction
+                className={classes.withdraw__listItemSecondaryAction}
+              >
+                <Typography variant="body1" color="textSecondary" gutterBottom>
+                  {coin.get('balance')} {coin.get('coin')}
+                </Typography>
+              </ListItemSecondaryAction>
             </ListItem>
           </List>
 
@@ -243,6 +337,7 @@ class WithdrawModalContent extends React.PureComponent<Props> {
               address={coin.get('address')}
               ref={this.addressInput}
               disabled={loading}
+              onChange={this.onChangeAddressInput}
             />
 
             <ValidationAmountInput
@@ -250,19 +345,41 @@ class WithdrawModalContent extends React.PureComponent<Props> {
               label="Amount to withdraw"
               margin="normal"
               balance={coin.get('balance')}
+              fee={coin.get('fee')}
               className={classes.withdraw__formItem}
               ref={this.amountInput}
               disabled={loading}
+              onChange={this.onChangeAmountInput}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button onClick={this.onClickAllButton}>Max</Button>
+                  </InputAdornment>
+                )
+              }}
             />
-
-            <br />
-
+            <div className={classes.withdraw__transactionFee}>
+              <Typography variant="subheading" gutterBottom>
+                Transaction Fee
+              </Typography>
+              <Typography
+                variant="body1"
+                color="textSecondary"
+                gutterBottom
+                className={classes.withdraw__transactionFeeValue}
+              >
+                {coin.get('fee')} {coin.get('coin')}
+              </Typography>
+            </div>
             <BuyButton
               variant="contained"
               color="primary"
               className={classes.withdraw__button}
               onClick={this.handleWithdraw}
-              disabled={loading}
+              disabled={
+                coin.get('balance') <= 0 ||
+                (loading || (invaidAmountInput || invaidAddressInput))
+              }
             >
               Withdraw
             </BuyButton>
