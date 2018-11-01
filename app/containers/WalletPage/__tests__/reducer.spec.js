@@ -1,6 +1,11 @@
-import walletReducer, { initialState } from '../reducer';
+import { fromJS } from 'immutable';
+import walletReducer, {
+  initialState,
+  generateCoinTransactionRecord
+} from '../reducer';
 import {
   loadTransactions,
+  loadCoinTransactions,
   openWithdrawModal,
   closeWithdrawModal,
   openDepositModal,
@@ -15,9 +20,10 @@ describe('containers/WalletPage/reducers/initial', () => {
 
 describe('containers/WalletPage/reducers/loadTransactions', () => {
   it('should handle the loadTransactions action correctly', () => {
-    const expectedResult = initialState
-      .setIn(['transactions', 'loading'], true)
-      .setIn(['transactions', 'error'], false);
+    const expectedResult = initialState.setIn(
+      ['transactions', 'loading'],
+      true
+    );
 
     expect(walletReducer(initialState, loadTransactions())).toEqual(
       expectedResult
@@ -66,6 +72,34 @@ describe('containers/WalletPage/reducers/closeDepositModal', () => {
     const expectedResult = initialState.setIn(['depositModal', 'open'], false);
 
     expect(walletReducer(initialState, closeDepositModal())).toEqual(
+      expectedResult
+    );
+  });
+});
+
+describe('containers/WalletPage/reducers/loadCoinTransactions', () => {
+  const data = {
+    result: 'success',
+    status: 'queued',
+    coin: 'KMD',
+    queueId: 23
+  };
+  it('should handle the loadCoinTransactions action correctly', () => {
+    const expectedResult = initialState
+      .setIn(
+        ['transactions', 'queueids'],
+        fromJS({
+          [data.queueId]: data.coin
+        })
+      )
+      .setIn(
+        ['transactions', 'coins'],
+        fromJS({
+          [data.coin]: generateCoinTransactionRecord()
+        })
+      );
+
+    expect(walletReducer(initialState, loadCoinTransactions(data))).toEqual(
       expectedResult
     );
   });
