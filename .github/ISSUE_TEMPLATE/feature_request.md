@@ -3,32 +3,30 @@ name: Feature request
 about: Suggest an idea for this project
 ---
 
-**General Checklist:**
+Title: [Persona name] should (not) be able to [overarching action]
 
-- [ ] Tests added for this feature/bug
-- [ ] All tests are passed
-- [ ] No lint error
-- Review
+Business/User Value: As [persona] I want to [action by user] so that [value or need met]
 
-  - [ ] Has been reviewed by UX
-  - [ ] Has been reviewed by Frontend
-  - [ ] Has been reviewed by Backend
-  - [ ] Has been reviewed by Database
+Acceptance Criteria
+GIVEN [necessary context and preconditions for story]
+WHEN [action]
+THEN [reaction]
 
-- [ ] Conform by the [merge request performance guides]
-- [ ] Conform by the [style guides]
-- [ ] [Squashed related commits together](https://git-scm.com/book/en/Git-Tools-Rewriting-History#Squashing-Commits)
+**DEV NOTES**
+None
 
-**Tasks Checklist**
+**DESIGN Notes**
+None
 
-- [ ] Todo something 1
-- [ ] Todo something 2
-- [ ] Todo something 3
+---other items that you may add to a story---
 
-**What are the relevant issue numbers?**
+**NEEDS PM**
+None
 
-Closes #
+**NEEDS DESIGN**
+None
 
-**What are the relevant issue on pivotal tracker ?**
+**Related issues**
+None
 
-delivered #
+/label ~"story"
