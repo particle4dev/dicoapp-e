@@ -1,3 +1,8 @@
+---
+name: Feature request
+about: Suggest an idea for this project
+---
+
 **General Checklist:**
 
 - [ ] Tests added for this feature/bug
