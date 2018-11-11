@@ -1,5 +1,11 @@
 # Change Log
 
+# 0.12.0 (2018.11.11)
+
+- 2b94d17 implement-transactions-tab (#86)
+- acddbbf update-github-issue-template (#85)
+- 95639bd upgrade-npm-package (#73)
+
 # 0.11.0 (2018.11.02)
 
 - 4e18812 loading-strip-on-top-get-stuck (#72)
