@@ -13,9 +13,10 @@ export default async function walletSubscribe(
     if (coin) {
       // FIXME this case
       // {error: "timeout"}
+      // {error: "no coin"}
       if (!result || !result.sort) return;
       // sort
-      let data = result.sort((a, b) => b.height - a.height);
+      let data = result.sort((a, b) => b.blockindex - a.blockindex);
 
       // only take 10 records
       // data = data.slice(0, 10);
@@ -28,7 +29,7 @@ export default async function walletSubscribe(
 
       dispatch(
         loadCoinTransactionsSuccess({
-          queueId: queueid,
+          queueId: `${queueid}`,
           coin,
           tx: data
         })

@@ -40,7 +40,7 @@ if (module.hot) {
   module.hot.accept(['./i18n', './containers/Routes'], () => {
     // ReactDOM.unmountComponentAtNode(MOUNT_NODE);
     // render();
-    const NextRoot = require('./containers/Routes'); // eslint-disable-line global-require
+    const NextRoot = require('./containers/Routes').default; // eslint-disable-line global-require
     render(NextRoot, translationMessages);
   });
 }

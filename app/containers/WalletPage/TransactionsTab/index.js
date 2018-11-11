@@ -32,7 +32,7 @@ const styles = theme => ({
 
   btns: {
     top: 8,
-    right: 8,
+    right: -12,
     display: 'flex',
     position: 'absolute'
   },
@@ -86,10 +86,10 @@ class TransactionsTab extends React.PureComponent<Props> {
     return (
       <div className={classes.walletTable__emptyContainer}>
         <CloudOff className={classes.walletTable__iconemptystate} />
-        <Typography variant="title" gutterBottom>
+        <Typography variant="h6" gutterBottom>
           No data found
         </Typography>
-        <Typography variant="subheading" gutterBottom>
+        <Typography variant="subtitle1" gutterBottom>
           Please start making a swap
         </Typography>
         <Button color="primary" onClick={switchToPortfolioTab}>
@@ -105,7 +105,7 @@ class TransactionsTab extends React.PureComponent<Props> {
     const { loading, queueids, classes, error, transactions } = this.props;
     const empty = !loading && transactions.size === 0 && queueids.size === 0;
     return (
-      <Grid container spacing={12}>
+      <Grid container spacing={16}>
         <Grid item xs={12} className={classes.containerSection}>
           <div className={classes.btns}>
             <IconButton
@@ -123,7 +123,12 @@ class TransactionsTab extends React.PureComponent<Props> {
             />
           )}
           {empty && this.renderEmptyState()}
-          {!empty && <TransactionsTable data={transactions} />}
+          {!empty && (
+            <TransactionsTable
+              data={transactions}
+              loading={loading || queueids.size !== 0}
+            />
+          )}
         </Grid>
       </Grid>
     );
