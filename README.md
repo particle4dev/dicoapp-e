@@ -35,7 +35,7 @@
   - No Email
   - No Password
 - Lowest transaction fee. It's only is 1/777 of the transaction amount
-- The easiest and safest way to swap coin
+- The easiest and safest way to distribute your coin
 - Cross platform
   - Windows, macOS and Linux ready
 
@@ -81,6 +81,8 @@ You can [download](https://github.com/KomodoPlatform/dicoapp-e/releases) the lat
 ## Documentation
 
 - [Release Process](/docs/release-process.md)
+
+- [White label the application](/docs/whitelabling.md)
 
 ## Credits
 
