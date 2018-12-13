@@ -24,7 +24,7 @@
   <a href="#license">License</a>
 </p>
 
-![screenshot](/docs/pictures/demo-dec-11-2018-15-54-48.png)
+![screenshot](/docs/pictures/2018-12-13-16-07-01.png)
 
 **This project is bound by a [Code of Conduct][].**
 
