@@ -43,7 +43,7 @@
 
 ### Prerequisites
 
-Following are the minimum tested versions for the tools and libraries you need for running Atomic Decentralized app:
+Following are the minimum tested versions for the tools and libraries you need for running dICO app:
 
 - Nodejs: v10.13.0 or newer
 
@@ -62,7 +62,7 @@ git clone -b master https://github.com/KomodoPlatform/dicoapp-e.git
 And install dependencies with yarn.
 
 ```bash
-$ cd atomicdex
+$ cd dicoapp-e
 $ yarn install
 ```
 
@@ -76,7 +76,7 @@ $ yarn dev
 
 ## Download
 
-You can [download](https://github.com/KomodoPlatform/dicoapp-e/releases) the latest installable version of AtomicDex app for Windows, macOS and Linux.
+You can [download](https://github.com/KomodoPlatform/dicoapp-e/releases) the latest installable version of dICO app for Windows, macOS and Linux.
 
 ## Documentation
 
